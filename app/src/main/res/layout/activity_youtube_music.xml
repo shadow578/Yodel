@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.ytmusic.YoutubeMusicActivity">
+
+    <!-- controls at the top -->
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/controls_box"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <!-- auto- download toggle -->
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/auto_download_list"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Auto Download List" />
+
+        <!-- download current-->
+        <Button
+            android:id="@+id/download_track"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Download" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <!-- main web view -->
+    <WebView
+        android:id="@+id/webview"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/controls_box" />
+
+    <!-- automatic downloading overlay -->
+    <TextView
+        android:id="@+id/auto_download_overlay"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="#aa000000"
+        android:gravity="center"
+        android:text="Auto- DL enabled"
+        android:textColor="@color/white"
+        android:textSize="25sp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/webview"
+        app:layout_constraintLeft_toLeftOf="@id/webview"
+        app:layout_constraintRight_toRightOf="@id/webview"
+        app:layout_constraintTop_toTopOf="@id/webview" />
+</androidx.constraintlayout.widget.ConstraintLayout>
