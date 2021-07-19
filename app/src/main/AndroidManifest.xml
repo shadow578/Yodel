@@ -22,6 +22,8 @@
             </intent-filter>
         </activity>
 
+        <service android:name=".downloader.DownloaderService"/>
+
 
         <activity android:name=".ui.AdblockWebViewActivity">
             <intent-filter>

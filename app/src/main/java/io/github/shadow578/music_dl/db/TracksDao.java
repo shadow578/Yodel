@@ -1,5 +1,6 @@
 package io.github.shadow578.music_dl.db;
 
+import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
@@ -15,6 +16,22 @@ import io.github.shadow578.music_dl.db.model.TrackInfo;
  */
 @Dao
 public interface TracksDao {
+
+    /**
+     * observe all tracks
+     *
+     * @return the tracks that can be observed
+     */
+    @Query("SELECT * FROM tracks")
+    LiveData<List<TrackInfo>> observe();
+
+    /**
+     * observe all tracks that have to be downloaded
+     *
+     * @return the tracks that can be observed
+     */
+    @Query("SELECT * FROM tracks WHERE isDownloaded = 0")
+    LiveData<List<TrackInfo>> observePending();
 
     /**
      * get a track from the db

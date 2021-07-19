@@ -103,10 +103,7 @@ public class YoutubeMusicActivity extends BaseActivity {
     private void handleDownloadTrack() {
         // extract id
         final String id = Util.extractTrackId(b.webview.getUrl());
-
-        //TODO dlTest inject
-        model.dlTest();
-
+        
         // show toast if could not find id or no track is playing
         if (id == null
                 || id.isEmpty()
