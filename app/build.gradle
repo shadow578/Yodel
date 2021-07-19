@@ -12,6 +12,10 @@ android {
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
+
+        ndk {
+            abiFilters 'x86', 'x86_64', 'armeabi-v7a', 'arm64-v8a'
+        }
     }
     buildTypes {
         release {
@@ -27,6 +31,14 @@ android {
     buildFeatures {
         viewBinding true
     }
+    splits {
+        abi {
+            enable true
+            reset()
+            include 'x86', 'x86_64', 'armeabi-v7a', 'arm64-v8a'
+            universalApk true
+        }
+    }
 }
 
 dependencies {
@@ -38,6 +50,10 @@ dependencies {
     // Room
     implementation "androidx.room:room-runtime:2.3.0"
     annotationProcessor "androidx.room:room-compiler:2.3.0"
+
+    // youtube-dl
+    implementation 'com.github.yausername.youtubedl-android:library:0.12.4'
+    implementation 'com.github.yausername.youtubedl-android:ffmpeg:0.12.4'
 
     // desugaring
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'

@@ -10,7 +10,12 @@ public enum Url {
     /**
      * the main youtube music page link
      */
-    YoutubeMusicMain("https://music.youtube.com");
+    YoutubeMusicMain("https://music.youtube.com"),
+
+    /**
+     * the youtube music watch page link (without id)
+     */
+    YoutubeMusicWatch(YoutubeMusicMain.url + "/watch?v=");
 
     /**
      * the url of this value
@@ -20,17 +25,17 @@ public enum Url {
 
     /**
      * create a new url value
+     *
      * @param url the url
      */
-    Url(@NonNull String url)
-    {
+    Url(@NonNull String url) {
         this.url = url;
     }
 
     /**
      * @return the url of this value
      */
-    public String url(){
+    public String url() {
         return url;
     }
 }
