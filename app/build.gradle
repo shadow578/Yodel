@@ -58,6 +58,9 @@ dependencies {
     implementation 'com.github.yausername.youtubedl-android:library:0.12.4'
     implementation 'com.github.yausername.youtubedl-android:ffmpeg:0.12.4'
 
+    // gson
+    implementation 'com.google.code.gson:gson:2.8.7'
+
     // desugaring
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
 

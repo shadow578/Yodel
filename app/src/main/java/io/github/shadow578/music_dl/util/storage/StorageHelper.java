@@ -1,4 +1,4 @@
-package io.github.shadow578.music_dl.util;
+package io.github.shadow578.music_dl.util.storage;
 
 import android.content.Context;
 import android.content.Intent;
@@ -15,18 +15,19 @@ import java.util.Optional;
 /**
  * helper class for storage framework
  */
+@SuppressWarnings("unused")
 public class StorageHelper {
     // region URI encode / decode
 
     /**
      * encode a uri to a string for storage in a database, preferences, ...
-     * the string can be converted back to a uri using {@link #decodeUri(String)}
+     * the string can be converted back to a uri using {@link #decodeUri(StorageKey)}
      *
      * @param uri the uri to encode
      * @return the encoded uri key
      */
     @NonNull
-    public static String encodeUri(@NonNull Uri uri) {
+    public static StorageKey encodeUri(@NonNull Uri uri) {
         // get file uri
         String encodedUri = uri.toString();
 
@@ -34,7 +35,7 @@ public class StorageHelper {
         encodedUri = Uri.encode(encodedUri);
 
         // base- 64 encode to ensure android does not cry about leaked paths or something...
-        return Base64.encodeToString(encodedUri.getBytes(StandardCharsets.UTF_8), Base64.DEFAULT);
+        return new StorageKey(Base64.encodeToString(encodedUri.getBytes(StandardCharsets.UTF_8), Base64.DEFAULT));
     }
 
     /**
@@ -45,10 +46,10 @@ public class StorageHelper {
      * @return the decoded uri
      */
     @NonNull
-    public static Optional<Uri> decodeUri(@NonNull String key) {
+    public static Optional<Uri> decodeUri(@NonNull StorageKey key) {
         try {
             // base- 64 decode
-            String uri = new String(Base64.decode(key, Base64.DEFAULT), StandardCharsets.UTF_8);
+            String uri = new String(Base64.decode(key.toString(), Base64.DEFAULT), StandardCharsets.UTF_8);
 
             // decode uri
             uri = Uri.decode(uri);
@@ -65,13 +66,13 @@ public class StorageHelper {
 
     /**
      * encode a file to a string for storage in a database, preferences, ...
-     * the string can be converted back to a file using {@link #decodeFile(Context, String)}
+     * the string can be converted back to a file using {@link #decodeFile(Context, StorageKey)}
      *
      * @param file the file to encode
      * @return the encoded file key
      */
     @NonNull
-    public static String encodeFile(@NonNull DocumentFile file) {
+    public static StorageKey encodeFile(@NonNull DocumentFile file) {
         return encodeUri(file.getUri());
     }
 
@@ -84,7 +85,7 @@ public class StorageHelper {
      * @return the decoded file
      */
     @NonNull
-    public static Optional<DocumentFile> decodeFile(@NonNull Context ctx, @NonNull String key) {
+    public static Optional<DocumentFile> decodeFile(@NonNull Context ctx, @NonNull StorageKey key) {
         // decode uri
         final Optional<Uri> uri = decodeUri(key);
         return uri.map(value -> DocumentFile.fromSingleUri(ctx, value));
@@ -101,10 +102,10 @@ public class StorageHelper {
      *
      * @param ctx  the context to persist the permission in
      * @param file the file to take permission of
-     * @return the key for this file. can be read back using {@link #getPersistedFilePermission(Context, String, boolean)}
+     * @return the key for this file. can be read back using {@link #getPersistedFilePermission(Context, StorageKey, boolean)}
      */
     @NonNull
-    public static String persistFilePermission(@NonNull Context ctx, @NonNull DocumentFile file) {
+    public static StorageKey persistFilePermission(@NonNull Context ctx, @NonNull DocumentFile file) {
         return persistFilePermission(ctx, file.getUri());
     }
 
@@ -114,10 +115,10 @@ public class StorageHelper {
      *
      * @param ctx the context to persist the permission in
      * @param uri the uri to take permission of
-     * @return the key for this uri. can be read back using {@link #getPersistedFilePermission(Context, String, boolean)}
+     * @return the key for this uri. can be read back using {@link #getPersistedFilePermission(Context, StorageKey, boolean)}
      */
     @NonNull
-    public static String persistFilePermission(@NonNull Context ctx, @NonNull Uri uri) {
+    public static StorageKey persistFilePermission(@NonNull Context ctx, @NonNull Uri uri) {
         ctx.getContentResolver().takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
         return encodeUri(uri);
     }
@@ -131,7 +132,7 @@ public class StorageHelper {
      * @return the file found
      */
     @NonNull
-    public static Optional<DocumentFile> getPersistedFilePermission(@NonNull Context ctx, @NonNull String key, boolean mustExist) {
+    public static Optional<DocumentFile> getPersistedFilePermission(@NonNull Context ctx, @NonNull StorageKey key, boolean mustExist) {
         // decode the uri from key
         final Optional<Uri> targetUri = decodeUri(key);
         //noinspection OptionalIsPresent

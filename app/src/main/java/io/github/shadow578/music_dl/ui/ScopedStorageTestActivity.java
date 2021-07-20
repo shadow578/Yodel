@@ -1,7 +1,6 @@
 package io.github.shadow578.music_dl.ui;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -21,7 +20,10 @@ import java.util.Optional;
 import java.util.StringJoiner;
 
 import io.github.shadow578.music_dl.databinding.ActivityScopedStorageTestBinding;
-import io.github.shadow578.music_dl.util.StorageHelper;
+import io.github.shadow578.music_dl.util.storage.StorageHelper;
+import io.github.shadow578.music_dl.util.preferences.PreferenceWrapper;
+import io.github.shadow578.music_dl.util.preferences.Prefs;
+import io.github.shadow578.music_dl.util.storage.StorageKey;
 
 /**
  * Storage API testing (really crappy but shows the basics)
@@ -37,11 +39,9 @@ public class ScopedStorageTestActivity extends AppCompatActivity {
         b = ActivityScopedStorageTestBinding.inflate(getLayoutInflater());
         setContentView(b.getRoot());
 
-        final String KEY_DL_DIR = "dl_dir";
-        final String KEY_LAST_FILE = "last_file";
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        PreferenceWrapper.init(PreferenceManager.getDefaultSharedPreferences(this));
 
-        final Optional<DocumentFile> root = StorageHelper.getPersistedFilePermission(this, prefs.getString(KEY_DL_DIR, ""), true);
+        final Optional<DocumentFile> root = StorageHelper.getPersistedFilePermission(this, Prefs.DOWNLOADS_DIR.get(), true);
         if (root.isPresent()) {
             b.tstExtDir.setText(root.get().getUri().toString());
         } else {
@@ -55,10 +55,8 @@ public class ScopedStorageTestActivity extends AppCompatActivity {
                     public void onActivityResult(ActivityResult result) {
                         if (result.getResultCode() == RESULT_OK) {
                             final Uri treeUri = result.getData().getData();
-                            final String key = StorageHelper.persistFilePermission(ScopedStorageTestActivity.this, treeUri);
-                            prefs.edit()
-                                    .putString(KEY_DL_DIR, key)
-                                    .apply();
+                            final StorageKey key = StorageHelper.persistFilePermission(ScopedStorageTestActivity.this, treeUri);
+                            Prefs.DOWNLOADS_DIR.set(key);
                         }
                     }
                 }
@@ -73,7 +71,7 @@ public class ScopedStorageTestActivity extends AppCompatActivity {
 
         b.tstRead.setOnClickListener(v -> {
             // get ext dir
-            final DocumentFile treeRoot = StorageHelper.getPersistedFilePermission(this, prefs.getString(KEY_DL_DIR, ""), true).get();
+            final DocumentFile treeRoot = StorageHelper.getPersistedFilePermission(this, Prefs.DOWNLOADS_DIR.get(), true).get();
 
             // enumerate all files, write to string
             final StringJoiner treeString = new StringJoiner("\n");
@@ -85,17 +83,15 @@ public class ScopedStorageTestActivity extends AppCompatActivity {
 
         b.tstWrite.setOnClickListener(v -> {
             // get ext dir
-            final DocumentFile treeRoot = StorageHelper.getPersistedFilePermission(this, prefs.getString(KEY_DL_DIR, ""), true).get();
+            final DocumentFile treeRoot = StorageHelper.getPersistedFilePermission(this, Prefs.DOWNLOADS_DIR.get(), true).get();
             final DocumentFile file = writeRnd(treeRoot);
 
-            prefs.edit()
-                    .putString(KEY_LAST_FILE, StorageHelper.encodeFile(file))
-                    .apply();
+            Prefs.LAST_FILE.set(StorageHelper.encodeFile(file));
         });
 
         b.tstGetFromPrefs.setOnClickListener(v -> {
             // get file
-            final DocumentFile file = StorageHelper.decodeFile(this, prefs.getString(KEY_LAST_FILE, "")).get();
+            final DocumentFile file = StorageHelper.decodeFile(this, Prefs.LAST_FILE.get()).get();
 
             Log.i("YTDL", "R: " + file.canRead() + "; W: " + file.canWrite());
             Log.i("YTDL", "DEL: " + file.delete());

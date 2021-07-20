@@ -27,6 +27,7 @@ import io.github.shadow578.music_dl.db.TracksDB;
 import io.github.shadow578.music_dl.db.model.TrackInfo;
 import io.github.shadow578.music_dl.downloader.wrapper.YoutubeDLWrapper;
 import io.github.shadow578.music_dl.util.Util;
+import io.github.shadow578.music_dl.util.preferences.Prefs;
 
 /**
  * tracks downloading service
