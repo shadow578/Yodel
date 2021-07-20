@@ -5,38 +5,39 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
+        android:name=".MusicDLApp"
         android:allowBackup="true"
+        android:extractNativeLibs="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.YTMusicDL"
-        android:extractNativeLibs="true"
-        android:requestLegacyExternalStorage="true"
         android:usesCleartextTraffic="true">
-        <activity android:name=".ui.ytmusic.YoutubeMusicActivity">
+        <activity android:name=".ui.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <service android:name=".downloader.DownloaderService" />
 
-        <service android:name=".downloader.DownloaderService"/>
 
 
         <activity android:name=".ui.AdblockWebViewActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHERx" />
             </intent-filter>
         </activity>
         <activity android:name=".ui.ScopedStorageTestActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHERx" />
             </intent-filter>
         </activity>
     </application>
