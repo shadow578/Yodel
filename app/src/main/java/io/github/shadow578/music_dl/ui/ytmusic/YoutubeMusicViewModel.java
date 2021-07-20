@@ -2,7 +2,6 @@ package io.github.shadow578.music_dl.ui.ytmusic;
 
 import android.app.Application;
 import android.content.Intent;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -14,6 +13,7 @@ import io.github.shadow578.music_dl.db.TracksDB;
 import io.github.shadow578.music_dl.db.model.TrackInfo;
 import io.github.shadow578.music_dl.downloader.DownloaderService;
 import io.github.shadow578.music_dl.util.Util;
+import io.github.shadow578.music_dl.util.storage.StorageKey;
 
 /**
  * viewmodel for the {@link YoutubeMusicActivity}
@@ -39,6 +39,7 @@ public class YoutubeMusicViewModel extends AndroidViewModel {
     public YoutubeMusicViewModel(@NonNull Application application) {
         super(application);
         TracksDB.init(getApplication());
+        maybeStartDownloaderService();
     }
 
     /**
@@ -56,7 +57,7 @@ public class YoutubeMusicViewModel extends AndroidViewModel {
 
         // insert into database
         Util.runAsync(()
-                -> TracksDB.getInstance().tracks().insert(new TrackInfo(id, currentTitle, null, false)));
+                -> TracksDB.getInstance().tracks().insert(new TrackInfo(id, currentTitle, StorageKey.EMPTY, false)));
 
         // start downloader
         maybeStartDownloaderService();

@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
+import androidx.room.TypeConverters;
 
 import java.io.File;
 
@@ -14,9 +15,12 @@ import io.github.shadow578.music_dl.db.model.TrackInfo;
 /**
  * the tracks database
  */
+@TypeConverters({
+        DBTypeConverters.class
+})
 @Database(entities = {
         TrackInfo.class
-}, version = 1)
+}, version = 2)
 public abstract class TracksDB extends RoomDatabase {
 
     /**

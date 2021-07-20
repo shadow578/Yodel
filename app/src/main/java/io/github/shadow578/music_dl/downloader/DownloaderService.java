@@ -1,7 +1,6 @@
 package io.github.shadow578.music_dl.downloader;
 
 import android.content.Context;
-import android.content.UriPermission;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -28,6 +27,8 @@ import io.github.shadow578.music_dl.db.model.TrackInfo;
 import io.github.shadow578.music_dl.downloader.wrapper.YoutubeDLWrapper;
 import io.github.shadow578.music_dl.util.Util;
 import io.github.shadow578.music_dl.util.preferences.Prefs;
+import io.github.shadow578.music_dl.util.storage.StorageHelper;
+import io.github.shadow578.music_dl.util.storage.StorageKey;
 
 /**
  * tracks downloading service
@@ -53,6 +54,7 @@ public class DownloaderService extends LifecycleService {
     @Override
     public void onCreate() {
         super.onCreate();
+        TracksDB.init(this);
         Util.runAsync(() -> {
             // init youtube-dl
             Log.i(TAG, "downloader service starting...");
@@ -64,7 +66,6 @@ public class DownloaderService extends LifecycleService {
             Util.runOnMain(() -> {
                 // init db and observe changes to pending tracks
                 Log.i(TAG, "start observing pending tracks...");
-                TracksDB.init(this);
                 TracksDB.getInstance().tracks().observePending().observe(this, pendingTracks -> {
                     Log.i(TAG, "pendingTracks update!");
 
@@ -84,6 +85,7 @@ public class DownloaderService extends LifecycleService {
                         }
 
                         // download this track
+                        currentDownloads.add(track);
                         downloadExecutor.execute(() -> downloadTrack(track));
                     }
                 });
@@ -107,8 +109,15 @@ public class DownloaderService extends LifecycleService {
             // insert into current downloads
             currentDownloads.add(track);
 
+            // double- check the track is not downloaded
+            final TrackInfo dbTrack = TracksDB.getInstance().tracks().get(track.id);
+            if (dbTrack == null || dbTrack.isDownloaded || track.isDownloaded) {
+                Log.i(TAG, String.format("skipping download of %s: appears to already be downloaded", track.id));
+                return;
+            }
+
             // download the track
-            if (download(track.id, track.title, ".mp3")) {
+            if (download(track, ".mp3")) {
                 track.isDownloaded = true;
                 TracksDB.getInstance().tracks().insert(track);
             }
@@ -121,28 +130,30 @@ public class DownloaderService extends LifecycleService {
     /**
      * download a track using youtube-dl
      *
-     * @param videoUrl   the url or id of the video/track to download
-     * @param title      the title to use. if available, the title is extracted from the video info using youtube-dl
+     * @param track      the track to use. if available, the track title is changed to the one extracted using youtube-dl
      * @param fileFormat the file format to use for the download. must be a audio format, as {@link YoutubeDLWrapper#audioOnly()} is hardcoded at the moment TODO make this non hard-coded
      * @return was the download successful?
      */
-    private boolean download(@NonNull String videoUrl, @NonNull String title, @NonNull String fileFormat) {
+    private boolean download(@NonNull TrackInfo track, @NonNull String fileFormat) {
         File tempFile = null;
         try {
             // prepare youtube-dl session
-            final YoutubeDLWrapper youtubeDl = YoutubeDLWrapper.create(videoUrl)
+            final YoutubeDLWrapper youtubeDl = YoutubeDLWrapper.create(resolveVideoUrl(track))
                     .fixSsl() // TODO make ssl fix a option in props
                     .audioOnly();
 
             // get title using youtube-dl, fallback to app- provided title
             final VideoInfo videoInfo = youtubeDl.getInfo(10);
             if (videoInfo != null) {
-                Log.i(TAG, "using title from video info");
-                title = videoInfo.getFulltitle();
+                final String extractedTitle = videoInfo.getFulltitle();
+                if (extractedTitle != null && !extractedTitle.isEmpty()) {
+                    Log.i(TAG, String.format("using extracted title (%s) from youtube-dl", extractedTitle));
+                    track.title = extractedTitle;
+                }
             }
-            if (title == null || title.isEmpty()) {
+            if (track.title == null || track.title.isEmpty()) {
                 Log.w(TAG, "no title, fallback to 'unknown'!");
-                title = "Unknown";
+                track.title = "Unknown";
             }
 
             // download the track to a temporary file in /cache of this app
@@ -167,7 +178,7 @@ public class DownloaderService extends LifecycleService {
             }
 
             // create file to write the track to
-            final DocumentFile finalFile = downloadRoot.get().createFile("audio/mp3", title + "." + fileFormat);
+            final DocumentFile finalFile = downloadRoot.get().createFile("audio/mp3", track.title + "." + fileFormat);
             if (finalFile == null || !finalFile.canWrite()) {
                 Log.e(TAG, "Could not create final output file!");
                 return false;
@@ -189,6 +200,9 @@ public class DownloaderService extends LifecycleService {
                 return false;
             }
 
+            // set the final file in track info
+            track.fileKey = StorageHelper.encodeFile(finalFile);
+
             // everything worked, call this success
             return true;
         } finally {
@@ -202,19 +216,30 @@ public class DownloaderService extends LifecycleService {
     }
 
     /**
-     * get the downloads directory of the app, using storage framework
-     * TODO move to utility class, with functions from ScopedStorageTestActivity
+     * get the video url youtube-dl should use for a track
+     *
+     * @param track the track to get the video url of
+     * @return the video url
+     */
+    @NonNull
+    private String resolveVideoUrl(@NonNull TrackInfo track) {
+        // youtube-dl is happy with just the track id
+        return track.id;
+    }
+
+    /**
+     * get the {@link Prefs#DOWNLOADS_DIRECTORY} of the app, using storage framework
      *
      * @param ctx the context to work in
      * @return the optional download root directory
      */
     @NonNull
     public static Optional<DocumentFile> getDownloadsDirectory(@NonNull Context ctx) {
-        return ctx.getContentResolver().getPersistedUriPermissions()
-                .stream()
-                .filter(UriPermission::isWritePermission)
-                .map(uri -> DocumentFile.fromTreeUri(ctx, uri.getUri()))
-                .filter(doc -> doc != null && doc.exists() && doc.canRead() && doc.canWrite() && doc.isDirectory())
-                .findFirst();
+        final StorageKey key = Prefs.DOWNLOADS_DIRECTORY.get();
+        if (key == null) {
+            return Optional.empty();
+        }
+
+        return StorageHelper.getPersistedFilePermission(ctx, key, true);
     }
 }

@@ -10,7 +10,7 @@ public final class Prefs {
     /**
      * the main downloads directory file key
      */
-    public static final PreferenceWrapper<StorageKey> DOWNLOADS_DIR = PreferenceWrapper.create(StorageKey.class, "downloads_dir", StorageKey.EMPTY);
+    public static final PreferenceWrapper<StorageKey> DOWNLOADS_DIRECTORY = PreferenceWrapper.create(StorageKey.class, "downloads_dir", StorageKey.EMPTY);
 
     /**
      * for ScopedStorageTestActivity: the last file written

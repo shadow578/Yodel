@@ -22,7 +22,7 @@ public class StorageKey {
      *
      * @param key the key of the file
      */
-    StorageKey(String key) {
+    public StorageKey(String key) {
         this.key = key;
     }
 

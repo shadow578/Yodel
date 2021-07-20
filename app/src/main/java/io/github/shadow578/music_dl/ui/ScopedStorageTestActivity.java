@@ -41,7 +41,7 @@ public class ScopedStorageTestActivity extends AppCompatActivity {
 
         PreferenceWrapper.init(PreferenceManager.getDefaultSharedPreferences(this));
 
-        final Optional<DocumentFile> root = StorageHelper.getPersistedFilePermission(this, Prefs.DOWNLOADS_DIR.get(), true);
+        final Optional<DocumentFile> root = StorageHelper.getPersistedFilePermission(this, Prefs.DOWNLOADS_DIRECTORY.get(), true);
         if (root.isPresent()) {
             b.tstExtDir.setText(root.get().getUri().toString());
         } else {
@@ -56,7 +56,7 @@ public class ScopedStorageTestActivity extends AppCompatActivity {
                         if (result.getResultCode() == RESULT_OK) {
                             final Uri treeUri = result.getData().getData();
                             final StorageKey key = StorageHelper.persistFilePermission(ScopedStorageTestActivity.this, treeUri);
-                            Prefs.DOWNLOADS_DIR.set(key);
+                            Prefs.DOWNLOADS_DIRECTORY.set(key);
                         }
                     }
                 }
@@ -71,7 +71,7 @@ public class ScopedStorageTestActivity extends AppCompatActivity {
 
         b.tstRead.setOnClickListener(v -> {
             // get ext dir
-            final DocumentFile treeRoot = StorageHelper.getPersistedFilePermission(this, Prefs.DOWNLOADS_DIR.get(), true).get();
+            final DocumentFile treeRoot = StorageHelper.getPersistedFilePermission(this, Prefs.DOWNLOADS_DIRECTORY.get(), true).get();
 
             // enumerate all files, write to string
             final StringJoiner treeString = new StringJoiner("\n");
@@ -83,7 +83,7 @@ public class ScopedStorageTestActivity extends AppCompatActivity {
 
         b.tstWrite.setOnClickListener(v -> {
             // get ext dir
-            final DocumentFile treeRoot = StorageHelper.getPersistedFilePermission(this, Prefs.DOWNLOADS_DIR.get(), true).get();
+            final DocumentFile treeRoot = StorageHelper.getPersistedFilePermission(this, Prefs.DOWNLOADS_DIRECTORY.get(), true).get();
             final DocumentFile file = writeRnd(treeRoot);
 
             Prefs.LAST_FILE.set(StorageHelper.encodeFile(file));

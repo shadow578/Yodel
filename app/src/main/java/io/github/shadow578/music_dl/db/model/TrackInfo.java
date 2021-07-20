@@ -6,6 +6,8 @@ import androidx.room.PrimaryKey;
 
 import java.util.Objects;
 
+import io.github.shadow578.music_dl.util.storage.StorageKey;
+
 /**
  * information about a track
  */
@@ -24,19 +26,19 @@ public class TrackInfo {
     public String title;
 
     /**
-     * the uri of the file this track was downloaded to
+     * the key of the file this track was downloaded to
      */
-    public String fileUri;
+    public StorageKey fileKey;
 
     /**
      * is this track fully downloaded?
      */
     public boolean isDownloaded;
 
-    public TrackInfo(@NonNull String id, String title, String fileUri, boolean isDownloaded) {
+    public TrackInfo(@NonNull String id, String title, StorageKey fileKey, boolean isDownloaded) {
         this.id = id;
         this.title = title;
-        this.fileUri = fileUri;
+        this.fileKey = fileKey;
         this.isDownloaded = isDownloaded;
     }
 
