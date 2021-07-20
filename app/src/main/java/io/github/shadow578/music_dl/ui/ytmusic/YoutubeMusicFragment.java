@@ -2,17 +2,20 @@ package io.github.shadow578.music_dl.ui.ytmusic;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import io.github.shadow578.music_dl.databinding.ActivityYoutubeMusicBinding;
-import io.github.shadow578.music_dl.util.BaseActivity;
+import io.github.shadow578.music_dl.databinding.FragmentExploreBinding;
 import io.github.shadow578.music_dl.util.Payload;
 import io.github.shadow578.music_dl.util.Url;
 import io.github.shadow578.music_dl.util.Util;
@@ -20,27 +23,29 @@ import io.github.shadow578.music_dl.util.Util;
 /**
  * the yt music browsing activity
  */
-public class YoutubeMusicActivity extends BaseActivity {
+public class YoutubeMusicFragment extends Fragment {
 
     /**
      * the view binding instance
      */
-    private ActivityYoutubeMusicBinding b;
+    private FragmentExploreBinding b;
 
     /**
      * the view model instance
      */
     private YoutubeMusicViewModel model;
 
+
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        b = FragmentExploreBinding.inflate(inflater, container, false);
+        return b.getRoot();
+    }
 
-        // inflate the view using view binding
-        b = ActivityYoutubeMusicBinding.inflate(getLayoutInflater());
-        setContentView(b.getRoot());
-
-        // create downloader instance
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         model = new ViewModelProvider(this).get(YoutubeMusicViewModel.class);
 
         // setup buttons
@@ -48,7 +53,7 @@ public class YoutubeMusicActivity extends BaseActivity {
         b.autoDownloadList.setOnCheckedChangeListener((v, checked) -> handleAutoDownload(checked));
 
         // sync auto- download with model value
-        model.getAutoDownloadEnabled().observe(this, autoDl -> {
+        model.getAutoDownloadEnabled().observe(requireActivity(), autoDl -> {
             b.autoDownloadList.setChecked(autoDl);
             b.autoDownloadOverlay.setVisibility(autoDl ? View.VISIBLE : View.GONE);
         });
@@ -103,12 +108,12 @@ public class YoutubeMusicActivity extends BaseActivity {
     private void handleDownloadTrack() {
         // extract id
         final String id = Util.extractTrackId(b.webview.getUrl());
-        
+
         // show toast if could not find id or no track is playing
         if (id == null
                 || id.isEmpty()
                 || !model.isTrackPlaying()) {
-            Toast.makeText(this, "could not find track info! is a track playing?", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), "could not find track info! is a track playing?", Toast.LENGTH_SHORT).show();
             return;
         }
 

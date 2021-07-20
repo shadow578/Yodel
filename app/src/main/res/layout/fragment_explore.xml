@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.ytmusic.YoutubeMusicActivity">
+    tools:context=".ui.ytmusic.YoutubeMusicFragment">
 
     <!-- controls at the top -->
     <androidx.appcompat.widget.LinearLayoutCompat

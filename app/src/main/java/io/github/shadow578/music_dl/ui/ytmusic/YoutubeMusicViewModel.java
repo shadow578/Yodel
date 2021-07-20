@@ -13,10 +13,9 @@ import io.github.shadow578.music_dl.db.TracksDB;
 import io.github.shadow578.music_dl.db.model.TrackInfo;
 import io.github.shadow578.music_dl.downloader.DownloaderService;
 import io.github.shadow578.music_dl.util.Util;
-import io.github.shadow578.music_dl.util.storage.StorageKey;
 
 /**
- * viewmodel for the {@link YoutubeMusicActivity}
+ * viewmodel for the {@link YoutubeMusicFragment}
  */
 public class YoutubeMusicViewModel extends AndroidViewModel {
 
