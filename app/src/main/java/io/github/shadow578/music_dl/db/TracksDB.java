@@ -20,7 +20,7 @@ import io.github.shadow578.music_dl.db.model.TrackInfo;
 })
 @Database(entities = {
         TrackInfo.class
-}, version = 2)
+}, version = 3)
 public abstract class TracksDB extends RoomDatabase {
 
     /**

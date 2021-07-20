@@ -41,6 +41,11 @@ public class DownloaderService extends LifecycleService {
     private static final String TAG = "DLService";
 
     /**
+     * retries for youtube-dl operations
+     */
+    private static final int YOUTUBE_DL_RETRIES = 10;
+
+    /**
      * a list of all tracks that are currently being downloaded
      */
     private final Set<TrackInfo> currentDownloads = new HashSet<>();
@@ -116,11 +121,14 @@ public class DownloaderService extends LifecycleService {
                 return;
             }
 
-            // download the track
+            // download the track and update the entry in the DB
             if (download(track, ".mp3")) {
                 track.isDownloaded = true;
-                TracksDB.getInstance().tracks().insert(track);
+            } else {
+                track.isDownloaded = false;
+                track.didDownloadFail = true;
             }
+            TracksDB.getInstance().tracks().insert(track);
         } finally {
             // remove from current downloads
             currentDownloads.remove(track);
@@ -143,7 +151,7 @@ public class DownloaderService extends LifecycleService {
                     .audioOnly();
 
             // get title using youtube-dl, fallback to app- provided title
-            final VideoInfo videoInfo = youtubeDl.getInfo(10);
+            final VideoInfo videoInfo = youtubeDl.getInfo(YOUTUBE_DL_RETRIES);
             if (videoInfo != null) {
                 final String extractedTitle = videoInfo.getFulltitle();
                 if (extractedTitle != null && !extractedTitle.isEmpty()) {
@@ -151,7 +159,7 @@ public class DownloaderService extends LifecycleService {
                     track.title = extractedTitle;
                 }
             }
-            if (track.title == null || track.title.isEmpty()) {
+            if (track.title.isEmpty()) {
                 Log.w(TAG, "no title, fallback to 'unknown'!");
                 track.title = "Unknown";
             }
@@ -161,7 +169,7 @@ public class DownloaderService extends LifecycleService {
             tempFile.deleteOnExit();
             final YoutubeDLResponse downloadResponse = youtubeDl.output(tempFile)
                     //.overwriteExisting() //no longer needed as the file is created by youtube-dl now
-                    .download(null, 10);
+                    .download(null, YOUTUBE_DL_RETRIES);
             if (downloadResponse == null || !tempFile.exists()) {
                 // download failed
                 Log.e(TAG, "youtube-dl download failed!");

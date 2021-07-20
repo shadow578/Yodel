@@ -15,6 +15,7 @@ import io.github.shadow578.music_dl.db.model.TrackInfo;
  * DAO for tracks
  */
 @Dao
+@SuppressWarnings("unused")
 public interface TracksDao {
 
     /**
@@ -30,7 +31,7 @@ public interface TracksDao {
      *
      * @return the tracks that can be observed
      */
-    @Query("SELECT * FROM tracks WHERE isDownloaded = 0")
+    @Query("SELECT * FROM tracks WHERE is_downloaded = 0 AND did_download_fail = 0")
     LiveData<List<TrackInfo>> observePending();
 
     /**

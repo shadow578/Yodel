@@ -57,7 +57,7 @@ public class YoutubeMusicViewModel extends AndroidViewModel {
 
         // insert into database
         Util.runAsync(()
-                -> TracksDB.getInstance().tracks().insert(new TrackInfo(id, currentTitle, StorageKey.EMPTY, false)));
+                -> TracksDB.getInstance().tracks().insert(TrackInfo.createNew(id, currentTitle)));
 
         // start downloader
         maybeStartDownloaderService();
