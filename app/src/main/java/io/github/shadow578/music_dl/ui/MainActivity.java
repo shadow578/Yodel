@@ -8,6 +8,7 @@ import android.os.Bundle;
 
 import io.github.shadow578.music_dl.R;
 import io.github.shadow578.music_dl.databinding.ActivityMainBinding;
+import io.github.shadow578.music_dl.ui.more.MoreFragment;
 import io.github.shadow578.music_dl.ui.tracks.TracksFragment;
 import io.github.shadow578.music_dl.ui.ytmusic.YoutubeMusicFragment;
 
@@ -15,6 +16,7 @@ public class MainActivity extends AppCompatActivity {
 
     private final YoutubeMusicFragment exploreFragment = new YoutubeMusicFragment();
     private final TracksFragment tracksFragment = new TracksFragment();
+    private final MoreFragment moreFragment = new MoreFragment();
 
     private ActivityMainBinding b;
 
@@ -42,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
         // select fragment to navigate to
         final Fragment targetFragment;
         if (navId == R.id.nav_more) {
-            targetFragment = exploreFragment;
+            targetFragment = moreFragment;
         } else if (navId == R.id.nav_explore) {
             targetFragment = exploreFragment;
         } else {

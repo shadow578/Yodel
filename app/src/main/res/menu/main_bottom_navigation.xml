@@ -14,7 +14,6 @@
     <item
         android:id="@+id/nav_more"
         android:icon="@drawable/ic_round_tpose_24"
-        android:title="More"
-        android:enabled="false"/>
+        android:title="More" />
 
 </menu>
