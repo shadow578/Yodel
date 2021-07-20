@@ -1,8 +1,10 @@
 package io.github.shadow578.music_dl.ui;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import androidx.activity.result.ActivityResult;
@@ -15,9 +17,11 @@ import androidx.documentfile.provider.DocumentFile;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Optional;
 import java.util.StringJoiner;
 
 import io.github.shadow578.music_dl.databinding.ActivityScopedStorageTestBinding;
+import io.github.shadow578.music_dl.util.StorageHelper;
 
 /**
  * Storage API testing (really crappy but shows the basics)
@@ -33,9 +37,14 @@ public class ScopedStorageTestActivity extends AppCompatActivity {
         b = ActivityScopedStorageTestBinding.inflate(getLayoutInflater());
         setContentView(b.getRoot());
 
-        try {
-            b.tstExtDir.setText(getTreeRoot().getUri().toString());
-        } catch (Exception e) {
+        final String KEY_DL_DIR = "dl_dir";
+        final String KEY_LAST_FILE = "last_file";
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+        final Optional<DocumentFile> root = StorageHelper.getPersistedFilePermission(this, prefs.getString(KEY_DL_DIR, ""), true);
+        if (root.isPresent()) {
+            b.tstExtDir.setText(root.get().getUri().toString());
+        } else {
             b.tstExtDir.setText("NONE");
         }
 
@@ -46,7 +55,10 @@ public class ScopedStorageTestActivity extends AppCompatActivity {
                     public void onActivityResult(ActivityResult result) {
                         if (result.getResultCode() == RESULT_OK) {
                             final Uri treeUri = result.getData().getData();
-                            getContentResolver().takePersistableUriPermission(treeUri, Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                            final String key = StorageHelper.persistFilePermission(ScopedStorageTestActivity.this, treeUri);
+                            prefs.edit()
+                                    .putString(KEY_DL_DIR, key)
+                                    .apply();
                         }
                     }
                 }
@@ -61,7 +73,7 @@ public class ScopedStorageTestActivity extends AppCompatActivity {
 
         b.tstRead.setOnClickListener(v -> {
             // get ext dir
-            final DocumentFile treeRoot = getTreeRoot();
+            final DocumentFile treeRoot = StorageHelper.getPersistedFilePermission(this, prefs.getString(KEY_DL_DIR, ""), true).get();
 
             // enumerate all files, write to string
             final StringJoiner treeString = new StringJoiner("\n");
@@ -73,12 +85,24 @@ public class ScopedStorageTestActivity extends AppCompatActivity {
 
         b.tstWrite.setOnClickListener(v -> {
             // get ext dir
-            final DocumentFile treeRoot = getTreeRoot();
-            writeRnd(treeRoot);
+            final DocumentFile treeRoot = StorageHelper.getPersistedFilePermission(this, prefs.getString(KEY_DL_DIR, ""), true).get();
+            final DocumentFile file = writeRnd(treeRoot);
+
+            prefs.edit()
+                    .putString(KEY_LAST_FILE, StorageHelper.encodeFile(file))
+                    .apply();
+        });
+
+        b.tstGetFromPrefs.setOnClickListener(v -> {
+            // get file
+            final DocumentFile file = StorageHelper.decodeFile(this, prefs.getString(KEY_LAST_FILE, "")).get();
+
+            Log.i("YTDL", "R: " + file.canRead() + "; W: " + file.canWrite());
+            Log.i("YTDL", "DEL: " + file.delete());
         });
     }
 
-    private void writeRnd(DocumentFile treeRoot) {
+    private DocumentFile writeRnd(DocumentFile treeRoot) {
         Log.i("YTDL", "W:" + treeRoot.canWrite());
 
         final DocumentFile file = treeRoot.createFile("text/plain", "Test");
@@ -89,9 +113,7 @@ public class ScopedStorageTestActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
 
-    private DocumentFile getTreeRoot() {
-        return DocumentFile.fromTreeUri(this, getContentResolver().getPersistedUriPermissions().get(0).getUri());
+        return file;
     }
 }

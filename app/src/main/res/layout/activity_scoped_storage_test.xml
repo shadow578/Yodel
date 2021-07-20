@@ -26,6 +26,12 @@
         android:text="Write Random"/>
 
     <Button
+        android:id="@+id/tst_get_from_prefs"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="get from prefs"/>
+
+    <Button
         android:id="@+id/tst_read"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
