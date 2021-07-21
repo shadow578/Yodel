@@ -140,7 +140,7 @@ public class DownloaderService extends LifecycleService {
     private boolean checkDownloadsDirSet() {
         final StorageKey downloadsKey = Prefs.DOWNLOADS_DIRECTORY.get();
         if (downloadsKey != null) {
-            final Optional<DocumentFile> downloadsDir = StorageHelper.decodeFile(this, downloadsKey);
+            final Optional<DocumentFile> downloadsDir = StorageHelper.getPersistedFilePermission(this, downloadsKey, true);
             return downloadsDir.isPresent()
                     && downloadsDir.get().exists()
                     && downloadsDir.get().canWrite();
@@ -350,6 +350,10 @@ public class DownloaderService extends LifecycleService {
      * cancel the progress notification and call {@link #stopForeground(boolean)}
      */
     private void hideNotification() {
+        if (notificationManager == null) {
+            return;
+        }
+
         notificationManager.cancel(PROGRESS_NOTIFICATION_ID);
         stopForeground(true);
         isInForeground = false;

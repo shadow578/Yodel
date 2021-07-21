@@ -3,7 +3,6 @@ package io.github.shadow578.music_dl.ui;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -30,8 +29,8 @@ public class BaseActivity extends AppCompatActivity {
     private ActivityResultLauncher<Intent> downloadDirectorySelectLauncher;
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
-        super.onCreate(savedInstanceState, persistentState);
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
         // create result launcher for download directory select
         downloadDirectorySelectLauncher = registerForActivityResult(
@@ -50,10 +49,9 @@ public class BaseActivity extends AppCompatActivity {
                                     && treeFile.canRead()
                                     && treeFile.canWrite()) {
                                 // persist the permission & save
-                                final StorageKey treeKey = StorageHelper.persistFilePermission(this, treeFile);
+                                final StorageKey treeKey = StorageHelper.persistFilePermission(getApplicationContext(), treeUri);
                                 Prefs.DOWNLOADS_DIRECTORY.set(treeKey);
                                 Log.i("MusicDL", String.format("selected and saved new track downloads directory: %s", treeUri.toString()));
-
                             } else {
                                 // bad selection
                                 Toast.makeText(this, "could not set downloads directory! please try again, or report this issue", Toast.LENGTH_LONG).show();
@@ -72,7 +70,7 @@ public class BaseActivity extends AppCompatActivity {
         // check if downloads dir is set and accessible
         final StorageKey downloadsKey = Prefs.DOWNLOADS_DIRECTORY.get();
         if (downloadsKey != null) {
-            final Optional<DocumentFile> downloadsDir = StorageHelper.decodeFile(this, downloadsKey);
+            final Optional<DocumentFile> downloadsDir = StorageHelper.getPersistedFilePermission(this, downloadsKey, true);
             if (downloadsDir.isPresent()
                     && downloadsDir.get().exists()
                     && downloadsDir.get().canWrite()) {
