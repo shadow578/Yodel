@@ -7,7 +7,6 @@ import androidx.room.PrimaryKey;
 
 import java.util.Objects;
 
-import io.github.shadow578.music_dl.db.TracksDB;
 import io.github.shadow578.music_dl.util.storage.StorageKey;
 
 /**

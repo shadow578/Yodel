@@ -35,6 +35,14 @@ public interface TracksDao {
     LiveData<List<TrackInfo>> observePending();
 
     /**
+     * get a list of all tracks that are marked as downloaded
+     *
+     * @return a list of all downloaded tracks
+     */
+    @Query("SELECT * FROM tracks WHERE is_downloaded = 1")
+    List<TrackInfo> getDownloaded();
+
+    /**
      * get a track from the db
      *
      * @param id the id of the track
