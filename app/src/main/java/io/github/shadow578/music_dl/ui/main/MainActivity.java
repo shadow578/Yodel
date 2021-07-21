@@ -3,13 +3,13 @@ package io.github.shadow578.music_dl.ui.main;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
 import io.github.shadow578.music_dl.R;
 import io.github.shadow578.music_dl.databinding.ActivityMainBinding;
+import io.github.shadow578.music_dl.ui.BaseActivity;
 import io.github.shadow578.music_dl.ui.more.MoreFragment;
 import io.github.shadow578.music_dl.ui.tracks.TracksFragment;
 import io.github.shadow578.music_dl.ui.ytmusic.YoutubeMusicFragment;
@@ -17,7 +17,7 @@ import io.github.shadow578.music_dl.ui.ytmusic.YoutubeMusicFragment;
 /**
  * the main activity
  */
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
 
     private final YoutubeMusicFragment exploreFragment = new YoutubeMusicFragment();
     private final TracksFragment tracksFragment = new TracksFragment();
@@ -58,6 +58,9 @@ public class MainActivity extends AppCompatActivity {
             }
             return true;
         });
+
+        // select downloads dir
+        maybeSelectDownloadsDir();
     }
 
     /**

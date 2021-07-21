@@ -3,6 +3,7 @@ package io.github.shadow578.music_dl.downloader;
 import android.app.Notification;
 import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
@@ -79,6 +80,14 @@ public class DownloaderService extends LifecycleService {
     @Override
     public void onCreate() {
         super.onCreate();
+        // ensure downloads are accessible
+        if (!checkDownloadsDirSet()) {
+            Toast.makeText(this, "Downloads directory not accessible, stopping Downloader!", Toast.LENGTH_LONG).show();
+            Log.i(TAG, "downloads dir not accessible, stopping service");
+            stopSelf();
+            return;
+        }
+
         // create progress notification
         notificationManager = NotificationManagerCompat.from(this);
 
@@ -121,6 +130,23 @@ public class DownloaderService extends LifecycleService {
         downloadThread.interrupt();
         hideNotification();
         super.onDestroy();
+    }
+
+    /**
+     * check if the downloads directory is set and accessible
+     *
+     * @return is the downloads dir set and accessible?
+     */
+    private boolean checkDownloadsDirSet() {
+        final StorageKey downloadsKey = Prefs.DOWNLOADS_DIRECTORY.get();
+        if (downloadsKey != null) {
+            final Optional<DocumentFile> downloadsDir = StorageHelper.decodeFile(this, downloadsKey);
+            return downloadsDir.isPresent()
+                    && downloadsDir.get().exists()
+                    && downloadsDir.get().canWrite();
+        }
+
+        return false;
     }
 
     //region downloading
