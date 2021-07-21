@@ -3,7 +3,7 @@
     package="io.github.shadow578.music_dl">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
         android:name=".MusicDLApp"
@@ -11,7 +11,6 @@
         android:extractNativeLibs="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.YTMusicDL"
@@ -24,23 +23,6 @@
             </intent-filter>
         </activity>
         <service android:name=".downloader.DownloaderService" />
-
-
-
-        <activity android:name=".ui.AdblockWebViewActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHERx" />
-            </intent-filter>
-        </activity>
-        <activity android:name=".ui.ScopedStorageTestActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHERx" />
-            </intent-filter>
-        </activity>
     </application>
 
 </manifest>
