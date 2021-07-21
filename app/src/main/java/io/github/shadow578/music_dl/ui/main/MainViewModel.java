@@ -31,6 +31,11 @@ public class MainViewModel extends ViewModel {
      * @param section the section to switch to
      */
     public void switchToSection(@NonNull MainActivity.Section section) {
+        // ignore if same section
+        if (currentSection.getValue().equals(section)) {
+            return;
+        }
+
         currentSection.setValue(section);
     }
 }

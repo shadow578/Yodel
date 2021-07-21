@@ -2,10 +2,17 @@ package io.github.shadow578.music_dl.ui.main;
 
 import android.os.Bundle;
 
+import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
+import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.viewpager2.adapter.FragmentStateAdapter;
+import androidx.viewpager2.widget.ViewPager2;
+
+import java.util.Arrays;
+import java.util.List;
 
 import io.github.shadow578.music_dl.R;
 import io.github.shadow578.music_dl.databinding.ActivityMainBinding;
@@ -24,6 +31,15 @@ public class MainActivity extends BaseActivity {
     private final MoreFragment moreFragment = new MoreFragment();
 
     /**
+     * order of the sections
+     */
+    private final List<Section> sectionOrder = Arrays.asList(
+            Section.Tracks,
+            Section.Explore,
+            Section.More
+    );
+
+    /**
      * the view model instance
      */
     private MainViewModel model;
@@ -34,74 +50,55 @@ public class MainActivity extends BaseActivity {
     private ActivityMainBinding b;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         b = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(b.getRoot());
-        initFragments();
 
         // create model
         model = new ViewModelProvider(this).get(MainViewModel.class);
 
-        // sync model section with UI
-        model.getSection().observe(this, this::navigateToSection);
-
-        // setup bottom navigation listener
-        b.bottomNav.setOnItemSelectedListener(item -> {
-            if (item.getItemId() == R.id.nav_more) {
-                model.switchToSection(Section.More);
-            } else if (item.getItemId() == R.id.nav_explore) {
-                model.switchToSection(Section.Explore);
-            } else {
-                // default to nav_tracks
-                model.switchToSection(Section.Tracks);
-            }
-            return true;
-        });
+        // init UI
+        setupBottomNavigationAndPager();
 
         // select downloads dir
         maybeSelectDownloadsDir();
     }
 
     /**
-     * add all fragments to the container, but hidden
+     * set up the fragment view pager and bottom navigation so they work
+     * together with each other & the view model
      */
-    private void initFragments() {
-        // start the transaction
-        final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+    private void setupBottomNavigationAndPager() {
+        b.fragmentPager.setAdapter(new SectionAdapter(this));
 
-        // add all fragments, but hide them initially
-        for (Section section : Section.values()) {
-            final Fragment fragment = getSectionFragment(section);
-            transaction.add(R.id.fragment_container, fragment, section.name())
-                    .hide(fragment);
-        }
-
-        // execute the transaction
-        transaction.commit();
-    }
-
-    /**
-     * navigate to one of the section fragments
-     *
-     * @param section the section to navigate to
-     */
-    private void navigateToSection(@NonNull Section section) {
-        // start the transaction
-        final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-
-        // hide all other sections
-        for (Section s : Section.values()) {
-            if (!s.equals(section)) {
-                transaction.hide(getSectionFragment(s));
+        // setup bottom navigation listener to update model
+        b.bottomNav.setOnItemSelectedListener(item -> {
+            // find section with matching id
+            for (Section section : Section.values()) {
+                if (section.menuItemId == item.getItemId()) {
+                    model.switchToSection(section);
+                    return true;
+                }
             }
-        }
 
-        // show the selected section
-        transaction.show(getSectionFragment(section));
+            return true;
+        });
 
-        // execute the transaction
-        transaction.commit();
+        // setup viewpager listener to update model
+        b.fragmentPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                model.switchToSection(sectionOrder.get(position));
+            }
+        });
+
+        // sync model with pager and bottom navigation
+        model.getSection().observe(this, section ->
+        {
+            b.fragmentPager.setCurrentItem(sectionOrder.indexOf(section));
+            b.bottomNav.setSelectedItemId(section.menuItemId);
+        });
     }
 
     /**
@@ -130,16 +127,51 @@ public class MainActivity extends BaseActivity {
         /**
          * the tracks library fragment
          */
-        Tracks,
+        Tracks(R.id.nav_tracks),
 
         /**
          * the explore fragment
          */
-        Explore,
+        Explore(R.id.nav_explore),
 
         /**
          * the more / about fragment
          */
-        More
+        More(R.id.nav_more);
+
+        /**
+         * the id of the menu item for this section (in bottom navigation)
+         */
+        @IdRes
+        private final int menuItemId;
+
+        /**
+         * create a new section in the main activity
+         *
+         * @param menuItemId the menu item of this section
+         */
+        Section(@IdRes int menuItemId) {
+            this.menuItemId = menuItemId;
+        }
+    }
+
+    /**
+     * adapter for the view pager
+     */
+    private class SectionAdapter extends FragmentStateAdapter {
+        public SectionAdapter(@NonNull FragmentActivity fragmentActivity) {
+            super(fragmentActivity);
+        }
+
+        @NonNull
+        @Override
+        public Fragment createFragment(int position) {
+            return getSectionFragment(sectionOrder.get(position));
+        }
+
+        @Override
+        public int getItemCount() {
+            return sectionOrder.size();
+        }
     }
 }
