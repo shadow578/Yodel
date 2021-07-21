@@ -10,11 +10,11 @@ import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import io.github.shadow578.music_dl.db.model.TrackInfo;
+import io.github.shadow578.music_dl.db.model.TrackStatus;
 import io.github.shadow578.music_dl.util.storage.StorageHelper;
 
 /**
@@ -25,7 +25,7 @@ import io.github.shadow578.music_dl.util.storage.StorageHelper;
 })
 @Database(entities = {
         TrackInfo.class
-}, version = 3)
+}, version = 4)
 public abstract class TracksDB extends RoomDatabase {
 
     /**
@@ -72,37 +72,37 @@ public abstract class TracksDB extends RoomDatabase {
     }
 
     /**
-     * remove all tracks from the db that no longer exist (or are not accessible) in the file system
+     * mark all tracks db that no longer exist (or are not accessible) in the file system as {@link io.github.shadow578.music_dl.db.model.TrackStatus#FileDeleted}
      *
      * @param ctx the context to get the files in
      * @return the number of removed tracks
      */
-    public int removeDeletedTracks(@NonNull Context ctx) {
+    public int markDeletedTracks(@NonNull Context ctx) {
         // get all tracks that are (supposedly) downloaded
         final List<TrackInfo> supposedlyDownloadedTracks = tracks().getDownloaded();
 
         // check on every track if the downloaded file still exists
-        final List<TrackInfo> deletedTracks = new ArrayList<>();
+        int count = 0;
         for (TrackInfo track : supposedlyDownloadedTracks) {
             // get file for this track
             final Optional<DocumentFile> trackFile = StorageHelper.decodeFile(ctx, track.fileKey);
 
-            // if the file could not be decoded, assume it was deleted
-            if (!trackFile.isPresent()) {
-                deletedTracks.add(track);
+            // if the file could not be decoded,
+            // the file cannot be read OR it does not exist
+            // assume it was removed
+            if (trackFile.isPresent()
+                    && trackFile.get().canRead()
+                    && trackFile.get().exists()) {
+                // file still there, do no more
                 continue;
             }
 
-            // if the file does not exist OR we have no read permissions, assume it was deleted
-            final DocumentFile file = trackFile.get();
-            if (!file.canRead() || !file.exists()) {
-                deletedTracks.add(track);
-            }
+            // mark as deleted track
+            track.status = TrackStatus.FileDeleted;
+            tracks().update(track);
+            count++;
         }
-
-        // remove deleted tracks from DB
-        tracks().removeAll(deletedTracks);
-        return deletedTracks.size();
+        return count;
     }
 
     /**

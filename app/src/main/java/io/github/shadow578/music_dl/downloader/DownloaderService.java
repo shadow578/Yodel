@@ -26,6 +26,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import io.github.shadow578.music_dl.R;
 import io.github.shadow578.music_dl.db.TracksDB;
 import io.github.shadow578.music_dl.db.model.TrackInfo;
+import io.github.shadow578.music_dl.db.model.TrackStatus;
 import io.github.shadow578.music_dl.downloader.wrapper.YoutubeDLWrapper;
 import io.github.shadow578.music_dl.util.Util;
 import io.github.shadow578.music_dl.util.notifications.NotificationChannels;
@@ -90,10 +91,10 @@ public class DownloaderService extends LifecycleService {
             // enqueue all that are not scheduled already
             boolean trackAdded = false;
             for (TrackInfo track : pendingTracks) {
-                // ignore if already downloading this track
+                // ignore if track not pending
                 if (track == null
                         || scheduledDownloads.contains(track)
-                        || track.isDownloaded) {
+                        || track.status != TrackStatus.DownloadPending) {
                     continue;
                 }
 
@@ -166,19 +167,19 @@ public class DownloaderService extends LifecycleService {
     private void downloadTrack(@NonNull TrackInfo track) {
         // double- check the track is not downloaded
         final TrackInfo dbTrack = TracksDB.getInstance().tracks().get(track.id);
-        if (dbTrack == null || dbTrack.isDownloaded || track.isDownloaded) {
+        if (dbTrack == null || dbTrack.status != TrackStatus.DownloadPending) {
             Log.i(TAG, String.format("skipping download of %s: appears to already be downloaded", track.id));
             return;
         }
 
+        // set status to downloading
+        track.status = TrackStatus.Downloading;
+        TracksDB.getInstance().tracks().update(track);
+
         // download the track and update the entry in the DB
-        if (download(track, ".mp3")) {
-            track.isDownloaded = true;
-        } else {
-            track.isDownloaded = false;
-            track.didDownloadFail = true;
-        }
-        TracksDB.getInstance().tracks().insert(track);
+        final boolean downloadOk = download(track, ".mp3");
+        track.status = downloadOk ? TrackStatus.Downloaded : TrackStatus.DownloadFailed;
+        TracksDB.getInstance().tracks().update(track);
     }
 
     /**

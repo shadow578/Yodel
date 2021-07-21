@@ -7,6 +7,7 @@ import androidx.room.PrimaryKey;
 
 import java.util.Objects;
 
+import io.github.shadow578.music_dl.db.TracksDB;
 import io.github.shadow578.music_dl.util.storage.StorageKey;
 
 /**
@@ -24,7 +25,7 @@ public class TrackInfo {
      */
     @NonNull
     public static TrackInfo createNew(@NonNull String id, @NonNull String title) {
-        return new TrackInfo(id, title, StorageKey.EMPTY, false, false);
+        return new TrackInfo(id, title, StorageKey.EMPTY, TrackStatus.DownloadPending);
     }
 
     /**
@@ -52,21 +53,15 @@ public class TrackInfo {
     /**
      * is this track fully downloaded?
      */
-    @ColumnInfo(name = "is_downloaded")
-    public boolean isDownloaded;
+    @NonNull
+    @ColumnInfo(name = "status")
+    public TrackStatus status;
 
-    /**
-     * did the download fail? if this flag is set, the download will not be retried.
-     */
-    @ColumnInfo(name = "did_download_fail")
-    public boolean didDownloadFail;
-
-    public TrackInfo(@NonNull String id, @NonNull String title, @NonNull StorageKey fileKey, boolean isDownloaded, boolean didDownloadFail) {
+    public TrackInfo(@NonNull String id, @NonNull String title, @NonNull StorageKey fileKey, @NonNull TrackStatus status) {
         this.id = id;
         this.title = title;
         this.fileKey = fileKey;
-        this.isDownloaded = isDownloaded;
-        this.didDownloadFail = didDownloadFail;
+        this.status = status;
     }
 
     @Override

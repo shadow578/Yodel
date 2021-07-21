@@ -22,7 +22,7 @@ public class MusicDLApp extends Application {
 
         // remove tracks that were deleted
         Util.runAsync(() -> {
-            final int removedCount = TracksDB.init(this).removeDeletedTracks(this);
+            final int removedCount = TracksDB.init(this).markDeletedTracks(this);
             Log.i("MusicDL", String.format("removed %d tracks that were deleted in the file system", removedCount));
         });
     }

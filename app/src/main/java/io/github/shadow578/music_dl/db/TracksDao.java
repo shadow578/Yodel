@@ -6,6 +6,7 @@ import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
+import androidx.room.Update;
 
 import java.util.List;
 
@@ -31,7 +32,7 @@ public interface TracksDao {
      *
      * @return the tracks that can be observed
      */
-    @Query("SELECT * FROM tracks WHERE is_downloaded = 0 AND did_download_fail = 0")
+    @Query("SELECT * FROM tracks WHERE status = 'pending'")
     LiveData<List<TrackInfo>> observePending();
 
     /**
@@ -39,7 +40,7 @@ public interface TracksDao {
      *
      * @return a list of all downloaded tracks
      */
-    @Query("SELECT * FROM tracks WHERE is_downloaded = 1")
+    @Query("SELECT * FROM tracks WHERE status = 'downloaded'")
     List<TrackInfo> getDownloaded();
 
     /**
@@ -58,6 +59,14 @@ public interface TracksDao {
      */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(TrackInfo track);
+
+    /**
+     * update a track
+     *
+     * @param track the track to update
+     */
+    @Update
+    void update(TrackInfo track);
 
     /**
      * remove a single track from the db

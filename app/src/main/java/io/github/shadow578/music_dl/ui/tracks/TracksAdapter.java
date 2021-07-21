@@ -50,15 +50,7 @@ public class TracksAdapter extends RecyclerView.Adapter<TracksAdapter.Holder> {
         holder.b.title.setText(track.title);
 
         // set status
-        final String status;
-        if (track.isDownloaded) {
-            status = "Downloaded";
-        } else if (track.didDownloadFail) {
-            status = "Download Failed";
-        } else {
-            status = "Downloading";
-        }
-        holder.b.status.setText(status);
+        holder.b.status.setText(track.status.key());
 
         // set click listener
         holder.b.getRoot().setOnClickListener(v -> clickListener.onClick(track));
