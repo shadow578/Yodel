@@ -1,9 +1,12 @@
 package io.github.shadow578.music_dl.downloader;
 
+import android.app.Notification;
 import android.content.Context;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.lifecycle.LifecycleService;
 
@@ -15,17 +18,17 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.HashSet;
 import java.util.Locale;
 import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
+import io.github.shadow578.music_dl.R;
 import io.github.shadow578.music_dl.db.TracksDB;
 import io.github.shadow578.music_dl.db.model.TrackInfo;
 import io.github.shadow578.music_dl.downloader.wrapper.YoutubeDLWrapper;
 import io.github.shadow578.music_dl.util.Util;
+import io.github.shadow578.music_dl.util.notifications.NotificationChannels;
 import io.github.shadow578.music_dl.util.preferences.Prefs;
 import io.github.shadow578.music_dl.util.storage.StorageHelper;
 import io.github.shadow578.music_dl.util.storage.StorageKey;
@@ -46,62 +49,113 @@ public class DownloaderService extends LifecycleService {
     private static final int YOUTUBE_DL_RETRIES = 10;
 
     /**
-     * a list of all tracks that are currently being downloaded
+     * notification id of the progress notification
      */
-    private final Set<TrackInfo> currentDownloads = new HashSet<>();
+    private static final int PROGRESS_NOTIFICATION_ID = 123456;
 
     /**
-     * executor for downloading async.
-     * using a single thread for this to ensure tracks are downloaded in order
+     * a list of all tracks that are scheduled to be downloaded.
+     * tracks are only removed from the set after they have been downloaded, and updated in the database
+     * this list is processed sequentially by {@link #downloadThread}
      */
-    private final Executor downloadExecutor = Executors.newSingleThreadExecutor();
+    private final BlockingQueue<TrackInfo> scheduledDownloads = new LinkedBlockingQueue<>();
+
+    /**
+     * the main download thread. runs in {@link #downloadThread()}
+     */
+    private final Thread downloadThread = new Thread(this::downloadThread);
+
+    /**
+     * notification manager, for progress notification
+     */
+    private NotificationManagerCompat notificationManager;
+
+    /**
+     * is the service currently in foreground?
+     */
+    private boolean isInForeground = false;
 
     @Override
     public void onCreate() {
         super.onCreate();
+        // create progress notification
+        notificationManager = NotificationManagerCompat.from(this);
+
+        // init db and observe changes to pending tracks
+        Log.i(TAG, "start observing pending tracks...");
         TracksDB.init(this);
-        Util.runAsync(() -> {
-            // init youtube-dl
-            Log.i(TAG, "downloader service starting...");
-            if (!YoutubeDLWrapper.init(this)) {
-                Log.e(TAG, "youtube-dl init failed");
-                return;
+        TracksDB.getInstance().tracks().observePending().observe(this, pendingTracks -> {
+            Log.i(TAG, String.format("pendingTracks update! size= %d", pendingTracks.size()));
+
+            // enqueue all that are not scheduled already
+            boolean trackAdded = false;
+            for (TrackInfo track : pendingTracks) {
+                // ignore if already downloading this track
+                if (track == null
+                        || scheduledDownloads.contains(track)
+                        || track.isDownloaded) {
+                    continue;
+                }
+
+                //enqueue the track
+                scheduledDownloads.add(track);
+                trackAdded = true;
             }
 
-            Util.runOnMain(() -> {
-                // init db and observe changes to pending tracks
-                Log.i(TAG, "start observing pending tracks...");
-                TracksDB.getInstance().tracks().observePending().observe(this, pendingTracks -> {
-                    Log.i(TAG, "pendingTracks update!");
-
-                    // skip if no tracks pending
-                    if (pendingTracks.size() <= 0) {
-                        Log.i(TAG, "no pending tracks, ignoring update");
-                        return;
-                    }
-
-                    // process all tracks
-                    for (TrackInfo track : pendingTracks) {
-                        // ignore if already downloading this track
-                        if (track == null
-                                || currentDownloads.contains(track)
-                                || track.isDownloaded) {
-                            continue;
-                        }
-
-                        // download this track
-                        currentDownloads.add(track);
-                        downloadExecutor.execute(() -> downloadTrack(track));
-                    }
-                });
-            });
+            // notifiy downloader
+            if (trackAdded) {
+                scheduledDownloads.notifyAll();
+            }
         });
+
+        // start downloader thread as daemon
+        downloadThread.setName("io.github.shadow578.music_dl.downloader.DOWNLOAD_THREAD");
+        downloadThread.setDaemon(true);
+        downloadThread.start();
     }
 
     @Override
     public void onDestroy() {
         Log.i(TAG, "destroying service...");
+        downloadThread.interrupt();
+        hideNotification();
         super.onDestroy();
+    }
+
+    //region downloading
+
+    /**
+     * the main download thread
+     */
+    private void downloadThread() {
+        try {
+            // init youtube-dl
+            Log.i(TAG, "downloader thread starting...");
+            if (!YoutubeDLWrapper.init(this)) {
+                Log.e(TAG, "youtube-dl init failed, stopping service");
+                stopSelf();
+                return;
+            }
+
+            // main loop
+            while (!Thread.interrupted()) {
+                // process all enqueued tracks
+                TrackInfo trackToDownload;
+                while ((trackToDownload = scheduledDownloads.peek()) != null) {
+                    downloadTrack(trackToDownload);
+                    scheduledDownloads.poll();
+                }
+
+                // remove notification
+                hideNotification();
+
+                // wait for changes to the set
+                synchronized (scheduledDownloads) {
+                    scheduledDownloads.wait();
+                }
+            }
+        } catch (InterruptedException ignored) {
+        }
     }
 
     /**
@@ -110,29 +164,21 @@ public class DownloaderService extends LifecycleService {
      * @param track the track to download
      */
     private void downloadTrack(@NonNull TrackInfo track) {
-        try {
-            // insert into current downloads
-            currentDownloads.add(track);
-
-            // double- check the track is not downloaded
-            final TrackInfo dbTrack = TracksDB.getInstance().tracks().get(track.id);
-            if (dbTrack == null || dbTrack.isDownloaded || track.isDownloaded) {
-                Log.i(TAG, String.format("skipping download of %s: appears to already be downloaded", track.id));
-                return;
-            }
-
-            // download the track and update the entry in the DB
-            if (download(track, ".mp3")) {
-                track.isDownloaded = true;
-            } else {
-                track.isDownloaded = false;
-                track.didDownloadFail = true;
-            }
-            TracksDB.getInstance().tracks().insert(track);
-        } finally {
-            // remove from current downloads
-            currentDownloads.remove(track);
+        // double- check the track is not downloaded
+        final TrackInfo dbTrack = TracksDB.getInstance().tracks().get(track.id);
+        if (dbTrack == null || dbTrack.isDownloaded || track.isDownloaded) {
+            Log.i(TAG, String.format("skipping download of %s: appears to already be downloaded", track.id));
+            return;
         }
+
+        // download the track and update the entry in the DB
+        if (download(track, ".mp3")) {
+            track.isDownloaded = true;
+        } else {
+            track.isDownloaded = false;
+            track.didDownloadFail = true;
+        }
+        TracksDB.getInstance().tracks().insert(track);
     }
 
     /**
@@ -151,6 +197,7 @@ public class DownloaderService extends LifecycleService {
                     .audioOnly();
 
             // get title using youtube-dl, fallback to app- provided title
+            updateNotification(createStatusNotification(track, "Resolving Video Info"));
             final VideoInfo videoInfo = youtubeDl.getInfo(YOUTUBE_DL_RETRIES);
             if (videoInfo != null) {
                 final String extractedTitle = videoInfo.getFulltitle();
@@ -165,11 +212,12 @@ public class DownloaderService extends LifecycleService {
             }
 
             // download the track to a temporary file in /cache of this app
+            updateNotification(createStatusNotification(track, "Starting Download"));
             tempFile = Util.getTempFile("youtube-dl_", "." + fileFormat, getCacheDir());
             tempFile.deleteOnExit();
             final YoutubeDLResponse downloadResponse = youtubeDl.output(tempFile)
                     //.overwriteExisting() //no longer needed as the file is created by youtube-dl now
-                    .download(null, YOUTUBE_DL_RETRIES);
+                    .download(((progress, etaInSeconds) -> updateNotification(createProgressNotification(track, progress, etaInSeconds))), YOUTUBE_DL_RETRIES);
             if (downloadResponse == null || !tempFile.exists()) {
                 // download failed
                 Log.e(TAG, "youtube-dl download failed!");
@@ -178,6 +226,7 @@ public class DownloaderService extends LifecycleService {
 
             // find root folder for saving downloaded tracks to
             // find using storage framework, and only allow persisted folders we can write to
+            updateNotification(createStatusNotification(track, "Finishing Download"));
             final Optional<DocumentFile> downloadRoot = getDownloadsDirectory(this);
             if (!downloadRoot.isPresent()) {
                 // download folder not found
@@ -250,4 +299,86 @@ public class DownloaderService extends LifecycleService {
 
         return StorageHelper.getPersistedFilePermission(ctx, key, true);
     }
+    //endregion
+
+    //region status notification
+
+    /**
+     * update the progress notification
+     *
+     * @param newNotification the updated notification
+     */
+    private void updateNotification(@NonNull Notification newNotification) {
+        if (isInForeground) {
+            // already in foreground, update the notification
+            notificationManager.notify(PROGRESS_NOTIFICATION_ID, newNotification);
+        } else {
+            // create foreground notification
+            isInForeground = true;
+            startForeground(PROGRESS_NOTIFICATION_ID, newNotification);
+        }
+    }
+
+    /**
+     * cancel the progress notification and call {@link #stopForeground(boolean)}
+     */
+    private void hideNotification() {
+        notificationManager.cancel(PROGRESS_NOTIFICATION_ID);
+        stopForeground(true);
+        isInForeground = false;
+    }
+
+    /**
+     * create a download progress display notification (during track download)
+     *
+     * @param track    the track that is being downloaded
+     * @param progress the current download progress, from 0.0 to 1.0
+     * @param eta      the estimated download time remaining, in seconds
+     * @return the progress notification
+     */
+    @NonNull
+    private Notification createProgressNotification(@NonNull TrackInfo track, double progress, long eta) {
+        // convert eta into HH:MM:SS
+        final String etaStr = String.format(Locale.US, "%02d:%02d:%02d",
+                eta / 3600,
+                (eta % 3600) / 60,
+                eta % 60);
+
+        return getBaseNotification()
+                .setContentTitle(String.format("Downloading %s", track.title))
+                .setSubText(String.format("Downloading - ETA %s", etaStr))
+                .setProgress(100, (int) Math.floor(progress * 100), false)
+                .build();
+    }
+
+    /**
+     * create a download prepare display notification (before or after track download)
+     *
+     * @param track  the track that is being downloaded
+     * @param status the status string
+     * @return the status notification
+     */
+    @NonNull
+    private Notification createStatusNotification(@NonNull TrackInfo track, @NonNull String status) {
+        return getBaseNotification()
+                .setContentTitle(String.format("Preparing %s", track.title))
+                .setSubText(status)
+                .setProgress(1, 0, true)
+                .build();
+    }
+
+    /**
+     * get the base notification, shared between all status notifications
+     *
+     * @return the builder, with base settings applied
+     */
+    @NonNull
+    private NotificationCompat.Builder getBaseNotification() {
+        return new NotificationCompat.Builder(this, NotificationChannels.DownloadProgress.id())
+                .setSmallIcon(R.drawable.ic_round_tpose_24)
+                .setShowWhen(false)
+                .setOnlyAlertOnce(true);
+    }
+
+    //endregion
 }
