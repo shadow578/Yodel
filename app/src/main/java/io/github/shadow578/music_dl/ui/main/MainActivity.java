@@ -96,8 +96,9 @@ public class MainActivity extends BaseActivity {
         // sync model with pager and bottom navigation
         model.getSection().observe(this, section ->
         {
-            b.fragmentPager.setCurrentItem(sectionOrder.indexOf(section));
             b.bottomNav.setSelectedItemId(section.menuItemId);
+            b.fragmentPager.setCurrentItem(sectionOrder.indexOf(section));
+            b.fragmentPager.setUserInputEnabled(section.allowPagerInput);
         });
     }
 
@@ -127,17 +128,17 @@ public class MainActivity extends BaseActivity {
         /**
          * the tracks library fragment
          */
-        Tracks(R.id.nav_tracks),
+        Tracks(R.id.nav_tracks, true),
 
         /**
          * the explore fragment
          */
-        Explore(R.id.nav_explore),
+        Explore(R.id.nav_explore, false),
 
         /**
          * the more / about fragment
          */
-        More(R.id.nav_more);
+        More(R.id.nav_more, true);
 
         /**
          * the id of the menu item for this section (in bottom navigation)
@@ -146,12 +147,19 @@ public class MainActivity extends BaseActivity {
         private final int menuItemId;
 
         /**
+         * enable user input on the view pager for this section?
+         */
+        private final boolean allowPagerInput;
+
+        /**
          * create a new section in the main activity
          *
-         * @param menuItemId the menu item of this section
+         * @param menuItemId      the menu item of this section
+         * @param allowPagerInput allow user input on the view pager?
          */
-        Section(@IdRes int menuItemId) {
+        Section(@IdRes int menuItemId, boolean allowPagerInput) {
             this.menuItemId = menuItemId;
+            this.allowPagerInput = allowPagerInput;
         }
     }
 
