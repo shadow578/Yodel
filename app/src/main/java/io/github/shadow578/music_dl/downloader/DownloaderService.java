@@ -114,7 +114,9 @@ public class DownloaderService extends LifecycleService {
 
             // notifiy downloader
             if (trackAdded) {
-                scheduledDownloads.notifyAll();
+                synchronized (scheduledDownloads) {
+                    scheduledDownloads.notifyAll();
+                }
             }
         });
 
@@ -156,6 +158,9 @@ public class DownloaderService extends LifecycleService {
      */
     private void downloadThread() {
         try {
+            // reset in- progress downloads back to pending
+            TracksDB.getInstance().tracks().resetDownloadingToPending();
+
             // init youtube-dl
             Log.i(TAG, "downloader thread starting...");
             if (!YoutubeDLWrapper.init(this)) {
@@ -376,8 +381,8 @@ public class DownloaderService extends LifecycleService {
                 eta % 60);
 
         return getBaseNotification()
-                .setContentTitle(String.format("Downloading %s", track.title))
-                .setSubText(String.format("Downloading - ETA %s", etaStr))
+                .setContentTitle(track.title)
+                .setSubText(String.format("Downloading • ETA %s", etaStr))
                 .setProgress(100, (int) Math.floor(progress * 100), false)
                 .build();
     }
@@ -392,7 +397,7 @@ public class DownloaderService extends LifecycleService {
     @NonNull
     private Notification createStatusNotification(@NonNull TrackInfo track, @NonNull String status) {
         return getBaseNotification()
-                .setContentTitle(String.format("Preparing %s", track.title))
+                .setContentTitle(track.title)
                 .setSubText(status)
                 .setProgress(1, 0, true)
                 .build();

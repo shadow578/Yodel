@@ -44,6 +44,12 @@ public interface TracksDao {
     List<TrackInfo> getDownloaded();
 
     /**
+     * reset all tracks in downloading status back to pending
+     */
+    @Query("UPDATE tracks SET status = 'pending' WHERE status = 'downloading'")
+    void resetDownloadingToPending();
+
+    /**
      * get a track from the db
      *
      * @param id the id of the track

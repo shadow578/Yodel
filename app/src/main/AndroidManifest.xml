@@ -3,6 +3,7 @@
     package="io.github.shadow578.music_dl">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
 
     <application
         android:name=".MusicDLApp"
