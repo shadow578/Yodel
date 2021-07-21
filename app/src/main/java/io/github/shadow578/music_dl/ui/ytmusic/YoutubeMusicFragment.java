@@ -12,10 +12,10 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import io.github.shadow578.music_dl.databinding.FragmentExploreBinding;
+import io.github.shadow578.music_dl.ui.BaseFragment;
 import io.github.shadow578.music_dl.util.Payload;
 import io.github.shadow578.music_dl.util.Url;
 import io.github.shadow578.music_dl.util.Util;
@@ -23,7 +23,7 @@ import io.github.shadow578.music_dl.util.Util;
 /**
  * the yt music browsing activity
  */
-public class YoutubeMusicFragment extends Fragment {
+public class YoutubeMusicFragment extends BaseFragment {
 
     /**
      * the view binding instance

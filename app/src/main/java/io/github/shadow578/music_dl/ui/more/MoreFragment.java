@@ -1,23 +1,24 @@
 package io.github.shadow578.music_dl.ui.more;
 
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import io.github.shadow578.music_dl.R;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import io.github.shadow578.music_dl.databinding.FragmentMoreBinding;
+import io.github.shadow578.music_dl.ui.BaseFragment;
 
 /**
- * more fragment
+ * more / about fragment
  */
-public class MoreFragment extends Fragment {
+public class MoreFragment extends BaseFragment {
 
+    /**
+     * view binding instance
+     */
     private FragmentMoreBinding b;
 
     @Nullable

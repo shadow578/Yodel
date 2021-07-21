@@ -1,27 +1,24 @@
 package io.github.shadow578.music_dl.ui.tracks;
 
-import androidx.lifecycle.ViewModelProvider;
-
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import io.github.shadow578.music_dl.R;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+
 import io.github.shadow578.music_dl.databinding.FragmentTracksBinding;
 import io.github.shadow578.music_dl.db.model.TrackInfo;
+import io.github.shadow578.music_dl.ui.BaseFragment;
 
 /**
  * downloaded and downloading tracks UI
  */
-public class TracksFragment extends Fragment {
+public class TracksFragment extends BaseFragment {
 
     /**
      * the view binding instance
