@@ -38,7 +38,6 @@ public class YoutubeMusicViewModel extends AndroidViewModel {
     public YoutubeMusicViewModel(@NonNull Application application) {
         super(application);
         TracksDB.init(getApplication());
-        maybeStartDownloaderService();
     }
 
     /**
