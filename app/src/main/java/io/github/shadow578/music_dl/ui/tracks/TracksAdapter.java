@@ -1,6 +1,8 @@
 package io.github.shadow578.music_dl.ui.tracks;
 
+import android.net.Uri;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -8,11 +10,17 @@ import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
 
 import io.github.shadow578.music_dl.databinding.RecyclerTrackViewBinding;
 import io.github.shadow578.music_dl.db.model.TrackInfo;
+import io.github.shadow578.music_dl.util.Util;
+import io.github.shadow578.music_dl.util.storage.StorageHelper;
 
 /**
  * recyclerview adapter for tracks livedata
@@ -46,8 +54,36 @@ public class TracksAdapter extends RecyclerView.Adapter<TracksAdapter.Holder> {
     public void onBindViewHolder(@NonNull Holder holder, int position) {
         final TrackInfo track = tracks.get(position);
 
-        // set title
+        // cover
+        final Optional<Uri> coverUri = StorageHelper.decodeUri(track.coverKey);
+        coverUri.ifPresent(cover -> Glide.with(holder.b.coverArt)
+                .load(cover)
+                .into(holder.b.coverArt));
+
+        // title
         holder.b.title.setText(track.title);
+
+        // build and set artist + album
+        final String albumAndArtist;
+        if (track.artist != null && track.albumName != null) {
+            albumAndArtist = String.format(Locale.US, "%s • %s", track.artist, track.albumName);
+        } else if (track.artist != null) {
+            albumAndArtist = track.artist;
+        } else if (track.albumName != null) {
+            albumAndArtist = track.albumName;
+        } else {
+            albumAndArtist = "";
+        }
+
+        holder.b.albumAndArtist.setText(albumAndArtist);
+
+        // duration
+        if (track.duration != null) {
+            holder.b.duration.setText(Util.secondsToTimeString(track.duration));
+            holder.b.duration.setVisibility(View.VISIBLE);
+        } else {
+            holder.b.duration.setVisibility(View.GONE);
+        }
 
         // set status
         holder.b.status.setText(track.status.key());

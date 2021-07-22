@@ -44,6 +44,10 @@ public class TracksFragment extends BaseFragment {
         // setup recycler with data from model
         b.tracksRecycler.setLayoutManager(new LinearLayoutManager(requireContext()));
         b.tracksRecycler.setAdapter(new TracksAdapter(requireActivity(), model.getTracks(), this::playTrack));
+
+        // show empty label if no tracks available
+        model.getTracks().observe(requireActivity(), tracks
+                -> b.emptyLabel.setVisibility(tracks.size() <= 0 ? View.GONE : View.VISIBLE));
     }
 
     /**

@@ -3,32 +3,80 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:minHeight="75dp"
+    android:layout_height="250dp"
     android:layout_margin="15dp"
+    app:cardCornerRadius="5dp"
     app:cardElevation="5dp"
-    app:cardCornerRadius="5dp">
+    tools:showIn="@layout/fragment_tracks">
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_margin="15dp"
         android:orientation="vertical">
 
-        <!-- title -->
-        <TextView
-            android:id="@+id/title"
+        <!-- cover art container -->
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="17sp"
-            android:textStyle="bold"
-            tools:text="Title"/>
+            android:layout_height="0dp"
+            android:layout_marginBottom="5dp"
+            android:layout_weight="1">
 
-        <!-- status -->
-        <TextView
-            android:id="@+id/status"
+            <!-- cover art -->
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/cover_art"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_round_tpose_24" />
+
+            <!-- duration -->
+            <TextView
+                android:id="@+id/duration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:background="@color/time_on_cover_background"
+                android:padding="5dp"
+                tools:text="00:00" />
+        </FrameLayout>
+
+        <!-- information container -->
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            tools:text="Downloading"/>
+            android:layout_height="wrap_content">
+
+            <!-- title -->
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                tools:text="Title" />
+
+            <!-- album + artist -->
+            <TextView
+                android:id="@+id/album_and_artist"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/title"
+                android:layout_alignParentStart="true"
+                android:ellipsize="end"
+                android:maxLines="1"
+                tools:text="Artist • Album" />
+
+            <!-- status -->
+            <TextView
+                android:id="@+id/status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/title"
+                android:layout_alignParentEnd="true"
+                android:ellipsize="end"
+                android:maxLines="1"
+                tools:text="Downloading" />
+        </RelativeLayout>
     </androidx.appcompat.widget.LinearLayoutCompat>
 </com.google.android.material.card.MaterialCardView>

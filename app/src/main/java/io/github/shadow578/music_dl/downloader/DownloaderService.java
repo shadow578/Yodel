@@ -539,15 +539,9 @@ public class DownloaderService extends LifecycleService {
      */
     @NonNull
     private Notification createProgressNotification(@NonNull TrackInfo track, double progress, long eta) {
-        // convert eta into HH:MM:SS
-        final String etaStr = String.format(Locale.US, "%02d:%02d:%02d",
-                eta / 3600,
-                (eta % 3600) / 60,
-                eta % 60);
-
         return getBaseNotification()
                 .setContentTitle(track.title)
-                .setSubText(String.format("Downloading • ETA %s", etaStr))
+                .setSubText(String.format("Downloading • ETA %s", Util.secondsToTimeString(eta)))
                 .setProgress(100, (int) Math.floor(progress * 100), false)
                 .build();
     }

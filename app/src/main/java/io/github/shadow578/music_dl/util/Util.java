@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Locale;
 import java.util.Random;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -148,4 +149,28 @@ public final class Util {
         return totalBytes;
     }
     //endregion
+
+
+    /**
+     * format a seconds value to HH:mm:ss or mm:ss format
+     *
+     * @param seconds the seconds value
+     * @return the formatted string
+     */
+    @NonNull
+    public static String secondsToTimeString(long seconds) {
+        final long hours = seconds / 3600;
+        if (hours <= 0) {
+            // less than 1h, use mm:ss
+            return String.format(Locale.US, "%02d:%02d",
+                    (seconds % 3600) / 60,
+                    seconds % 60);
+        }
+
+        // more than 1h, use HH:mm:ss
+        return String.format(Locale.US, "%02d:%02d:%02d",
+                hours,
+                (seconds % 3600) / 60,
+                seconds % 60);
+    }
 }

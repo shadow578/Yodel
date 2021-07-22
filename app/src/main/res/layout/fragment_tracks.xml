@@ -1,16 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.tracks.TracksFragment">
 
+    <!-- main list -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/tracks_recycler"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingBottom="35dp"
         android:clipToPadding="false"
+        android:paddingBottom="35dp"
         tools:listitem="@layout/recycler_track_view" />
 
-</FrameLayout>
+    <!-- empty label -->
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/empty_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="Empty,\n like my thoughts"
+        android:textAlignment="center"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:visibility="gone" />
+
+</RelativeLayout>
