@@ -1,13 +1,14 @@
 package io.github.shadow578.music_dl.db.model;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+import java.time.LocalDate;
 import java.util.Objects;
 
-import io.github.shadow578.music_dl.db.TracksDB;
 import io.github.shadow578.music_dl.util.storage.StorageKey;
 
 /**
@@ -25,7 +26,7 @@ public class TrackInfo {
      */
     @NonNull
     public static TrackInfo createNew(@NonNull String id, @NonNull String title) {
-        return new TrackInfo(id, title, StorageKey.EMPTY, TrackStatus.DownloadPending);
+        return new TrackInfo(id, title, null, null, null, null, StorageKey.EMPTY, StorageKey.EMPTY, TrackStatus.DownloadPending);
     }
 
     /**
@@ -44,11 +45,46 @@ public class TrackInfo {
     public String title;
 
     /**
+     * the name of the artist
+     */
+    @Nullable
+    @ColumnInfo(name = "artist_name")
+    public String artist;
+
+    /**
+     * the day the track was released / uploaded
+     */
+    @Nullable
+    @ColumnInfo(name = "release_date")
+    public LocalDate releaseDate;
+
+    /**
+     * duration of the track, in seconds
+     */
+    @Nullable
+    @ColumnInfo(name = "duration")
+    public Long duration;
+
+    /**
+     * the album name, if this track is part of one
+     */
+    @Nullable
+    @ColumnInfo(name = "album_name")
+    public String albumName;
+
+    /**
      * the key of the file this track was downloaded to
      */
     @NonNull
-    @ColumnInfo(name = "download_file_key")
-    public StorageKey fileKey;
+    @ColumnInfo(name = "audio_file_key")
+    public StorageKey audioFileKey;
+
+    /**
+     * the key of the track cover image file
+     */
+    @NonNull
+    @ColumnInfo(name = "cover_file_key")
+    public StorageKey coverKey;
 
     /**
      * is this track fully downloaded?
@@ -57,10 +93,15 @@ public class TrackInfo {
     @ColumnInfo(name = "status")
     public TrackStatus status;
 
-    public TrackInfo(@NonNull String id, @NonNull String title, @NonNull StorageKey fileKey, @NonNull TrackStatus status) {
+    public TrackInfo(@NonNull String id, @NonNull String title, @Nullable String artist, @Nullable LocalDate releaseDate, @Nullable Long duration, @Nullable String albumName, @NonNull StorageKey audioFileKey, @NonNull StorageKey coverKey, @NonNull TrackStatus status) {
         this.id = id;
         this.title = title;
-        this.fileKey = fileKey;
+        this.artist = artist;
+        this.releaseDate = releaseDate;
+        this.duration = duration;
+        this.albumName = albumName;
+        this.audioFileKey = audioFileKey;
+        this.coverKey = coverKey;
         this.status = status;
     }
 

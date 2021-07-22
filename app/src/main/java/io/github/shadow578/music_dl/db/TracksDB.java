@@ -25,7 +25,7 @@ import io.github.shadow578.music_dl.util.storage.StorageHelper;
 })
 @Database(entities = {
         TrackInfo.class
-}, version = 4)
+}, version = 5)
 public abstract class TracksDB extends RoomDatabase {
 
     /**
@@ -85,7 +85,7 @@ public abstract class TracksDB extends RoomDatabase {
         int count = 0;
         for (TrackInfo track : supposedlyDownloadedTracks) {
             // get file for this track
-            final Optional<DocumentFile> trackFile = StorageHelper.decodeFile(ctx, track.fileKey);
+            final Optional<DocumentFile> trackFile = StorageHelper.decodeFile(ctx, track.audioFileKey);
 
             // if the file could not be decoded,
             // the file cannot be read OR it does not exist

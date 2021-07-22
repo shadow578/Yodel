@@ -1,7 +1,8 @@
 package io.github.shadow578.music_dl.downloader;
 
 import android.app.Notification;
-import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -11,16 +12,21 @@ import androidx.core.app.NotificationManagerCompat;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.lifecycle.LifecycleService;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonSyntaxException;
 import com.yausername.youtubedl_android.YoutubeDLResponse;
-import com.yausername.youtubedl_android.mapper.VideoInfo;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -66,6 +72,11 @@ public class DownloaderService extends LifecycleService {
      * the main download thread. runs in {@link #downloadThread()}
      */
     private final Thread downloadThread = new Thread(this::downloadThread);
+
+    /**
+     * gson instance
+     */
+    private final Gson gson = new Gson();
 
     /**
      * notification manager, for progress notification
@@ -151,7 +162,7 @@ public class DownloaderService extends LifecycleService {
         return false;
     }
 
-    //region downloading
+    //region downloader top- level
 
     /**
      * the main download thread
@@ -208,100 +219,225 @@ public class DownloaderService extends LifecycleService {
         TracksDB.getInstance().tracks().update(track);
 
         // download the track and update the entry in the DB
-        final boolean downloadOk = download(track, ".mp3");
+        //TODO file format is hardcoded
+        final boolean downloadOk = download(track, "mp3");
         track.status = downloadOk ? TrackStatus.Downloaded : TrackStatus.DownloadFailed;
         TracksDB.getInstance().tracks().update(track);
     }
 
     /**
-     * download a track using youtube-dl
+     * download the track and resolve metadata
      *
-     * @param track      the track to use. if available, the track title is changed to the one extracted using youtube-dl
-     * @param fileFormat the file format to use for the download. must be a audio format, as {@link YoutubeDLWrapper#audioOnly()} is hardcoded at the moment TODO make this non hard-coded
+     * @param track      the track to download
+     * @param fileFormat the file format to download the track in
      * @return was the download successful?
      */
     private boolean download(@NonNull TrackInfo track, @NonNull String fileFormat) {
-        File tempFile = null;
+        TempFiles files = null;
         try {
-            // prepare youtube-dl session
-            final YoutubeDLWrapper youtubeDl = YoutubeDLWrapper.create(resolveVideoUrl(track))
-                    .fixSsl() // TODO make ssl fix a option in props
-                    .audioOnly();
-
-            // get title using youtube-dl, fallback to app- provided title
-            updateNotification(createStatusNotification(track, "Resolving Video Info"));
-            final VideoInfo videoInfo = youtubeDl.getInfo(YOUTUBE_DL_RETRIES);
-            if (videoInfo != null) {
-                final String extractedTitle = videoInfo.getFulltitle();
-                if (extractedTitle != null && !extractedTitle.isEmpty()) {
-                    Log.i(TAG, String.format("using extracted title (%s) from youtube-dl", extractedTitle));
-                    track.title = extractedTitle;
-                }
-            }
-            if (track.title.isEmpty()) {
-                Log.w(TAG, "no title, fallback to 'unknown'!");
-                track.title = "Unknown";
-            }
-
-            // download the track to a temporary file in /cache of this app
+            // create session
             updateNotification(createStatusNotification(track, "Starting Download"));
-            tempFile = Util.getTempFile("youtube-dl_", "." + fileFormat, getCacheDir());
-            tempFile.deleteOnExit();
-            final YoutubeDLResponse downloadResponse = youtubeDl.output(tempFile)
-                    //.overwriteExisting() //no longer needed as the file is created by youtube-dl now
-                    .download(((progress, etaInSeconds) -> updateNotification(createProgressNotification(track, progress, etaInSeconds))), YOUTUBE_DL_RETRIES);
-            if (downloadResponse == null || !tempFile.exists()) {
-                // download failed
-                Log.e(TAG, "youtube-dl download failed!");
-                return false;
-            }
+            final YoutubeDLWrapper session = createSession(track);
+            files = createTempFiles(track, fileFormat);
 
-            // find root folder for saving downloaded tracks to
-            // find using storage framework, and only allow persisted folders we can write to
+            // download the track and metadata using youtube-dl
+            downloadTrack(track, session, files);
+
+            // parse the metadata
+            updateNotification(createStatusNotification(track, "Processing Metadata"));
+            parseMetadata(track, files);
+
+            // copy audio file to downloads dir
             updateNotification(createStatusNotification(track, "Finishing Download"));
-            final Optional<DocumentFile> downloadRoot = getDownloadsDirectory(this);
-            if (!downloadRoot.isPresent()) {
-                // download folder not found
-                Log.e(TAG, "failed to find downloads folder!");
-                return false;
+            copyAudioToFinal(track, files, fileFormat);
+
+            // copy cover to cover store
+            // if this fails, we do not fail the whole operation
+            try {
+                copyCoverToFinal(track, files);
+            } catch (DownloaderException e) {
+                Log.e(TAG, "failed to copy cover of " + track.id + "! (this is not fatal, the rest of the download was successful)", e);
             }
-
-            // create file to write the track to
-            final DocumentFile finalFile = downloadRoot.get().createFile("audio/mp3", track.title + "." + fileFormat);
-            if (finalFile == null || !finalFile.canWrite()) {
-                Log.e(TAG, "Could not create final output file!");
-                return false;
-            }
-
-            // copy the temp file to the final destination
-            try (final InputStream in = new FileInputStream(tempFile);
-                 final OutputStream out = getContentResolver().openOutputStream(finalFile.getUri())) {
-                Util.streamTransfer(in, out, 1024);
-            } catch (IOException e) {
-                Log.e(TAG, String.format(Locale.US, "error copying temp file (%s) to final destination (%s)",
-                        tempFile.toString(), finalFile.getUri().toString()),
-                        e);
-
-                // delete final destination file
-                if (!finalFile.delete()) {
-                    Log.w(TAG, "failed to delete final file on copy fail");
-                }
-                return false;
-            }
-
-            // set the final file in track info
-            track.fileKey = StorageHelper.encodeFile(finalFile);
-
-            // everything worked, call this success
             return true;
+        } catch (DownloaderException e) {
+            Log.e(TAG, "download of " + track.id + " failed!", e);
+            return false;
         } finally {
-            // delete the temp file
-            if (tempFile != null
-                    && tempFile.exists()
-                    && !tempFile.delete()) {
-                Log.w(TAG, "failed to directly delete temp file. this does not matter too much, as .deleteOnExit() should take care of it later.");
+            // delete temp files
+            if (files != null && !files.delete()) {
+                Log.w(TAG, "could not delete temp files for " + track.id);
             }
         }
+    }
+
+    //endregion
+
+    //region downloader implementation
+
+    /**
+     * prepare a new youtube-dl session for the track
+     *
+     * @param track the track to prepare the session for
+     * @return the youtube-dl session
+     * @throws DownloaderException if the cache directory could not be created (needed for the session)
+     */
+    @NonNull
+    private YoutubeDLWrapper createSession(@NonNull TrackInfo track) throws DownloaderException {
+        return YoutubeDLWrapper.create(resolveVideoUrl(track))
+                .fixSsl() // TODO make ssl fix a option in props
+                .cacheDir(getDownloadCacheDirectory())
+                .audioOnly();
+    }
+
+    /**
+     * create the tempoary files for the download
+     *
+     * @param track      the track to create the files for
+     * @param fileFormat the file format to download in
+     * @return the tempoary files
+     */
+    @NonNull
+    private TempFiles createTempFiles(@NonNull TrackInfo track, @NonNull String fileFormat) {
+        final File tempAudio = Util.getTempFile("dl_" + track.id, "." + fileFormat, getCacheDir());
+        return new TempFiles(tempAudio);
+    }
+
+    /**
+     * invoke youtube-dl to download the track + metadata + thumbnail
+     *
+     * @param track   the track to download
+     * @param session the current youtube-dl session
+     * @param files   the files to write
+     * @throws DownloaderException if download fails
+     */
+    private void downloadTrack(@NonNull TrackInfo track, @NonNull YoutubeDLWrapper session, @NonNull TempFiles files) throws DownloaderException {
+        // make sure all files to create are non- existent
+        files.delete();
+
+        // download
+        final YoutubeDLResponse downloadResponse = session.output(files.getAudio())
+                //.overwriteExisting()
+                .writeMetadata()
+                .writeThumbnail()
+                .download(((progress, etaInSeconds) -> updateNotification(createProgressNotification(track, progress / 100.0, etaInSeconds))), YOUTUBE_DL_RETRIES);
+        if (downloadResponse == null
+                || !files.getAudio().exists()
+                || !files.getMetadataJson().exists()) {
+            throw new DownloaderException("youtube-dl download failed!");
+        }
+    }
+
+    /**
+     * parse the metadata file and update the values in the track
+     *
+     * @param track the track to update
+     * @param files the files created by youtube-dl
+     * @throws DownloaderException if parsing fails
+     */
+    private void parseMetadata(@NonNull TrackInfo track, @NonNull TempFiles files) throws DownloaderException {
+        // check metadata file exists
+        if (!files.getMetadataJson().exists()) {
+            throw new DownloaderException("metadata file not found!");
+        }
+
+        // deserialize the file
+        final TrackMetadata metadata;
+        try (final FileReader reader = new FileReader(files.getMetadataJson())) {
+            metadata = gson.fromJson(reader, TrackMetadata.class);
+        } catch (IOException | JsonIOException | JsonSyntaxException e) {
+            throw new DownloaderException("deserialization of the metadata file failed", e);
+        }
+
+        // set track data
+        metadata.getTrackTitle().ifPresent(title -> track.title = title);
+        metadata.getArtistName().ifPresent(artist -> track.artist = artist);
+        metadata.getUploadDate().ifPresent(uploadDate -> track.releaseDate = uploadDate);
+        if (metadata.duration != null) {
+            track.duration = metadata.duration;
+        }
+
+        if (metadata.album != null && !metadata.album.trim().isEmpty()) {
+            track.albumName = metadata.album;
+        }
+    }
+
+    /**
+     * copy the temporary audio file to the final destination
+     *
+     * @param track      the track to download
+     * @param files      the temporary files, of which the audio file is copied to the downloads dir
+     * @param fileFormat the file format that was used for the download
+     * @throws DownloaderException if creating the final file or the copy operation fails
+     */
+    private void copyAudioToFinal(@NonNull TrackInfo track, @NonNull TempFiles files, @NonNull String fileFormat) throws DownloaderException {
+        // check audio file exists
+        if (!files.getAudio().exists()) {
+            throw new DownloaderException("cannot find audio file to copy");
+        }
+
+        // find root folder for saving downloaded tracks to
+        // find using storage framework, and only allow persisted folders we can write to
+        final Optional<DocumentFile> downloadRoot = getDownloadsDirectory();
+        if (!downloadRoot.isPresent()) {
+            throw new DownloaderException("failed to find downloads folder");
+        }
+
+        // create file to write the track to
+        final DocumentFile finalFile = downloadRoot.get().createFile("audio/mp3", track.title + "." + fileFormat);
+        if (finalFile == null || !finalFile.canWrite()) {
+            throw new DownloaderException("Could not create final output file!");
+        }
+
+        // copy the temp file to the final destination
+        try (final InputStream in = new FileInputStream(files.getAudio());
+             final OutputStream out = getContentResolver().openOutputStream(finalFile.getUri())) {
+            Util.streamTransfer(in, out, 1024);
+        } catch (IOException e) {
+            // try to remove the final file
+            if (!finalFile.delete()) {
+                Log.w(TAG, "failed to delete final file on copy fail");
+            }
+
+            throw new DownloaderException(String.format(Locale.US, "error copying temp file (%s) to final destination (%s)",
+                    files.getAudio().toString(), finalFile.getUri().toString()),
+                    e);
+        }
+
+        // set the final file in track info
+        track.audioFileKey = StorageHelper.encodeFile(finalFile);
+    }
+
+    /**
+     * copy the album cover to the final destination
+     *
+     * @param track the track to copy the cover of
+     * @param files the files downloaded by youtube-dl
+     * @throws DownloaderException if copying the cover fails
+     */
+    private void copyCoverToFinal(@NonNull TrackInfo track, @NonNull TempFiles files) throws DownloaderException {
+        // check thumbnail file exists
+        if (!files.getThumbnail().exists()) {
+            throw new DownloaderException("cannot find thumbnail file");
+        }
+
+        // get covers directory
+        final File coverRoot = getCoverArtDirectory();
+
+        // create file for the thumbnail
+        final File coverFile = new File(coverRoot, String.format("%s_%s.webp", track.id, UUID.randomUUID()));
+
+        // read temporary thumbnail file and write as webp in cover art directory
+        try (final InputStream in = new FileInputStream(files.getThumbnail());
+             final OutputStream out = new FileOutputStream(coverFile)) {
+            final Bitmap cover = BitmapFactory.decodeStream(in);
+            cover.compress(Bitmap.CompressFormat.WEBP, 100, out);
+            cover.recycle();
+        } catch (IOException e) {
+            throw new DownloaderException("failed to save cover as webp", e);
+        }
+
+        // set the cover file key in track
+        track.coverKey = StorageHelper.encodeFile(DocumentFile.fromFile(coverFile));
     }
 
     /**
@@ -319,17 +455,46 @@ public class DownloaderService extends LifecycleService {
     /**
      * get the {@link Prefs#DOWNLOADS_DIRECTORY} of the app, using storage framework
      *
-     * @param ctx the context to work in
      * @return the optional download root directory
      */
     @NonNull
-    public static Optional<DocumentFile> getDownloadsDirectory(@NonNull Context ctx) {
+    public Optional<DocumentFile> getDownloadsDirectory() {
         final StorageKey key = Prefs.DOWNLOADS_DIRECTORY.get();
         if (key == null) {
             return Optional.empty();
         }
 
-        return StorageHelper.getPersistedFilePermission(ctx, key, true);
+        return StorageHelper.getPersistedFilePermission(this, key, true);
+    }
+
+    /**
+     * get the cover art directory
+     *
+     * @return the directory to save cover art to
+     * @throws DownloaderException if the directory could not be created
+     */
+    @NonNull
+    public File getCoverArtDirectory() throws DownloaderException {
+        final File coversDir = new File(getNoBackupFilesDir(), "cover_store");
+        if (!coversDir.exists() && !coversDir.mkdirs()) {
+            throw new DownloaderException("could not create cover_store directory");
+        }
+        return coversDir;
+    }
+
+    /**
+     * get the youtube-dl cache directory
+     *
+     * @return the cache directory
+     * @throws DownloaderException if creating the directory failed
+     */
+    @NonNull
+    public File getDownloadCacheDirectory() throws DownloaderException {
+        final File cacheDir = new File(getCacheDir(), "youtube-dl_cache");
+        if (!cacheDir.exists() && !cacheDir.mkdirs()) {
+            throw new DownloaderException("could not create youtube-dl_cache directory");
+        }
+        return cacheDir;
     }
     //endregion
 

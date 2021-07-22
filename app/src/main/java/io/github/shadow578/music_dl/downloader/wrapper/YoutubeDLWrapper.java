@@ -169,6 +169,26 @@ public class YoutubeDLWrapper {
     }
 
     /**
+     * write the metadata to disk as a json file. path is {@link #output(File)} + .info.json
+     *
+     * @return self instance
+     */
+    public YoutubeDLWrapper writeMetadata() {
+        request.addOption("--write-info-json");
+        return this;
+    }
+
+    /**
+     * write the main thumbnail to disk as webp file. path is {@link #output(File)} + .webp
+     *
+     * @return self instance
+     */
+    public YoutubeDLWrapper writeThumbnail() {
+        request.addOption("--write-thumbnail");
+        return this;
+    }
+
+    /**
      * set the file to download to, using '-o OUTPUT'.
      * only for use with {@link #download(DownloadProgressCallback)} functions
      *
@@ -177,6 +197,18 @@ public class YoutubeDLWrapper {
      */
     public YoutubeDLWrapper output(@NonNull File output) {
         request.addOption("-o", output.getAbsolutePath());
+        return this;
+    }
+
+
+    /**
+     * set the youtube-dl cache directory, using '-cache-dir CACHE'.
+     *
+     * @param cache the cache directory
+     * @return self instance
+     */
+    public YoutubeDLWrapper cacheDir(@NonNull File cache) {
+        request.addOption("--cache-dir", cache.getAbsolutePath());
         return this;
     }
 
