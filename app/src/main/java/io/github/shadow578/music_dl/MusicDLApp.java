@@ -7,7 +7,7 @@ import android.util.Log;
 
 import io.github.shadow578.music_dl.db.TracksDB;
 import io.github.shadow578.music_dl.downloader.DownloaderService;
-import io.github.shadow578.music_dl.util.Util;
+import io.github.shadow578.music_dl.util.Async;
 import io.github.shadow578.music_dl.util.notifications.NotificationChannels;
 import io.github.shadow578.music_dl.util.preferences.PreferenceWrapper;
 
@@ -23,7 +23,7 @@ public class MusicDLApp extends Application {
         NotificationChannels.registerAll(this);
 
         // remove tracks that were deleted
-        Util.runAsync(() -> {
+        Async.runAsync(() -> {
             final int removedCount = TracksDB.init(this).markDeletedTracks(this);
             Log.i("MusicDL", String.format("removed %d tracks that were deleted in the file system", removedCount));
         });

@@ -19,10 +19,16 @@ public final class Util {
 
     //region youtube util
     /**
-     * youtube track ID regex.
+     * youtube full link ID regex.
      * CG1 = ID
      */
-    private static final Pattern ID_PATTERN = Pattern.compile("(?:https?://)?(?:music.)?(?:youtube.com)(?:/.*watch?\\?)(?:.*)?(?:v=)([^&]+)(?:&)?(?:.*)?");
+    private static final Pattern FULL_LINK_PATTERN = Pattern.compile("(?:https?://)?(?:music.)?(?:youtube.com)(?:/.*watch?\\?)(?:.*)?(?:v=)([^&]+)(?:&)?(?:.*)?");
+
+    /**
+     * youtube short link ID regex.
+     * CG1 = ID
+     */
+    private static final Pattern SHORT_LINK_PATTERN = Pattern.compile("(?:https?://)?(?:youtu.be/)([^&]+)(?:&)?(?:.*)?");
 
     /**
      * extract the track ID from a youtube (music) url (like [music.]youtube.com/watch?v=xxxxx)
@@ -32,7 +38,14 @@ public final class Util {
      */
     @NonNull
     public static Optional<String> extractTrackId(@NonNull String url) {
-        final Matcher m = ID_PATTERN.matcher(url);
+        // first try full link
+        Matcher m = FULL_LINK_PATTERN.matcher(url);
+        if (m.find()) {
+            return Optional.ofNullable(m.group(1));
+        }
+
+        // try short link
+        m = SHORT_LINK_PATTERN.matcher(url);
         if (m.find()) {
             return Optional.ofNullable(m.group(1));
         }
