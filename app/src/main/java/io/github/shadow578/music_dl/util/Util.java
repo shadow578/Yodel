@@ -1,19 +1,14 @@
 package io.github.shadow578.music_dl.util;
 
-import android.os.Handler;
-import android.os.Looper;
-
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.Random;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -35,55 +30,14 @@ public final class Util {
      * @param url the url to extract the id from
      * @return the id, or null if could not extract
      */
-    @Nullable
-    public static String extractTrackId(@NonNull String url) {
+    @NonNull
+    public static Optional<String> extractTrackId(@NonNull String url) {
         final Matcher m = ID_PATTERN.matcher(url);
         if (m.find()) {
-            return m.group(1);
+            return Optional.ofNullable(m.group(1));
         }
 
-        return null;
-    }
-
-    /**
-     * create a youtube music watch link
-     *
-     * @param id the id of the track to watch
-     * @return the full page link url
-     */
-    @NonNull
-    public static String getYoutubeMusicWatchLink(@NonNull String id) {
-        return Url.YoutubeMusicWatch.url() + id;
-    }
-    //endregion
-
-    //region runOnMain / runAsync
-    /**
-     * handler to run functions on the main thread.
-     */
-    private static final Handler MAIN_HANDLER = new Handler(Looper.getMainLooper());
-
-    /**
-     * run a function on the main thread
-     *
-     * @param runnable the function to run
-     */
-    public static void runOnMain(@NonNull Runnable runnable) {
-        MAIN_HANDLER.post(runnable);
-    }
-
-    /**
-     * executor for background operations
-     */
-    private static final Executor asyncExecutor = Executors.newCachedThreadPool();
-
-    /**
-     * run a function in the background
-     *
-     * @param runnable the function to run
-     */
-    public static void runAsync(@NonNull Runnable runnable) {
-        asyncExecutor.execute(runnable);
+        return Optional.empty();
     }
     //endregion
 
@@ -150,7 +104,6 @@ public final class Util {
     }
     //endregion
 
-
     /**
      * format a seconds value to HH:mm:ss or mm:ss format
      *
@@ -162,13 +115,13 @@ public final class Util {
         final long hours = seconds / 3600;
         if (hours <= 0) {
             // less than 1h, use mm:ss
-            return String.format(Locale.US, "%02d:%02d",
+            return String.format(Locale.US, "%01d:%02d",
                     (seconds % 3600) / 60,
                     seconds % 60);
         }
 
         // more than 1h, use HH:mm:ss
-        return String.format(Locale.US, "%02d:%02d:%02d",
+        return String.format(Locale.US, "%01d:%02d:%02d",
                 hours,
                 (seconds % 3600) / 60,
                 seconds % 60);

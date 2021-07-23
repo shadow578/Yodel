@@ -195,7 +195,6 @@ public class YoutubeDLWrapper {
         return this;
     }
 
-
     /**
      * set the youtube-dl cache directory, using '-cache-dir CACHE'.
      *

@@ -12,7 +12,7 @@ import androidx.lifecycle.MutableLiveData;
 import io.github.shadow578.music_dl.db.TracksDB;
 import io.github.shadow578.music_dl.db.model.TrackInfo;
 import io.github.shadow578.music_dl.downloader.DownloaderService;
-import io.github.shadow578.music_dl.util.Util;
+import io.github.shadow578.music_dl.util.Async;
 
 /**
  * viewmodel for the {@link YoutubeMusicFragment}
@@ -54,7 +54,7 @@ public class YoutubeMusicViewModel extends AndroidViewModel {
         //TODO do not overwrite existing entries -> show dialog to choose to delete existing file or just ignore
 
         // insert into database
-        Util.runAsync(()
+        Async.runAsync(()
                 -> TracksDB.getInstance().tracks().insert(TrackInfo.createNew(id, currentTitle)));
 
         // start downloader

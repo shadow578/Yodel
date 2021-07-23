@@ -14,8 +14,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
 
+import java.util.Optional;
+
 import io.github.shadow578.music_dl.databinding.FragmentExploreBinding;
 import io.github.shadow578.music_dl.ui.BaseFragment;
+import io.github.shadow578.music_dl.util.Async;
 import io.github.shadow578.music_dl.util.Payload;
 import io.github.shadow578.music_dl.util.Url;
 import io.github.shadow578.music_dl.util.Util;
@@ -107,18 +110,18 @@ public class YoutubeMusicFragment extends BaseFragment {
      */
     private void handleDownloadTrack() {
         // extract id
-        final String id = Util.extractTrackId(b.webview.getUrl());
+        final Optional<String> id = Util.extractTrackId(b.webview.getUrl());
 
         // show toast if could not find id or no track is playing
-        if (id == null
-                || id.isEmpty()
+        if (!id.isPresent()
+                || id.get().isEmpty()
                 || !model.isTrackPlaying()) {
             Toast.makeText(requireContext(), "could not find track info! is a track playing?", Toast.LENGTH_SHORT).show();
             return;
         }
 
         // call model download
-        model.downloadTrack(id);
+        model.downloadTrack(id.get());
     }
 
     /**
@@ -164,7 +167,7 @@ public class YoutubeMusicFragment extends BaseFragment {
         @JavascriptInterface
         public void videoChanged() {
             // update the title
-            Util.runOnMain(() -> Payload.ExtractTrackTitle.run(b.webview));
+            Async.runOnMain(() -> Payload.ExtractTrackTitle.run(b.webview));
         }
 
         /**
@@ -174,7 +177,7 @@ public class YoutubeMusicFragment extends BaseFragment {
          */
         @JavascriptInterface
         public void reportTitle(@Nullable String title) {
-            Util.runOnMain(() -> {
+            Async.runOnMain(() -> {
                 // report new title
                 model.setCurrentTitle(title);
 
