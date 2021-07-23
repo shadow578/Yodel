@@ -9,7 +9,6 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 public class Async {
-    //region runOnMain / runAsync
     /**
      * handler to run functions on the main thread.
      */
@@ -25,6 +24,16 @@ public class Async {
     }
 
     /**
+     * run a function on the main thread
+     *
+     * @param runnable the function to run
+     * @param delay    the delay, in milliseconds
+     */
+    public static void runLaterOnMain(@NonNull Runnable runnable, long delay) {
+        MAIN_HANDLER.postDelayed(runnable, delay);
+    }
+
+    /**
      * executor for background operations
      */
     private static final Executor asyncExecutor = Executors.newCachedThreadPool();
@@ -37,5 +46,4 @@ public class Async {
     public static void runAsync(@NonNull Runnable runnable) {
         asyncExecutor.execute(runnable);
     }
-    //endregion
 }

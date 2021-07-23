@@ -15,14 +15,20 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.YTMusicDL"
         android:usesCleartextTraffic="true">
-        <activity android:name=".ui.main.MainActivity">
+
+        <!-- splash screen -->
+        <activity android:name=".ui.splash.SplashScreenActivity"
+            android:theme="@style/Theme.SplashScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- main -->
+        <activity android:name=".ui.main.MainActivity" />
+
+        <!-- services -->
         <service android:name=".downloader.DownloaderService" />
     </application>
-
 </manifest>
