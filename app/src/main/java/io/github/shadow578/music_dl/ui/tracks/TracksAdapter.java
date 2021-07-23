@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
+import io.github.shadow578.music_dl.R;
 import io.github.shadow578.music_dl.databinding.RecyclerTrackViewBinding;
 import io.github.shadow578.music_dl.db.model.TrackInfo;
 import io.github.shadow578.music_dl.util.Util;
@@ -58,6 +59,7 @@ public class TracksAdapter extends RecyclerView.Adapter<TracksAdapter.Holder> {
         final Optional<Uri> coverUri = StorageHelper.decodeUri(track.coverKey);
         coverUri.ifPresent(cover -> Glide.with(holder.b.coverArt)
                 .load(cover)
+                .fallback(R.drawable.ic_round_tpose_24)
                 .into(holder.b.coverArt));
 
         // title

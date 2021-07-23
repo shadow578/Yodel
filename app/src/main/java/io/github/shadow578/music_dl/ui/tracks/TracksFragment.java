@@ -47,7 +47,7 @@ public class TracksFragment extends BaseFragment {
 
         // show empty label if no tracks available
         model.getTracks().observe(requireActivity(), tracks
-                -> b.emptyLabel.setVisibility(tracks.size() <= 0 ? View.GONE : View.VISIBLE));
+                -> b.emptyLabel.setVisibility(tracks.size() > 0 ? View.GONE : View.VISIBLE));
     }
 
     /**
