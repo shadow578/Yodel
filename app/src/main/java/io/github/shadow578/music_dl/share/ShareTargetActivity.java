@@ -12,6 +12,7 @@ import java.util.Optional;
 
 import io.github.shadow578.music_dl.db.TracksDB;
 import io.github.shadow578.music_dl.db.model.TrackInfo;
+import io.github.shadow578.music_dl.downloader.DownloaderService;
 import io.github.shadow578.music_dl.util.Async;
 import io.github.shadow578.music_dl.util.Util;
 
@@ -85,6 +86,17 @@ public class ShareTargetActivity extends AppCompatActivity {
         // add to db as pending download
         Async.runAsync(()
                 -> TracksDB.getInstance().tracks().insert(TrackInfo.createNew(trackId.get(), trackTitle)));
+
+        // start downloader as needed
+        startDownloadService();
         return true;
+    }
+
+    /**
+     * start the downloader service
+     */
+    private void startDownloadService() {
+        final Intent serviceIntent = new Intent(this, DownloaderService.class);
+        startService(serviceIntent);
     }
 }

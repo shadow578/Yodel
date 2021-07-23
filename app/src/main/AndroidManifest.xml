@@ -5,6 +5,8 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
+    <permission android:name="io.github.shadow578.music_dl.permission.QUEUE_DOWNLOAD"/>
+
     <application
         android:name=".MusicDLApp"
         android:allowBackup="true"
@@ -37,6 +39,16 @@
                 <data android:mimeType="text/plain" />
             </intent-filter>
         </activity>
+
+        <!-- download request receiver -->
+        <receiver android:name=".share.DownloadBroadcastReceiver"
+            android:enabled="true"
+            android:exported="true"
+            android:permission="io.github.shadow578.music_dl.permission.QUEUE_DOWNLOAD">
+            <intent-filter>
+                <action android:name="io.github.shadow578.music_dl.action.QUEUE_DOWNLOAD"/>
+            </intent-filter>
+        </receiver>
 
         <!-- services -->
         <service android:name=".downloader.DownloaderService" />

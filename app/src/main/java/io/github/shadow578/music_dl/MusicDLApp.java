@@ -27,9 +27,5 @@ public class MusicDLApp extends Application {
             final int removedCount = TracksDB.init(this).markDeletedTracks(this);
             Log.i("MusicDL", String.format("removed %d tracks that were deleted in the file system", removedCount));
         });
-
-        // start downloader service
-        final Intent serviceIntent = new Intent(this, DownloaderService.class);
-        startService(serviceIntent);
     }
 }

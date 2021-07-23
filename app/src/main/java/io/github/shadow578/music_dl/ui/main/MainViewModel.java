@@ -1,14 +1,23 @@
 package io.github.shadow578.music_dl.ui.main;
 
+import android.app.Application;
+import android.content.Intent;
+
 import androidx.annotation.NonNull;
+import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
+
+import io.github.shadow578.music_dl.downloader.DownloaderService;
 
 /**
- * viewmodel for the main activity
+ * view model for the main activity
  */
-public class MainViewModel extends ViewModel {
+public class MainViewModel extends AndroidViewModel {
+    public MainViewModel(@NonNull Application application) {
+        super(application);
+        startDownloadService();
+    }
 
     /**
      * the currently open section
@@ -16,6 +25,13 @@ public class MainViewModel extends ViewModel {
     @NonNull
     private final MutableLiveData<MainActivity.Section> currentSection = new MutableLiveData<>(MainActivity.Section.Tracks);
 
+    /**
+     * start the downloader service
+     */
+    private void startDownloadService() {
+        final Intent serviceIntent = new Intent(getApplication(), DownloaderService.class);
+        getApplication().startService(serviceIntent);
+    }
 
     /**
      * @return the currently visible section
@@ -32,7 +48,7 @@ public class MainViewModel extends ViewModel {
      */
     public void switchToSection(@NonNull MainActivity.Section section) {
         // ignore if same section
-        if (currentSection.getValue().equals(section)) {
+        if (section.equals(currentSection.getValue())) {
             return;
         }
 
