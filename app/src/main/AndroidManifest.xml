@@ -17,7 +17,8 @@
         android:usesCleartextTraffic="true">
 
         <!-- splash screen -->
-        <activity android:name=".ui.splash.SplashScreenActivity"
+        <activity
+            android:name=".ui.splash.SplashScreenActivity"
             android:theme="@style/Theme.SplashScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -27,6 +28,15 @@
 
         <!-- main -->
         <activity android:name=".ui.main.MainActivity" />
+
+        <!-- share -->
+        <activity android:name=".share.ShareTargetActivity">
+            <intent-filter android:label="Download from YouTube">
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+        </activity>
 
         <!-- services -->
         <service android:name=".downloader.DownloaderService" />
