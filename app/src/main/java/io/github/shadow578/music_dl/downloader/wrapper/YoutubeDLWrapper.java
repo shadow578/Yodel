@@ -12,7 +12,6 @@ import com.yausername.youtubedl_android.YoutubeDL;
 import com.yausername.youtubedl_android.YoutubeDLException;
 import com.yausername.youtubedl_android.YoutubeDLRequest;
 import com.yausername.youtubedl_android.YoutubeDLResponse;
-import com.yausername.youtubedl_android.mapper.VideoInfo;
 
 import java.io.File;
 
@@ -43,10 +42,6 @@ public class YoutubeDLWrapper {
      */
     @NonNull
     public static YoutubeDLWrapper create(@NonNull String videoUrl) {
-        if (!initialized) {
-            throw new IllegalStateException("youtube-dl was not initialized! call YoutubeDLWrapper.init() first!");
-        }
-
         return new YoutubeDLWrapper(videoUrl);
     }
 
@@ -265,6 +260,10 @@ public class YoutubeDLWrapper {
      * @return the response, or null if the download failed
      */
     public YoutubeDLResponse download(@Nullable DownloadProgressCallback progressCallback, int tries) {
+        if (!initialized) {
+            throw new IllegalStateException("youtube-dl was not initialized! call YoutubeDLWrapper.init() first!");
+        }
+
         YoutubeDLResponse response;
         do {
             response = download(progressCallback);
@@ -283,6 +282,10 @@ public class YoutubeDLWrapper {
      * @return the response, or null if the download failed
      */
     public YoutubeDLResponse download(@Nullable DownloadProgressCallback progressCallback) {
+        if (!initialized) {
+            throw new IllegalStateException("youtube-dl was not initialized! call YoutubeDLWrapper.init() first!");
+        }
+
         try {
             Log.i(TAG, "downloading " + videoUrl);
             final YoutubeDLResponse response = YoutubeDL.getInstance().execute(request, progressCallback);
@@ -308,44 +311,6 @@ public class YoutubeDLWrapper {
         Log.i(TAG, " exit code: " + response.getExitCode());
         Log.i(TAG, " stdout: \n" + response.getOut());
         Log.i(TAG, " stderr: \n" + response.getErr());
-    }
-    //endregion
-
-    //region get info
-
-    /**
-     * get the video info, with retries
-     *
-     * @param tries the number of retries for downloading
-     * @return the video info, or null if failed
-     */
-    @Nullable
-    public VideoInfo getInfo(int tries) {
-        VideoInfo info;
-        do {
-            info = getInfo();
-            if (info != null) {
-                break;
-            }
-        } while (--tries > 0);
-
-        return info;
-    }
-
-    /**
-     * get the video info, without retries
-     *
-     * @return the video info, or null if failed
-     */
-    @Nullable
-    public VideoInfo getInfo() {
-        try {
-            Log.i(TAG, "getting video info for " + videoUrl);
-            return YoutubeDL.getInstance().getInfo(videoUrl);
-        } catch (YoutubeDLException | InterruptedException e) {
-            Log.e(TAG, "get-info of '" + videoUrl + "' using youtube-dl failed", e);
-            return null;
-        }
     }
     //endregion
 }
