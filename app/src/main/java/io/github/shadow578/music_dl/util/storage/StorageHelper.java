@@ -49,13 +49,18 @@ public class StorageHelper {
     public static Optional<Uri> decodeUri(@NonNull StorageKey key) {
         try {
             // base- 64 decode
-            String uri = new String(Base64.decode(key.toString(), Base64.DEFAULT), StandardCharsets.UTF_8);
+            String uriString = new String(Base64.decode(key.toString(), Base64.DEFAULT), StandardCharsets.UTF_8);
 
             // decode uri
-            uri = Uri.decode(uri);
+            uriString = Uri.decode(uriString);
+
+            // check if empty
+            if (uriString == null || uriString.isEmpty()) {
+                return Optional.empty();
+            }
 
             // parse uri
-            return Optional.of(Uri.parse(uri));
+            return Optional.of(Uri.parse(uriString));
         } catch (IllegalArgumentException ignored) {
             return Optional.empty();
         }

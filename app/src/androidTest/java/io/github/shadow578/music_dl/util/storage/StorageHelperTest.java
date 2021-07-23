@@ -2,24 +2,31 @@ package io.github.shadow578.music_dl.util.storage;
 
 import android.net.Uri;
 
+import androidx.test.filters.SmallTest;
+import androidx.test.platform.app.InstrumentationRegistry;
+
+import org.junit.Test;
+
+import java.io.File;
+
 import static com.github.npathai.hamcrestopt.OptionalMatchers.isEmpty;
 import static com.github.npathai.hamcrestopt.OptionalMatchers.isPresentAnd;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.core.IsEqual.equalTo;
+import static org.hamcrest.core.IsNull.notNullValue;
 
 /**
- * test for {@link StorageHelper}
- * TODO: StorageHelper depends on android libraries, maybe run these tests in a instrumentation test is possible?
+ * instrumented test for {@link StorageHelper}
  */
+@SmallTest
 public class StorageHelperTest {
 
     /**
      * {@link StorageHelper#encodeUri(Uri)} and {@link StorageHelper#decodeUri(StorageKey)}
      */
-    //@Test
+    @Test
     public void shouldEncodeAndDecodeUri() {
-        final Uri uri = Uri.parse("file://data/user/0/io.gihub.shadow578.yt_dl/cache/test.mp3");
+        final Uri uri = Uri.fromFile(new File(InstrumentationRegistry.getInstrumentation().getTargetContext().getCacheDir(), "test.bar"));
 
         // encode
         final StorageKey key = StorageHelper.encodeUri(uri);
@@ -32,12 +39,8 @@ public class StorageHelperTest {
     /**
      * {@link StorageHelper#decodeUri(StorageKey)} with invalid key
      */
-    //@Test
+    @Test
     public void shouldNotDecode() {
-        // empty key
         assertThat(StorageHelper.decodeUri(StorageKey.EMPTY), isEmpty());
-
-        // invalid key
-        assertThat(StorageHelper.decodeUri(new StorageKey("foobar")), isEmpty());
     }
 }
