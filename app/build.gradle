@@ -71,4 +71,6 @@ dependencies {
 
     // unit testing
     testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.hamcrest:hamcrest:2.2'
+    testImplementation 'com.github.npathai:hamcrest-optional:2.0.0'
 }
