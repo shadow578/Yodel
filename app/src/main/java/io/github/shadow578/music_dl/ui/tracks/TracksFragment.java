@@ -1,5 +1,7 @@
 package io.github.shadow578.music_dl.ui.tracks;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,9 +13,13 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import java.util.Optional;
+
+import io.github.shadow578.music_dl.R;
 import io.github.shadow578.music_dl.databinding.FragmentTracksBinding;
 import io.github.shadow578.music_dl.db.model.TrackInfo;
 import io.github.shadow578.music_dl.ui.BaseFragment;
+import io.github.shadow578.music_dl.util.storage.StorageHelper;
 
 /**
  * downloaded and downloading tracks UI
@@ -56,6 +62,19 @@ public class TracksFragment extends BaseFragment {
      * @param track the track to play
      */
     private void playTrack(@NonNull TrackInfo track) {
-        Toast.makeText(requireContext(), "track play: " + track.title, Toast.LENGTH_LONG).show();
+        // decode track audio file key
+        final Optional<Uri> trackUri = StorageHelper.decodeUri(track.audioFileKey);
+        if (!trackUri.isPresent()) {
+            Toast.makeText(requireContext(), R.string.tracks_play_failed, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // start external player
+        final Intent playIntent = new Intent(Intent.ACTION_VIEW)
+                .setDataAndType(trackUri.get(), "audio/*")
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                        | Intent.FLAG_ACTIVITY_SINGLE_TOP
+                        | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        startActivity(playIntent);
     }
 }
