@@ -1,5 +1,32 @@
 <resources>
+    <!-- shared -->
     <string name="app_name">YTMusic-DL</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="empty_text">Empty,\nlike my soul</string>
+    <string name="base_toast_select_download_directory">Select the folder you want to save tracks in</string>
+    <string name="base_toast_set_download_directory_fail">could not set downloads directory! please try again, or report this issue</string>
+
+    <!-- bottom navigation in main -->
+    <string name="main_nav_tracks">Tracks</string>
+    <string name="main_nav_explore">Explore</string>
+    <string name="main_nav_more">More</string>
+
+    <!-- tracks -->
+    <string name="tracks_artist_and_album" formatted="true">%1$s • %2$s</string>
+
+    <!-- share -->
+    <string name="share_toast_ok">Download Queued</string>
+    <string name="share_toast_fail">Cannot download shared video!</string>
+
+    <!-- dl service -->
+    <string name="dl_notification_subtext" formatted="true">Downloading • ETA %1$s</string>
+    <string name="dl_status_starting_download">Starting Download</string>
+    <string name="dl_status_process_metadata">Processing Metadata</string>
+    <string name="dl_status_finish">Finishing Download</string>
+
+    <!-- notification channels -->
+    <string name="channel_default_name">Default</string>
+    <string name="channel_default_description">the fallback notification channel</string>
+    <string name="channel_downloader_name">Downloads</string>
+    <string name="channel_downloader_description">sends information about in- progress downloads</string>
+
 </resources>

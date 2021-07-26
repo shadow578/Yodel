@@ -14,6 +14,7 @@ import androidx.documentfile.provider.DocumentFile;
 
 import java.util.Optional;
 
+import io.github.shadow578.music_dl.R;
 import io.github.shadow578.music_dl.util.preferences.Prefs;
 import io.github.shadow578.music_dl.util.storage.StorageHelper;
 import io.github.shadow578.music_dl.util.storage.StorageKey;
@@ -54,7 +55,7 @@ public class BaseActivity extends AppCompatActivity {
                                 Log.i("MusicDL", String.format("selected and saved new track downloads directory: %s", treeUri.toString()));
                             } else {
                                 // bad selection
-                                Toast.makeText(this, "could not set downloads directory! please try again, or report this issue", Toast.LENGTH_LONG).show();
+                                Toast.makeText(this, R.string.base_toast_set_download_directory_fail, Toast.LENGTH_LONG).show();
                                 maybeSelectDownloadsDir();
                             }
                         }
@@ -83,13 +84,11 @@ public class BaseActivity extends AppCompatActivity {
         Prefs.DOWNLOADS_DIRECTORY.reset();
 
         // show toast with prompt
-        //TODO remove if EXTRA_TITLE works as expected
-        Toast.makeText(this, "Select the folder you want to use for downloaded tracks", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, R.string.base_toast_select_download_directory, Toast.LENGTH_LONG).show();
 
         // select downloads dir
         final Intent openTree = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
-                .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
-                .putExtra(Intent.EXTRA_TITLE, "Folder for Tracks");
+                .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
         downloadDirectorySelectLauncher.launch(openTree);
     }
 }

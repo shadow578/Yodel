@@ -7,6 +7,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.documentfile.provider.DocumentFile;
@@ -242,7 +243,7 @@ public class DownloaderService extends LifecycleService {
         TempFiles files = null;
         try {
             // create session
-            updateNotification(createStatusNotification(track, "Starting Download"));
+            updateNotification(createStatusNotification(track, R.string.dl_status_starting_download));
             final YoutubeDLWrapper session = createSession(track, fileFormat);
             files = createTempFiles(track, fileFormat);
 
@@ -250,7 +251,7 @@ public class DownloaderService extends LifecycleService {
             downloadTrack(track, session, files);
 
             // parse the metadata
-            updateNotification(createStatusNotification(track, "Processing Metadata"));
+            updateNotification(createStatusNotification(track, R.string.dl_status_process_metadata));
             parseMetadata(track, files);
 
             // write id3v2 metadata for mp3 files
@@ -264,7 +265,7 @@ public class DownloaderService extends LifecycleService {
             }
 
             // copy audio file to downloads dir
-            updateNotification(createStatusNotification(track, "Finishing Download"));
+            updateNotification(createStatusNotification(track, R.string.dl_status_finish));
             copyAudioToFinal(track, files, fileFormat);
 
             // copy cover to cover store
@@ -616,7 +617,7 @@ public class DownloaderService extends LifecycleService {
     private Notification createProgressNotification(@NonNull TrackInfo track, double progress, long eta) {
         return getBaseNotification()
                 .setContentTitle(track.title)
-                .setSubText(String.format("Downloading • ETA %s", Util.secondsToTimeString(eta)))
+                .setSubText(getString(R.string.dl_notification_subtext, Util.secondsToTimeString(eta)))
                 .setProgress(100, (int) Math.floor(progress * 100), false)
                 .build();
     }
@@ -624,15 +625,15 @@ public class DownloaderService extends LifecycleService {
     /**
      * create a download prepare display notification (before or after track download)
      *
-     * @param track  the track that is being downloaded
-     * @param status the status string
+     * @param track     the track that is being downloaded
+     * @param statusRes the status string
      * @return the status notification
      */
     @NonNull
-    private Notification createStatusNotification(@NonNull TrackInfo track, @NonNull String status) {
+    private Notification createStatusNotification(@NonNull TrackInfo track, @StringRes int statusRes) {
         return getBaseNotification()
                 .setContentTitle(track.title)
-                .setSubText(status)
+                .setSubText(getString(statusRes))
                 .setProgress(1, 0, true)
                 .build();
     }

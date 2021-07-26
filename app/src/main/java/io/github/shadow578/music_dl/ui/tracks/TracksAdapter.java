@@ -14,7 +14,6 @@ import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 
 import io.github.shadow578.music_dl.R;
@@ -68,7 +67,8 @@ public class TracksAdapter extends RecyclerView.Adapter<TracksAdapter.Holder> {
         // build and set artist + album
         final String albumAndArtist;
         if (track.artist != null && track.albumName != null) {
-            albumAndArtist = String.format(Locale.US, "%s • %s", track.artist, track.albumName);
+            albumAndArtist = holder.b.getRoot().getContext().getString(R.string.tracks_artist_and_album,
+                    track.artist, track.albumName);
         } else if (track.artist != null) {
             albumAndArtist = track.artist;
         } else if (track.albumName != null) {

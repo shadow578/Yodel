@@ -8,6 +8,8 @@ import androidx.annotation.StringRes;
 import androidx.core.app.NotificationChannelCompat;
 import androidx.core.app.NotificationManagerCompat;
 
+import io.github.shadow578.music_dl.R;
+
 /**
  * class to handle notification channels
  */
@@ -18,12 +20,12 @@ public enum NotificationChannels {
      * <p>
      * only for use when testing stuff (and the actual channel is not setup yet) or for notifications that are normally not shown
      */
-    Default(),
+    Default(R.string.channel_default_name, R.string.channel_default_description),
 
     /**
      * notification channel used by {@link io.github.shadow578.music_dl.downloader.DownloaderService} to show download progress
      */
-    DownloadProgress(NotificationManagerCompat.IMPORTANCE_LOW);
+    DownloadProgress(R.string.channel_downloader_name, R.string.channel_downloader_description, NotificationManagerCompat.IMPORTANCE_LOW);
 
 // region boring background stuff
 

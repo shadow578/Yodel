@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.Optional;
 
+import io.github.shadow578.music_dl.R;
 import io.github.shadow578.music_dl.db.TracksDB;
 import io.github.shadow578.music_dl.db.model.TrackInfo;
 import io.github.shadow578.music_dl.downloader.DownloaderService;
@@ -30,9 +31,9 @@ public class ShareTargetActivity extends AppCompatActivity {
         if (intent != null
                 && Intent.ACTION_SEND.equals(intent.getAction())) {
             if (handleShare(intent)) {
-                Toast.makeText(this, "queued download", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.share_toast_ok, Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(this, "could not download shared video!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.share_toast_fail, Toast.LENGTH_SHORT).show();
             }
         }
 

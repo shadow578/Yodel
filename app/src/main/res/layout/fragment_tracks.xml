@@ -20,7 +20,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:text="Empty,\n like my thoughts"
+        android:text="@string/empty_text"
         android:textAlignment="center"
         android:textSize="20sp"
         android:textStyle="bold"
