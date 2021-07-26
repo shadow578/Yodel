@@ -61,6 +61,9 @@ dependencies {
     implementation 'com.github.yausername.youtubedl-android:library:0.12.4'
     implementation 'com.github.yausername.youtubedl-android:ffmpeg:0.12.4'
 
+    // id3v2 tagging
+    implementation 'com.mpatric:mp3agic:0.9.1'
+
     // gson
     implementation 'com.google.code.gson:gson:2.8.7'
 

@@ -51,9 +51,13 @@ public class YoutubeDLWrapperTest {
         assertThat(args, hasItem(videoUrl));
 
         // audio only
-        session.audioOnly();
+        session.audioOnly("mp3");
         args = session.getRequest().buildCommand();
         assertThat(args, hasItems("-f", "bestaudio"));
+        assertThat(args, hasItems("--extract-audio"));
+        assertThat(args, hasItems("--audio-quality", "0"));
+        assertThat(args, hasItems("--audio-format", "mp3"));
+
 
         // video only
         session.videoOnly();

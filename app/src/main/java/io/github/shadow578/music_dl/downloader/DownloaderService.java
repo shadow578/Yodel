@@ -15,8 +15,13 @@ import androidx.lifecycle.LifecycleService;
 import com.google.gson.Gson;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
+import com.mpatric.mp3agic.ID3v2;
+import com.mpatric.mp3agic.InvalidDataException;
+import com.mpatric.mp3agic.NotSupportedException;
+import com.mpatric.mp3agic.UnsupportedTagException;
 import com.yausername.youtubedl_android.YoutubeDLResponse;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -34,6 +39,7 @@ import io.github.shadow578.music_dl.R;
 import io.github.shadow578.music_dl.db.TracksDB;
 import io.github.shadow578.music_dl.db.model.TrackInfo;
 import io.github.shadow578.music_dl.db.model.TrackStatus;
+import io.github.shadow578.music_dl.downloader.wrapper.MP3agicWrapper;
 import io.github.shadow578.music_dl.downloader.wrapper.YoutubeDLWrapper;
 import io.github.shadow578.music_dl.util.Util;
 import io.github.shadow578.music_dl.util.notifications.NotificationChannels;
@@ -237,7 +243,7 @@ public class DownloaderService extends LifecycleService {
         try {
             // create session
             updateNotification(createStatusNotification(track, "Starting Download"));
-            final YoutubeDLWrapper session = createSession(track);
+            final YoutubeDLWrapper session = createSession(track, fileFormat);
             files = createTempFiles(track, fileFormat);
 
             // download the track and metadata using youtube-dl
@@ -246,6 +252,16 @@ public class DownloaderService extends LifecycleService {
             // parse the metadata
             updateNotification(createStatusNotification(track, "Processing Metadata"));
             parseMetadata(track, files);
+
+            // write id3v2 metadata for mp3 files
+            // if this fails, we do not fail the whole operation
+            if (fileFormat.toLowerCase().equals("mp3")) {
+                try {
+                    writeID3Tag(track, files);
+                } catch (DownloaderException e) {
+                    Log.e(TAG, "failed to write id3v2 tags of " + track.id + "! (this is not fatal, the rest of the download was successful)", e);
+                }
+            }
 
             // copy audio file to downloads dir
             updateNotification(createStatusNotification(track, "Finishing Download"));
@@ -277,16 +293,17 @@ public class DownloaderService extends LifecycleService {
     /**
      * prepare a new youtube-dl session for the track
      *
-     * @param track the track to prepare the session for
+     * @param track      the track to prepare the session for
+     * @param fileFormat the file format to download the track in
      * @return the youtube-dl session
      * @throws DownloaderException if the cache directory could not be created (needed for the session)
      */
     @NonNull
-    private YoutubeDLWrapper createSession(@NonNull TrackInfo track) throws DownloaderException {
+    private YoutubeDLWrapper createSession(@NonNull TrackInfo track, @NonNull String fileFormat) throws DownloaderException {
         return YoutubeDLWrapper.create(resolveVideoUrl(track))
                 .fixSsl() // TODO make ssl fix a option in props
                 .cacheDir(getDownloadCacheDirectory())
-                .audioOnly();
+                .audioOnly(fileFormat);
     }
 
     /**
@@ -298,8 +315,8 @@ public class DownloaderService extends LifecycleService {
      */
     @NonNull
     private TempFiles createTempFiles(@NonNull TrackInfo track, @NonNull String fileFormat) {
-        final File tempAudio = Util.getTempFile("dl_" + track.id, "." + fileFormat, getCacheDir());
-        return new TempFiles(tempAudio);
+        final File tempAudio = Util.getTempFile("dl_" + track.id, "", getCacheDir());
+        return new TempFiles(tempAudio, fileFormat);
     }
 
     /**
@@ -416,7 +433,8 @@ public class DownloaderService extends LifecycleService {
      */
     private void copyCoverToFinal(@NonNull TrackInfo track, @NonNull TempFiles files) throws DownloaderException {
         // check thumbnail file exists
-        if (!files.getThumbnail().exists()) {
+        final Optional<File> thumbnail = files.getThumbnail();
+        if (!thumbnail.isPresent() || !thumbnail.get().exists()) {
             throw new DownloaderException("cannot find thumbnail file");
         }
 
@@ -427,7 +445,7 @@ public class DownloaderService extends LifecycleService {
         final File coverFile = new File(coverRoot, String.format("%s_%s.webp", track.id, UUID.randomUUID()));
 
         // read temporary thumbnail file and write as webp in cover art directory
-        try (final InputStream in = new FileInputStream(files.getThumbnail());
+        try (final InputStream in = new FileInputStream(thumbnail.get());
              final OutputStream out = new FileOutputStream(coverFile)) {
             final Bitmap cover = BitmapFactory.decodeStream(in);
             cover.compress(Bitmap.CompressFormat.WEBP, 100, out);
@@ -439,6 +457,62 @@ public class DownloaderService extends LifecycleService {
         // set the cover file key in track
         track.coverKey = StorageHelper.encodeFile(DocumentFile.fromFile(coverFile));
     }
+
+    /**
+     * write the track metadata to the id3v2 tag of the file
+     *
+     * @param track the track data
+     * @param files the files downloaded by youtube-dl
+     * @throws DownloaderException if writing the id3 tag fails
+     */
+    private void writeID3Tag(@NonNull TrackInfo track, @NonNull TempFiles files) throws DownloaderException {
+        try {
+            // clear all previous id3 tags, and create a new & empty one
+            final MP3agicWrapper mp3Wrapper = MP3agicWrapper.create(files.getAudio());
+            final ID3v2 tag = mp3Wrapper
+                    .clearAllTags()
+                    .editTag();
+
+            // write basic metadata (title, artist, album, ...)
+            tag.setTitle(track.title);
+
+            if (track.artist != null) {
+                tag.setArtist(track.artist);
+            }
+
+            if (track.releaseDate != null) {
+                tag.setYear(String.format(Locale.US, "%04d", track.releaseDate.getYear()));
+            }
+
+            if (track.albumName != null) {
+                tag.setAlbum(track.albumName);
+            }
+
+            // set cover art (if thumbnail was downloaded)
+            final Optional<File> thumbnail = files.getThumbnail();
+            if (thumbnail.isPresent() && thumbnail.get().exists()) {
+                try (final FileInputStream src = new FileInputStream(thumbnail.get());
+                     final ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+                    // convert to png
+                    final Bitmap cover = BitmapFactory.decodeStream(src);
+                    cover.compress(Bitmap.CompressFormat.PNG, 100, out);
+                    cover.recycle();
+
+                    // write cover to tag
+                    tag.setAlbumImage(out.toByteArray(), "image/png");
+                } catch (IOException e) {
+                    Log.e(TAG, "failed to convert cover image to PNG", e);
+                }
+            }
+
+            // save the file with tags
+            mp3Wrapper.save();
+        } catch (IOException | NotSupportedException | InvalidDataException | UnsupportedTagException e) {
+            throw new DownloaderException("could not write id3v2 tag to file!", e);
+        }
+    }
+
+    //region util
 
     /**
      * get the video url youtube-dl should use for a track
@@ -496,6 +570,7 @@ public class DownloaderService extends LifecycleService {
         }
         return cacheDir;
     }
+    //endregion
     //endregion
 
     //region status notification

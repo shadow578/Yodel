@@ -153,13 +153,16 @@ public class YoutubeDLWrapper {
     }
 
     /**
-     * download best quality audio only, using '-f bestaudio'.
+     * download best quality audio only, using '-f bestaudio' with '--extract-audio'. '--audio-quality 0' and '--audio-format FORMAT'.
      * only for use with {@link #download(DownloadProgressCallback)} functions
      *
+     * @param format the format of the audio to download, like 'mp3'
      * @return self instance
      */
-    public YoutubeDLWrapper audioOnly() {
-        request.addOption("-f", "bestaudio");
+    public YoutubeDLWrapper audioOnly(@NonNull String format) {
+        request.addOption("-f", "bestaudio").addOption("--extract-audio")
+                .addOption("--audio-format", format)
+                .addOption("--audio-quality", 0);
         return this;
     }
 
