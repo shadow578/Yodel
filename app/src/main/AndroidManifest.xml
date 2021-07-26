@@ -33,7 +33,7 @@
 
         <!-- share -->
         <activity android:name=".share.ShareTargetActivity">
-            <intent-filter android:label="Download from YouTube">
+            <intent-filter android:label="@string/share_to_download_label">
                 <action android:name="android.intent.action.SEND" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:mimeType="text/plain" />

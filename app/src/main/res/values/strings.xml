@@ -1,6 +1,7 @@
 <resources>
     <!-- shared -->
     <string name="app_name">YTMusic-DL</string>
+    <string name="share_to_download_label">Download from YouTube</string>
     <string name="empty_text">Empty,\nlike my soul</string>
     <string name="base_toast_select_download_directory">Select the folder you want to save tracks in</string>
     <string name="base_toast_set_download_directory_fail">could not set downloads directory! please try again, or report this issue</string>
