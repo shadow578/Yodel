@@ -3,6 +3,7 @@
     <string name="app_name">YTMusic-DL</string>
     <string name="share_to_download_label">Download from YouTube</string>
     <string name="empty_text">Empty,\nlike my soul</string>
+    <string name="fallback_title">Unknown</string>
     <string name="base_toast_select_download_directory">Select the folder you want to save tracks in</string>
     <string name="base_toast_set_download_directory_fail">could not set downloads directory! please try again, or report this issue</string>
 
@@ -14,6 +15,12 @@
     <!-- tracks -->
     <string name="tracks_artist_and_album" formatted="true">%1$s • %2$s</string>
     <string name="tracks_play_failed">Failed to open audio player</string>
+
+    <!-- replace track dialog -->
+    <string name="tracks_replace_existing_title">Replace Track?</string>
+    <string name="tracks_replace_existing_message" formatted="true">\'%1$s\' was already downloaded? <br>\nDo you want to replace it?</br></string>
+    <string name="tracks_replace_existing_positive">Yes, Replace</string>
+    <string name="tracks_replace_existing_negative">No</string>
 
     <!-- share -->
     <string name="share_toast_ok">Download Queued</string>

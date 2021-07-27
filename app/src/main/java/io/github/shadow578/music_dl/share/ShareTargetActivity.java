@@ -11,10 +11,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.util.Optional;
 
 import io.github.shadow578.music_dl.R;
-import io.github.shadow578.music_dl.db.TracksDB;
-import io.github.shadow578.music_dl.db.model.TrackInfo;
 import io.github.shadow578.music_dl.downloader.DownloaderService;
-import io.github.shadow578.music_dl.util.Async;
+import io.github.shadow578.music_dl.ui.InsertTrackUIHelper;
 import io.github.shadow578.music_dl.util.Util;
 
 /**
@@ -74,19 +72,10 @@ public class ShareTargetActivity extends AppCompatActivity {
         String title = null;
         if (intent.hasExtra(Intent.EXTRA_TITLE)) {
             title = intent.getStringExtra(Intent.EXTRA_TITLE);
-
-        }
-
-        final String trackTitle;
-        if (title != null && !title.isEmpty()) {
-            trackTitle = title;
-        } else {
-            trackTitle = "Unknown Track";
         }
 
         // add to db as pending download
-        Async.runAsync(()
-                -> TracksDB.getInstance().tracks().insert(TrackInfo.createNew(trackId.get(), trackTitle)));
+        InsertTrackUIHelper.insertTrack(this, trackId.get(), title);
 
         // start downloader as needed
         startDownloadService();
