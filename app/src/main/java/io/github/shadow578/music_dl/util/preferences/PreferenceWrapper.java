@@ -43,7 +43,7 @@ public class PreferenceWrapper<T> {
      * @return the preference wrapper
      */
     @NonNull
-    public static <T> PreferenceWrapper<T> create(@NonNull Class<T> type, @NonNull String key, @Nullable T defaultValue) {
+    public static <T> PreferenceWrapper<T> create(@NonNull Class<T> type, @NonNull String key, @NonNull T defaultValue) {
         return new PreferenceWrapper<>(key, type, defaultValue);
     }
 
@@ -56,7 +56,7 @@ public class PreferenceWrapper<T> {
     /**
      * the default value of the preference
      */
-    @Nullable
+    @NonNull
     private final T defaultValue;
 
     /**
@@ -72,7 +72,7 @@ public class PreferenceWrapper<T> {
      * @param type         the internal type of this preference, used for gson deserialization
      * @param defaultValue the default value of the preference
      */
-    private PreferenceWrapper(@NonNull String key, @NonNull Class<T> type, @Nullable T defaultValue) {
+    private PreferenceWrapper(@NonNull String key, @NonNull Class<T> type, @NonNull T defaultValue) {
         this.key = key;
         this.type = type;
         this.defaultValue = defaultValue;
@@ -83,7 +83,7 @@ public class PreferenceWrapper<T> {
      *
      * @return the preference value
      */
-    @Nullable
+    @NonNull
     public T get() {
         return get(defaultValue);
     }
@@ -93,8 +93,8 @@ public class PreferenceWrapper<T> {
      *
      * @return the preference value
      */
-    @Nullable
-    public T get(@Nullable T defaultValueOverwrite) {
+    @NonNull
+    public T get(@NonNull T defaultValueOverwrite) {
         assertInit();
         final String json = prefs.getString(key, null);
         if (json == null || json.isEmpty()) {

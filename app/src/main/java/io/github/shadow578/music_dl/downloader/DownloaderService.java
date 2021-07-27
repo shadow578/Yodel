@@ -158,8 +158,8 @@ public class DownloaderService extends LifecycleService {
      * @return is the downloads dir set and accessible?
      */
     private boolean checkDownloadsDirSet() {
-        final StorageKey downloadsKey = Prefs.DOWNLOADS_DIRECTORY.get();
-        if (downloadsKey != null) {
+        final StorageKey downloadsKey = Prefs.DownloadsDirectory.get();
+        if (downloadsKey.equals(StorageKey.EMPTY)) {
             final Optional<DocumentFile> downloadsDir = StorageHelper.getPersistedFilePermission(this, downloadsKey, true);
             return downloadsDir.isPresent()
                     && downloadsDir.get().exists()
@@ -226,8 +226,8 @@ public class DownloaderService extends LifecycleService {
         TracksDB.getInstance().tracks().update(track);
 
         // download the track and update the entry in the DB
-        //TODO file format is hardcoded
-        final boolean downloadOk = download(track, "mp3");
+        final TrackDownloadFormat format = Prefs.DownloadFormat.get();
+        final boolean downloadOk = download(track, format);
         track.status = downloadOk ? TrackStatus.Downloaded : TrackStatus.DownloadFailed;
         TracksDB.getInstance().tracks().update(track);
     }
@@ -235,17 +235,17 @@ public class DownloaderService extends LifecycleService {
     /**
      * download the track and resolve metadata
      *
-     * @param track      the track to download
-     * @param fileFormat the file format to download the track in
+     * @param track  the track to download
+     * @param format the file format to download the track in
      * @return was the download successful?
      */
-    private boolean download(@NonNull TrackInfo track, @NonNull String fileFormat) {
+    private boolean download(@NonNull TrackInfo track, @NonNull TrackDownloadFormat format) {
         TempFiles files = null;
         try {
             // create session
             updateNotification(createStatusNotification(track, R.string.dl_status_starting_download));
-            final YoutubeDLWrapper session = createSession(track, fileFormat);
-            files = createTempFiles(track, fileFormat);
+            final YoutubeDLWrapper session = createSession(track, format);
+            files = createTempFiles(track, format);
 
             // download the track and metadata using youtube-dl
             downloadTrack(track, session, files);
@@ -256,7 +256,7 @@ public class DownloaderService extends LifecycleService {
 
             // write id3v2 metadata for mp3 files
             // if this fails, we do not fail the whole operation
-            if (fileFormat.toLowerCase().equals("mp3")) {
+            if (format.isID3Supported()) {
                 try {
                     writeID3Tag(track, files);
                 } catch (DownloaderException e) {
@@ -266,7 +266,7 @@ public class DownloaderService extends LifecycleService {
 
             // copy audio file to downloads dir
             updateNotification(createStatusNotification(track, R.string.dl_status_finish));
-            copyAudioToFinal(track, files, fileFormat);
+            copyAudioToFinal(track, files, format);
 
             // copy cover to cover store
             // if this fails, we do not fail the whole operation
@@ -294,30 +294,36 @@ public class DownloaderService extends LifecycleService {
     /**
      * prepare a new youtube-dl session for the track
      *
-     * @param track      the track to prepare the session for
-     * @param fileFormat the file format to download the track in
+     * @param track  the track to prepare the session for
+     * @param format the file format to download the track in
      * @return the youtube-dl session
      * @throws DownloaderException if the cache directory could not be created (needed for the session)
      */
     @NonNull
-    private YoutubeDLWrapper createSession(@NonNull TrackInfo track, @NonNull String fileFormat) throws DownloaderException {
-        return YoutubeDLWrapper.create(resolveVideoUrl(track))
-                .fixSsl() // TODO make ssl fix a option in props
+    private YoutubeDLWrapper createSession(@NonNull TrackInfo track, @NonNull TrackDownloadFormat format) throws DownloaderException {
+        final YoutubeDLWrapper session = YoutubeDLWrapper.create(resolveVideoUrl(track))
                 .cacheDir(getDownloadCacheDirectory())
-                .audioOnly(fileFormat);
+                .audioOnly(format.fileExtension());
+
+        // enable ssl fix
+        if (Prefs.EnableSSLFix.get()) {
+            session.fixSsl();
+        }
+
+        return session;
     }
 
     /**
      * create the tempoary files for the download
      *
-     * @param track      the track to create the files for
-     * @param fileFormat the file format to download in
+     * @param track  the track to create the files for
+     * @param format the file format to download in
      * @return the tempoary files
      */
     @NonNull
-    private TempFiles createTempFiles(@NonNull TrackInfo track, @NonNull String fileFormat) {
+    private TempFiles createTempFiles(@NonNull TrackInfo track, @NonNull TrackDownloadFormat format) {
         final File tempAudio = Util.getTempFile("dl_" + track.id, "", getCacheDir());
-        return new TempFiles(tempAudio, fileFormat);
+        return new TempFiles(tempAudio, format.fileExtension());
     }
 
     /**
@@ -382,12 +388,12 @@ public class DownloaderService extends LifecycleService {
     /**
      * copy the temporary audio file to the final destination
      *
-     * @param track      the track to download
-     * @param files      the temporary files, of which the audio file is copied to the downloads dir
-     * @param fileFormat the file format that was used for the download
+     * @param track  the track to download
+     * @param files  the temporary files, of which the audio file is copied to the downloads dir
+     * @param format the file format that was used for the download
      * @throws DownloaderException if creating the final file or the copy operation fails
      */
-    private void copyAudioToFinal(@NonNull TrackInfo track, @NonNull TempFiles files, @NonNull String fileFormat) throws DownloaderException {
+    private void copyAudioToFinal(@NonNull TrackInfo track, @NonNull TempFiles files, @NonNull TrackDownloadFormat format) throws DownloaderException {
         // check audio file exists
         if (!files.getAudio().exists()) {
             throw new DownloaderException("cannot find audio file to copy");
@@ -401,7 +407,7 @@ public class DownloaderService extends LifecycleService {
         }
 
         // create file to write the track to
-        final DocumentFile finalFile = downloadRoot.get().createFile("audio/mp3", track.title + "." + fileFormat);
+        final DocumentFile finalFile = downloadRoot.get().createFile(format.mimeType(), track.title + "." + format.fileExtension());
         if (finalFile == null || !finalFile.canWrite()) {
             throw new DownloaderException("Could not create final output file!");
         }
@@ -528,14 +534,14 @@ public class DownloaderService extends LifecycleService {
     }
 
     /**
-     * get the {@link Prefs#DOWNLOADS_DIRECTORY} of the app, using storage framework
+     * get the {@link Prefs#DownloadsDirectory} of the app, using storage framework
      *
      * @return the optional download root directory
      */
     @NonNull
     public Optional<DocumentFile> getDownloadsDirectory() {
-        final StorageKey key = Prefs.DOWNLOADS_DIRECTORY.get();
-        if (key == null) {
+        final StorageKey key = Prefs.DownloadsDirectory.get();
+        if (key.equals(StorageKey.EMPTY)) {
             return Optional.empty();
         }
 

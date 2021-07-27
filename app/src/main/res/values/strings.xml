@@ -31,4 +31,11 @@
     <string name="channel_downloader_name">Downloads</string>
     <string name="channel_downloader_description">sends information about in- progress downloads</string>
 
+    <!-- file formats -->
+    <string name="file_format_mp3">MP3 (with metadata)</string>
+    <string name="file_format_aac">AAC</string>
+    <string name="file_format_webm">WebM Audio</string>
+    <string name="file_format_ogg">OGG</string>
+    <string name="file_format_flac">FLAC</string>
+    <string name="file_format_wav">WAV</string>
 </resources>

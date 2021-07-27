@@ -51,7 +51,7 @@ public class BaseActivity extends AppCompatActivity {
                                     && treeFile.canWrite()) {
                                 // persist the permission & save
                                 final StorageKey treeKey = StorageHelper.persistFilePermission(getApplicationContext(), treeUri);
-                                Prefs.DOWNLOADS_DIRECTORY.set(treeKey);
+                                Prefs.DownloadsDirectory.set(treeKey);
                                 Log.i("MusicDL", String.format("selected and saved new track downloads directory: %s", treeUri.toString()));
                             } else {
                                 // bad selection
@@ -69,8 +69,8 @@ public class BaseActivity extends AppCompatActivity {
      */
     protected void maybeSelectDownloadsDir() {
         // check if downloads dir is set and accessible
-        final StorageKey downloadsKey = Prefs.DOWNLOADS_DIRECTORY.get();
-        if (downloadsKey != null) {
+        final StorageKey downloadsKey = Prefs.DownloadsDirectory.get();
+        if (downloadsKey.equals(StorageKey.EMPTY)) {
             final Optional<DocumentFile> downloadsDir = StorageHelper.getPersistedFilePermission(this, downloadsKey, true);
             if (downloadsDir.isPresent()
                     && downloadsDir.get().exists()
@@ -81,7 +81,7 @@ public class BaseActivity extends AppCompatActivity {
         }
 
         // reset preference key so next check could be faster
-        Prefs.DOWNLOADS_DIRECTORY.reset();
+        Prefs.DownloadsDirectory.reset();
 
         // show toast with prompt
         Toast.makeText(this, R.string.base_toast_select_download_directory, Toast.LENGTH_LONG).show();
