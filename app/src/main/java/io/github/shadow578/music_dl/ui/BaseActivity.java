@@ -70,7 +70,7 @@ public class BaseActivity extends AppCompatActivity {
     protected void maybeSelectDownloadsDir() {
         // check if downloads dir is set and accessible
         final StorageKey downloadsKey = Prefs.DownloadsDirectory.get();
-        if (downloadsKey.equals(StorageKey.EMPTY)) {
+        if (!downloadsKey.equals(StorageKey.EMPTY)) {
             final Optional<DocumentFile> downloadsDir = StorageHelper.getPersistedFilePermission(this, downloadsKey, true);
             if (downloadsDir.isPresent()
                     && downloadsDir.get().exists()

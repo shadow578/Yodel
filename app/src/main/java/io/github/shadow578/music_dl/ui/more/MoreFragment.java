@@ -19,6 +19,7 @@ public class MoreFragment extends BaseFragment {
     /**
      * view binding instance
      */
+    @SuppressWarnings("FieldCanBeLocal")
     private FragmentMoreBinding b;
 
     @Nullable

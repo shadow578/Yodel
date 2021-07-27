@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<full-backup-content>
+    <!-- shared_prefs -->
+    <include
+        domain="sharedpref"
+        path="io.github.shadow578.music_dl_preferences.xml" />
+
+    <!-- databases -->
+    <include
+        domain="database"
+        path="." />
+</full-backup-content>

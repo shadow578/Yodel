@@ -62,7 +62,7 @@ public final class Util {
     private static final Random random = new Random();
 
     /**
-     * generate a random alphanumeric string with lenght characters
+     * generate a random alphanumeric string with length characters
      *
      * @param length the length of the string to generate
      * @return the random string

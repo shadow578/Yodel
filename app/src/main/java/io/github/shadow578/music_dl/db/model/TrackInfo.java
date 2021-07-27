@@ -35,7 +35,7 @@ public class TrackInfo {
     @NonNull
     @PrimaryKey
     @ColumnInfo(name = "id")
-    public String id;
+    public final String id;
 
     /**
      * the title of the track

@@ -1,12 +1,10 @@
 package io.github.shadow578.music_dl;
 
 import android.app.Application;
-import android.content.Intent;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
 import io.github.shadow578.music_dl.db.TracksDB;
-import io.github.shadow578.music_dl.downloader.DownloaderService;
 import io.github.shadow578.music_dl.util.Async;
 import io.github.shadow578.music_dl.util.notifications.NotificationChannels;
 import io.github.shadow578.music_dl.util.preferences.PreferenceWrapper;

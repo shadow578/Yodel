@@ -33,7 +33,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
-            android:background="@color/time_on_cover_background"
+            android:background="@drawable/cover_art_time_background"
             android:textColor="@color/white"
             app:layout_constraintBottom_toBottomOf="@id/cover_art"
             app:layout_constraintRight_toRightOf="@id/cover_art"

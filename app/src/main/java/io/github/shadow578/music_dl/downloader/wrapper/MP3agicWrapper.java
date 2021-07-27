@@ -106,11 +106,10 @@ public class MP3agicWrapper {
     /**
      * save the mp3 file, overwriting the original file
      *
-     * @return was the save successful
      * @throws IOException           if io operation fails
      * @throws NotSupportedException if mp3agic failes to save the file (see {@link Mp3File#save(String)})
      */
-    public boolean save() throws IOException, NotSupportedException {
+    public void save() throws IOException, NotSupportedException {
         File tagged = null;
         try {
             // create file to write to (original appended with .tagged)
@@ -127,8 +126,6 @@ public class MP3agicWrapper {
                  final FileOutputStream out = new FileOutputStream(originalFile.getAbsolutePath(), false)) {
                 Util.streamTransfer(src, out, 1024);
             }
-
-            return true;
         } finally {
             if (tagged != null) {
                 if (tagged.exists() && !tagged.delete()) {

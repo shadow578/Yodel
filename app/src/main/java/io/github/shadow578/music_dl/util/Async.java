@@ -8,6 +8,10 @@ import androidx.annotation.NonNull;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
+/**
+ * async operation utilities
+ */
+@SuppressWarnings("unused")
 public class Async {
     /**
      * handler to run functions on the main thread.

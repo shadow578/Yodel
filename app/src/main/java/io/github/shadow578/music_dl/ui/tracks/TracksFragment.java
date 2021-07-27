@@ -29,6 +29,7 @@ public class TracksFragment extends BaseFragment {
     /**
      * the view binding instance
      */
+    @SuppressWarnings("FieldCanBeLocal")
     private TracksViewModel model;
 
     /**

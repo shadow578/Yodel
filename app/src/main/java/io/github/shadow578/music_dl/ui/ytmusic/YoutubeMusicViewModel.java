@@ -5,10 +5,11 @@ import android.content.Intent;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+
+import java.util.Optional;
 
 import io.github.shadow578.music_dl.db.TracksDB;
 import io.github.shadow578.music_dl.db.model.TrackInfo;
@@ -56,7 +57,7 @@ public class YoutubeMusicViewModel extends AndroidViewModel {
 
         // insert into database
         Async.runAsync(()
-                -> TracksDB.getInstance().tracks().insert(TrackInfo.createNew(id, currentTitle)));
+                -> TracksDB.getInstance().tracks().insert(TrackInfo.createNew(id, Optional.ofNullable(currentTitle).orElse("Unknown"))));
 
         // start downloader
         maybeStartDownloaderService();

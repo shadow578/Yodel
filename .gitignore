@@ -2,9 +2,7 @@
 /app/build.properties
 
 # AS default
-*.iml
 .gradle
-/local.properties
 /.idea/caches
 /.idea/libraries
 /.idea/modules.xml
@@ -14,9 +12,7 @@
 .DS_Store
 /build
 /captures
-.externalNativeBuild
 .cxx
-local.properties
 .idea/
 
 # Built application files

@@ -130,7 +130,7 @@ public class DownloaderService extends LifecycleService {
                 trackAdded = true;
             }
 
-            // notifiy downloader
+            // notify downloader
             if (trackAdded) {
                 synchronized (scheduledDownloads) {
                     scheduledDownloads.notifyAll();
@@ -159,7 +159,7 @@ public class DownloaderService extends LifecycleService {
      */
     private boolean checkDownloadsDirSet() {
         final StorageKey downloadsKey = Prefs.DownloadsDirectory.get();
-        if (downloadsKey.equals(StorageKey.EMPTY)) {
+        if (!downloadsKey.equals(StorageKey.EMPTY)) {
             final Optional<DocumentFile> downloadsDir = StorageHelper.getPersistedFilePermission(this, downloadsKey, true);
             return downloadsDir.isPresent()
                     && downloadsDir.get().exists()
@@ -314,7 +314,7 @@ public class DownloaderService extends LifecycleService {
     }
 
     /**
-     * create the tempoary files for the download
+     * create the temporary files for the download
      *
      * @param track  the track to create the files for
      * @param format the file format to download in

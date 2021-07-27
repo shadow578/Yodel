@@ -35,11 +35,11 @@ public class TracksAdapter extends RecyclerView.Adapter<TracksAdapter.Holder> {
 
     public TracksAdapter(@NonNull LifecycleOwner owner, @NonNull LiveData<List<TrackInfo>> tracks, @NonNull ItemClickListener clickListener) {
         this.clickListener = clickListener;
-        tracks.observe(owner, trackInfos -> {
-            if (trackInfos == null)
+        tracks.observe(owner, trackInfoList -> {
+            if (trackInfoList == null)
                 return;
 
-            this.tracks = trackInfos;
+            this.tracks = trackInfoList;
             notifyDataSetChanged();
         });
     }
