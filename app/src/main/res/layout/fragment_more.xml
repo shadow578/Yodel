@@ -17,14 +17,56 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-
-    <TextView
-        android:layout_width="wrap_content"
+    <!-- options -->
+    <ScrollView
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:text="(more)"
+        android:layout_marginTop="100dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/app_icon" />
+        app:layout_constraintTop_toBottomOf="@id/app_icon">
 
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
+            <!-- about -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/about"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/more_about"
+                android:textAllCaps="false" />
+
+            <!-- downloads dir -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/select_downloads_dir"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/more_select_downloads_dir"
+                android:textAllCaps="false" />
+
+            <!-- download format -->
+
+            <androidx.appcompat.widget.AppCompatSpinner
+                android:id="@+id/downloads_format"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <!-- enable writing metadata -->
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/enable_tagging"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/more_enable_tagging" />
+
+            <!-- ssl fix -->
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/enable_ssl_fix"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/more_enable_ssl_fix" />
+        </androidx.appcompat.widget.LinearLayoutCompat>
+    </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

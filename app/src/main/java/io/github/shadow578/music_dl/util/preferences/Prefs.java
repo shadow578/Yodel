@@ -23,4 +23,9 @@ public final class Prefs {
      * download format {@link YoutubeDLWrapper} should use for future downloads. existing downloads are not affected
      */
     public static final PreferenceWrapper<TrackDownloadFormat> DownloadFormat = PreferenceWrapper.create(TrackDownloadFormat.class, "track_download_format", TrackDownloadFormat.MP3);
+
+    /**
+     * enable writing ID3 metadata on downloaded tracks (if format supports it)
+     */
+    public static final PreferenceWrapper<Boolean> EnableMetadataTagging = PreferenceWrapper.create(Boolean.class, "enable_meta_tagging", true);
 }

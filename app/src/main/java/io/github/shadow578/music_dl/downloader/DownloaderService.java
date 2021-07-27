@@ -256,7 +256,7 @@ public class DownloaderService extends LifecycleService {
 
             // write id3v2 metadata for mp3 files
             // if this fails, we do not fail the whole operation
-            if (format.isID3Supported()) {
+            if (format.isID3Supported() && Prefs.EnableMetadataTagging.get()) {
                 try {
                     writeID3Tag(track, files);
                 } catch (DownloaderException e) {

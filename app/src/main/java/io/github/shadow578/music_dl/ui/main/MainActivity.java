@@ -62,7 +62,7 @@ public class MainActivity extends BaseActivity {
         setupBottomNavigationAndPager();
 
         // select downloads dir
-        maybeSelectDownloadsDir();
+        maybeSelectDownloadsDir(false);
     }
 
     /**

@@ -56,7 +56,7 @@ public class BaseActivity extends AppCompatActivity {
                             } else {
                                 // bad selection
                                 Toast.makeText(this, R.string.base_toast_set_download_directory_fail, Toast.LENGTH_LONG).show();
-                                maybeSelectDownloadsDir();
+                                maybeSelectDownloadsDir(true);
                             }
                         }
                     }
@@ -66,11 +66,13 @@ public class BaseActivity extends AppCompatActivity {
 
     /**
      * prompt the user to select the downloads dir, if not set
+     *
+     * @param force force select a new directory?
      */
-    protected void maybeSelectDownloadsDir() {
+    public void maybeSelectDownloadsDir(boolean force) {
         // check if downloads dir is set and accessible
         final StorageKey downloadsKey = Prefs.DownloadsDirectory.get();
-        if (!downloadsKey.equals(StorageKey.EMPTY)) {
+        if (!downloadsKey.equals(StorageKey.EMPTY) && !force) {
             final Optional<DocumentFile> downloadsDir = StorageHelper.getPersistedFilePermission(this, downloadsKey, true);
             if (downloadsDir.isPresent()
                     && downloadsDir.get().exists()
@@ -79,9 +81,6 @@ public class BaseActivity extends AppCompatActivity {
                 return;
             }
         }
-
-        // reset preference key so next check could be faster
-        Prefs.DownloadsDirectory.reset();
 
         // show toast with prompt
         Toast.makeText(this, R.string.base_toast_select_download_directory, Toast.LENGTH_LONG).show();
