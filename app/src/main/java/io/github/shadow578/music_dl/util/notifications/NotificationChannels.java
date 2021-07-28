@@ -20,7 +20,7 @@ public enum NotificationChannels {
      * <p>
      * only for use when testing stuff (and the actual channel is not setup yet) or for notifications that are normally not shown
      */
-    Default(R.string.channel_default_name, R.string.channel_default_description),
+    Default(R.string.channel_default_name, R.string.channel_default_description, NotificationManagerCompat.IMPORTANCE_DEFAULT),
 
     /**
      * notification channel used by {@link io.github.shadow578.music_dl.downloader.DownloaderService} to show download progress
@@ -51,8 +51,7 @@ public enum NotificationChannels {
     /**
      * importance int
      */
-    @Nullable
-    private final Integer importance;
+    private final int importance;
 
     /**
      * define a new notification channel. the channel will have no description and a fallback name
@@ -60,7 +59,7 @@ public enum NotificationChannels {
     NotificationChannels() {
         name = null;
         description = null;
-        importance = null;
+        importance = NotificationManagerCompat.IMPORTANCE_LOW;
     }
 
     /**
@@ -116,12 +115,6 @@ public enum NotificationChannels {
     @NonNull
     private NotificationChannelCompat createChannel(@NonNull Context ctx) {
         // create channel builder
-        final int importance;
-        if (this.importance != null) {
-            importance = this.importance;
-        } else {
-            importance = NotificationManagerCompat.IMPORTANCE_DEFAULT;
-        }
         final NotificationChannelCompat.Builder channelBuilder = new NotificationChannelCompat.Builder(id(), importance);
 
         // set name with fallback
