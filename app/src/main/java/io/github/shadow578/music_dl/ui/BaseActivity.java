@@ -1,5 +1,6 @@
 package io.github.shadow578.music_dl.ui;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,6 +15,7 @@ import androidx.documentfile.provider.DocumentFile;
 import java.util.Optional;
 
 import io.github.shadow578.music_dl.R;
+import io.github.shadow578.music_dl.downloader.DownloaderService;
 import io.github.shadow578.music_dl.util.preferences.Prefs;
 import io.github.shadow578.music_dl.util.storage.StorageHelper;
 import io.github.shadow578.music_dl.util.storage.StorageKey;
@@ -48,6 +50,10 @@ public class BaseActivity extends AppCompatActivity {
                             final StorageKey treeKey = StorageHelper.persistFilePermission(getApplicationContext(), treeUri);
                             Prefs.DownloadsDirectory.set(treeKey);
                             Log.i("MusicDL", String.format("selected and saved new track downloads directory: %s", treeUri.toString()));
+
+                            // restart downloader
+                            final Intent serviceIntent = new Intent(getApplication(), DownloaderService.class);
+                            getApplication().startService(serviceIntent);
                         } else {
                             // bad selection
                             Toast.makeText(this, R.string.base_toast_set_download_directory_fail, Toast.LENGTH_LONG).show();
