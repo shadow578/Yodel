@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
 import java.time.LocalDate;
@@ -14,7 +15,10 @@ import io.github.shadow578.music_dl.util.storage.StorageKey;
 /**
  * information about a track
  */
-@Entity(tableName = "tracks")
+@Entity(tableName = "tracks",
+        indices = {
+                @Index("first_added_at")
+        })
 public class TrackInfo {
 
     /**
@@ -26,7 +30,7 @@ public class TrackInfo {
      */
     @NonNull
     public static TrackInfo createNew(@NonNull String id, @NonNull String title) {
-        return new TrackInfo(id, title, null, null, null, null, StorageKey.EMPTY, StorageKey.EMPTY, TrackStatus.DownloadPending);
+        return new TrackInfo(id, System.currentTimeMillis(), title, null, null, null, null, StorageKey.EMPTY, StorageKey.EMPTY, TrackStatus.DownloadPending);
     }
 
     /**
@@ -36,6 +40,12 @@ public class TrackInfo {
     @PrimaryKey
     @ColumnInfo(name = "id")
     public final String id;
+
+    /**
+     * when this track was first added. millis timestamp, from {@link System#currentTimeMillis()}
+     */
+    @ColumnInfo(name = "first_added_at")
+    public final long firstAddedAt;
 
     /**
      * the title of the track
@@ -93,8 +103,9 @@ public class TrackInfo {
     @ColumnInfo(name = "status")
     public TrackStatus status;
 
-    public TrackInfo(@NonNull String id, @NonNull String title, @Nullable String artist, @Nullable LocalDate releaseDate, @Nullable Long duration, @Nullable String albumName, @NonNull StorageKey audioFileKey, @NonNull StorageKey coverKey, @NonNull TrackStatus status) {
+    public TrackInfo(@NonNull String id, long firstAddedAt, @NonNull String title, @Nullable String artist, @Nullable LocalDate releaseDate, @Nullable Long duration, @Nullable String albumName, @NonNull StorageKey audioFileKey, @NonNull StorageKey coverKey, @NonNull TrackStatus status) {
         this.id = id;
+        this.firstAddedAt = firstAddedAt;
         this.title = title;
         this.artist = artist;
         this.releaseDate = releaseDate;

@@ -25,7 +25,7 @@ import io.github.shadow578.music_dl.util.storage.StorageHelper;
 })
 @Database(entities = {
         TrackInfo.class
-}, version = 5)
+}, version = 6)
 public abstract class TracksDB extends RoomDatabase {
 
     /**

@@ -24,7 +24,7 @@ public interface TracksDao {
      *
      * @return the tracks that can be observed
      */
-    @Query("SELECT * FROM tracks")
+    @Query("SELECT * FROM tracks ORDER BY first_added_at ASC")
     LiveData<List<TrackInfo>> observe();
 
     /**
