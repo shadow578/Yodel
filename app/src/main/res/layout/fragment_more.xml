@@ -48,7 +48,6 @@
                 android:textAllCaps="false" />
 
             <!-- download format -->
-
             <androidx.appcompat.widget.AppCompatSpinner
                 android:id="@+id/downloads_format"
                 android:layout_width="match_parent"
@@ -67,6 +66,36 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/more_enable_ssl_fix" />
+
+            <!-- import / export -->
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:orientation="horizontal">
+
+                <!-- export tracks -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/backup_tracks"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
+                    android:layout_weight="1"
+                    android:text="@string/more_backup"
+                    android:textAllCaps="false"
+                    app:icon="@drawable/ic_round_upload_24" />
+
+                <!-- import tracks -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/restore_tracks"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_weight="1"
+                    android:text="@string/more_restore"
+                    android:textAllCaps="false"
+                    app:icon="@drawable/ic_round_download_24" />
+            </androidx.appcompat.widget.LinearLayoutCompat>
         </androidx.appcompat.widget.LinearLayoutCompat>
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

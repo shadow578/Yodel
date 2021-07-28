@@ -7,15 +7,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.documentfile.provider.DocumentFile;
 import androidx.lifecycle.ViewModelProvider;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import io.github.shadow578.music_dl.R;
 import io.github.shadow578.music_dl.databinding.FragmentMoreBinding;
 import io.github.shadow578.music_dl.downloader.TrackDownloadFormat;
 import io.github.shadow578.music_dl.ui.BaseFragment;
@@ -36,11 +41,56 @@ public class MoreFragment extends BaseFragment {
      */
     private MoreViewModel model;
 
+    /**
+     * launcher for export file choose action
+     */
+    private ActivityResultLauncher<String> chooseExportFileLauncher;
+
+    /**
+     * launcher for import file choose action
+     */
+    private ActivityResultLauncher<String[]> chooseImportFileLauncher;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         b = FragmentMoreBinding.inflate(inflater, container, false);
         return b.getRoot();
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        chooseExportFileLauncher = registerForActivityResult(
+                new ActivityResultContracts.CreateDocument(),
+                uri -> {
+                    if (uri == null) {
+                        return;
+                    }
+
+                    final DocumentFile file = DocumentFile.fromSingleUri(requireContext(), uri);
+                    if (file != null && file.canWrite()) {
+                        model.exportTracks(file);
+                        Toast.makeText(requireContext(), R.string.backup_toast_starting, Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(requireContext(), R.string.backup_toast_failed, Toast.LENGTH_SHORT).show();
+                    }
+                });
+        chooseImportFileLauncher = registerForActivityResult(
+                new ActivityResultContracts.OpenDocument(),
+                uri -> {
+                    if (uri == null) {
+                        return;
+                    }
+
+                    final DocumentFile file = DocumentFile.fromSingleUri(requireContext(), uri);
+                    if (file != null && file.canRead()) {
+                        model.importTracks(file, requireActivity());
+                        Toast.makeText(requireContext(), R.string.restore_toast_starting, Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(requireContext(), R.string.restore_toast_failed, Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     @Override
@@ -64,6 +114,12 @@ public class MoreFragment extends BaseFragment {
         // listen to write metadata
         b.enableTagging.setOnCheckedChangeListener((buttonView, isChecked) -> model.setEnableTagging(isChecked));
         model.getEnableTagging().observe(requireActivity(), enableTagging -> b.enableTagging.setChecked(enableTagging));
+
+        // backup / restore buttons
+        b.restoreTracks.setOnClickListener(v
+                -> chooseImportFileLauncher.launch(new String[]{"application/json"}));
+        b.backupTracks.setOnClickListener(v
+                -> chooseExportFileLauncher.launch("tracks_export.json"));
     }
 
     /**

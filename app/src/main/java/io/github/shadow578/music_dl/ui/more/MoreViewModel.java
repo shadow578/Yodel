@@ -2,14 +2,24 @@ package io.github.shadow578.music_dl.ui.more;
 
 import android.app.Activity;
 import android.app.Application;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.documentfile.provider.DocumentFile;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import io.github.shadow578.music_dl.R;
+import io.github.shadow578.music_dl.backup.BackupData;
+import io.github.shadow578.music_dl.backup.BackupHelper;
 import io.github.shadow578.music_dl.downloader.TrackDownloadFormat;
 import io.github.shadow578.music_dl.ui.BaseActivity;
+import io.github.shadow578.music_dl.util.Async;
 import io.github.shadow578.music_dl.util.preferences.Prefs;
 
 /**
@@ -68,6 +78,56 @@ public class MoreViewModel extends AndroidViewModel {
 
         Prefs.DownloadFormat.set(format);
         downloadFormat.setValue(format);
+    }
+
+    /**
+     * import tracks from a backup file
+     *
+     * @param file the file to import from
+     */
+    public void importTracks(@NonNull DocumentFile file, @NonNull Activity parent) {
+        Async.runAsync(() -> {
+            // read the backup data
+            final Optional<BackupData> backup = BackupHelper.readBackupData(getApplication(), file);
+            if (!backup.isPresent()) {
+                Async.runOnMain(()
+                        -> Toast.makeText(getApplication(), R.string.restore_toast_failed, Toast.LENGTH_SHORT).show());
+                return;
+            }
+
+            // show confirmation dialog
+            Async.runOnMain(() -> {
+                final AtomicBoolean replaceExisting = new AtomicBoolean(false);
+                final int tracksCount = backup.get().tracks.size();
+                new AlertDialog.Builder(parent)
+                        .setTitle(getApplication().getString(R.string.restore_dialog_title, tracksCount))
+                        .setSingleChoiceItems(R.array.restore_dialog_modes, 0, (dialog, mode)
+                                -> replaceExisting.set(mode == 1))
+                        .setNegativeButton(R.string.restore_dialog_negative, (dialog, w) -> dialog.dismiss())
+                        .setPositiveButton(R.string.restore_dialog_positive, (dialog, w) -> {
+                            // restore the backup
+                            Toast.makeText(getApplication(), getApplication().getString(R.string.restore_toast_success, tracksCount), Toast.LENGTH_SHORT).show();
+                            Async.runAsync(()
+                                    -> BackupHelper.restoreBackup(getApplication(), backup.get(), replaceExisting.get()));
+                        })
+                        .show();
+            });
+        });
+    }
+
+    /**
+     * export tracks to a backup file
+     *
+     * @param file the file to export to
+     */
+    public void exportTracks(@NonNull DocumentFile file) {
+        Async.runAsync(() -> {
+            final boolean success = BackupHelper.createBackup(getApplication(), file);
+            if (!success) {
+                Async.runOnMain(()
+                        -> Toast.makeText(getApplication(), R.string.backup_toast_failed, Toast.LENGTH_SHORT).show());
+            }
+        });
     }
 
     /**

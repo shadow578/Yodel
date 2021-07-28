@@ -36,6 +36,14 @@ public interface TracksDao {
     LiveData<List<TrackInfo>> observePending();
 
     /**
+     * get a list of all tracks
+     *
+     * @return a list of all tracks
+     */
+    @Query("SELECT * FROM tracks")
+    List<TrackInfo> getAll();
+
+    /**
      * get a list of all tracks that are marked as downloaded
      *
      * @return a list of all downloaded tracks
@@ -65,6 +73,22 @@ public interface TracksDao {
      */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(TrackInfo track);
+
+    /**
+     * insert multiple tracks into the db, replacing existing entries
+     *
+     * @param tracks the tracks to insert
+     */
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertAll(List<TrackInfo> tracks);
+
+    /**
+     * insert multiple tracks into the db, skipping existing entries
+     *
+     * @param tracks the tracks to insert
+     */
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    void insertAllNew(List<TrackInfo> tracks);
 
     /**
      * update a track
