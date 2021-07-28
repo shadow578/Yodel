@@ -56,10 +56,19 @@ public class TracksAdapter extends RecyclerView.Adapter<TracksAdapter.Holder> {
 
         // cover
         final Optional<Uri> coverUri = StorageHelper.decodeUri(track.coverKey);
-        coverUri.ifPresent(cover -> Glide.with(holder.b.coverArt)
-                .load(cover)
-                .fallback(R.drawable.ic_round_tpose_24)
-                .into(holder.b.coverArt));
+        if (coverUri.isPresent()) {
+            // load cover from fs using glide
+            Glide.with(holder.b.coverArt)
+                    .load(coverUri.get())
+                    .placeholder(R.drawable.ic_round_placeholder_24)
+                    .fallback(R.drawable.ic_round_placeholder_24)
+                    .into(holder.b.coverArt);
+        } else {
+            // load fallback image
+            Glide.with(holder.b.coverArt)
+                    .load(R.drawable.ic_round_placeholder_24)
+                    .into(holder.b.coverArt);
+        }
 
         // title
         holder.b.title.setText(track.title);
