@@ -1,6 +1,5 @@
 package io.github.shadow578.music_dl.ui;
 
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -27,7 +26,7 @@ public class BaseActivity extends AppCompatActivity {
     /**
      * result launcher for download directory select
      */
-    private ActivityResultLauncher<Intent> downloadDirectorySelectLauncher;
+    private ActivityResultLauncher<Uri> downloadDirectorySelectLauncher;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -35,29 +34,24 @@ public class BaseActivity extends AppCompatActivity {
 
         // create result launcher for download directory select
         downloadDirectorySelectLauncher = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                result -> {
-                    // make sure result is ok
-                    final Intent data = result.getData();
-                    if (result.getResultCode() == RESULT_OK && data != null) {
-                        final Uri treeUri = data.getData();
-                        if (treeUri != null) {
-                            final DocumentFile treeFile = DocumentFile.fromTreeUri(this, treeUri);
+                new ActivityResultContracts.OpenDocumentTree(),
+                treeUri -> {
+                    if (treeUri != null) {
+                        final DocumentFile treeFile = DocumentFile.fromTreeUri(this, treeUri);
 
-                            // check access
-                            if (treeFile != null
-                                    && treeFile.exists()
-                                    && treeFile.canRead()
-                                    && treeFile.canWrite()) {
-                                // persist the permission & save
-                                final StorageKey treeKey = StorageHelper.persistFilePermission(getApplicationContext(), treeUri);
-                                Prefs.DownloadsDirectory.set(treeKey);
-                                Log.i("MusicDL", String.format("selected and saved new track downloads directory: %s", treeUri.toString()));
-                            } else {
-                                // bad selection
-                                Toast.makeText(this, R.string.base_toast_set_download_directory_fail, Toast.LENGTH_LONG).show();
-                                maybeSelectDownloadsDir(true);
-                            }
+                        // check access
+                        if (treeFile != null
+                                && treeFile.exists()
+                                && treeFile.canRead()
+                                && treeFile.canWrite()) {
+                            // persist the permission & save
+                            final StorageKey treeKey = StorageHelper.persistFilePermission(getApplicationContext(), treeUri);
+                            Prefs.DownloadsDirectory.set(treeKey);
+                            Log.i("MusicDL", String.format("selected and saved new track downloads directory: %s", treeUri.toString()));
+                        } else {
+                            // bad selection
+                            Toast.makeText(this, R.string.base_toast_set_download_directory_fail, Toast.LENGTH_LONG).show();
+                            maybeSelectDownloadsDir(true);
                         }
                     }
                 }
@@ -82,12 +76,8 @@ public class BaseActivity extends AppCompatActivity {
             }
         }
 
-        // show toast with prompt
+        // select directory
         Toast.makeText(this, R.string.base_toast_select_download_directory, Toast.LENGTH_LONG).show();
-
-        // select downloads dir
-        final Intent openTree = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
-                .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
-        downloadDirectorySelectLauncher.launch(openTree);
+        downloadDirectorySelectLauncher.launch(null);
     }
 }
