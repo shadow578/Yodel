@@ -17,8 +17,11 @@ import java.util.Optional;
 
 import io.github.shadow578.music_dl.R;
 import io.github.shadow578.music_dl.databinding.FragmentTracksBinding;
+import io.github.shadow578.music_dl.db.TracksDB;
 import io.github.shadow578.music_dl.db.model.TrackInfo;
+import io.github.shadow578.music_dl.db.model.TrackStatus;
 import io.github.shadow578.music_dl.ui.BaseFragment;
+import io.github.shadow578.music_dl.util.Async;
 import io.github.shadow578.music_dl.util.storage.StorageHelper;
 
 /**
@@ -50,7 +53,7 @@ public class TracksFragment extends BaseFragment {
 
         // setup recycler with data from model
         b.tracksRecycler.setLayoutManager(new LinearLayoutManager(requireContext()));
-        b.tracksRecycler.setAdapter(new TracksAdapter(requireActivity(), model.getTracks(), this::playTrack));
+        b.tracksRecycler.setAdapter(new TracksAdapter(requireActivity(), model.getTracks(), this::playTrack, this::reDownloadTrack));
 
         // show empty label if no tracks available
         model.getTracks().observe(requireActivity(), tracks
@@ -77,5 +80,18 @@ public class TracksFragment extends BaseFragment {
                         | Intent.FLAG_ACTIVITY_SINGLE_TOP
                         | Intent.FLAG_GRANT_READ_URI_PERMISSION);
         startActivity(playIntent);
+    }
+
+    /**
+     * re- download a track
+     *
+     * @param track the track to re- download
+     */
+    private void reDownloadTrack(@NonNull TrackInfo track) {
+        // reset status to pending
+        track.status = TrackStatus.DownloadPending;
+
+        // overwrite entry in db
+        Async.runAsync(() -> TracksDB.init(requireContext()).tracks().insert(track));
     }
 }

@@ -26,6 +26,17 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <!-- status icon -->
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/status_icon"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/cover_art_status_background"
+            app:layout_constraintRight_toRightOf="@id/cover_art"
+            app:layout_constraintTop_toTopOf="@id/cover_art"
+            app:tint="@color/white"
+            tools:src="@drawable/ic_round_placeholder_24" />
+
         <!-- duration -->
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/duration"
@@ -38,6 +49,33 @@
             app:layout_constraintRight_toRightOf="@id/cover_art"
             tools:text="00:00" />
 
+        <!-- retry download -->
+        <RelativeLayout
+            android:id="@+id/retry_download_container"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@color/on_cover_background"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/cover_art"
+            app:layout_constraintLeft_toLeftOf="@id/cover_art"
+            app:layout_constraintRight_toRightOf="@id/cover_art"
+            app:layout_constraintTop_toTopOf="@id/cover_art"
+            tools:visibility="visible">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:drawablePadding="10dp"
+                android:gravity="center"
+                android:text="@string/tracks_re_download"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                app:drawableStartCompat="@drawable/ic_round_refresh_24"
+                app:drawableTint="@color/white" />
+        </RelativeLayout>
+
         <!-- title -->
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/title"
@@ -45,6 +83,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:layout_marginTop="5dp"
+            android:layout_marginEnd="10dp"
             android:ellipsize="end"
             android:maxLines="1"
             android:textSize="18sp"
@@ -56,27 +95,15 @@
         <!-- album + artist -->
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/album_and_artist"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
             android:ellipsize="end"
             android:maxLines="1"
             android:paddingBottom="5dp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toBottomOf="@id/title"
             tools:text="Artist • Album" />
-
-        <!-- status -->
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/status"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="10dp"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:paddingBottom="5dp"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/title"
-            tools:text="Downloading" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>
