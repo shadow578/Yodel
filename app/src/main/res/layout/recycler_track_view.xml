@@ -21,7 +21,6 @@
             android:id="@+id/cover_art"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:src="@drawable/ic_round_tpose_24"
             app:layout_constraintDimensionRatio="H, 16:9"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"

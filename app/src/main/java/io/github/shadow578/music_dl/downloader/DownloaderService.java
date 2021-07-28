@@ -652,7 +652,7 @@ public class DownloaderService extends LifecycleService {
     @NonNull
     private NotificationCompat.Builder getBaseNotification() {
         return new NotificationCompat.Builder(this, NotificationChannels.DownloadProgress.id())
-                .setSmallIcon(R.drawable.ic_round_tpose_24)
+                .setSmallIcon(R.drawable.ic_round_placeholder_24)
                 .setShowWhen(false)
                 .setOnlyAlertOnce(true);
     }

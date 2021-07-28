@@ -3,17 +3,17 @@
 
     <item
         android:id="@+id/nav_tracks"
-        android:icon="@drawable/ic_round_tpose_24"
+        android:icon="@drawable/ic_round_library_music_24"
         android:title="@string/main_nav_tracks" />
 
     <item
         android:id="@+id/nav_explore"
-        android:icon="@drawable/ic_round_tpose_24"
+        android:icon="@drawable/ic_round_explore_24"
         android:title="@string/main_nav_explore" />
 
     <item
         android:id="@+id/nav_more"
-        android:icon="@drawable/ic_round_tpose_24"
+        android:icon="@drawable/ic_round_more_horiz_24"
         android:title="@string/main_nav_more" />
 
 </menu>
