@@ -6,6 +6,7 @@
     <string name="fallback_title">Unknown</string>
     <string name="base_toast_select_download_directory">Select the folder you want to save tracks in</string>
     <string name="base_toast_set_download_directory_fail">could not set downloads directory! please try again, or report this issue</string>
+    <string name="locale_system_default">Follow System</string>
 
     <!-- bottom navigation in main -->
     <string name="main_nav_tracks">Tracks</string>

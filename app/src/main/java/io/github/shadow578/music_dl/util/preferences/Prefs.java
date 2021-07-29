@@ -1,5 +1,6 @@
 package io.github.shadow578.music_dl.util.preferences;
 
+import io.github.shadow578.music_dl.LocaleOverride;
 import io.github.shadow578.music_dl.downloader.TrackDownloadFormat;
 import io.github.shadow578.music_dl.downloader.wrapper.YoutubeDLWrapper;
 import io.github.shadow578.music_dl.util.storage.StorageKey;
@@ -28,4 +29,9 @@ public final class Prefs {
      * enable writing ID3 metadata on downloaded tracks (if format supports it)
      */
     public static final PreferenceWrapper<Boolean> EnableMetadataTagging = PreferenceWrapper.create(Boolean.class, "enable_meta_tagging", true);
+
+    /**
+     * override for the app locale
+     */
+    public static final PreferenceWrapper<LocaleOverride> LocaleOverride = PreferenceWrapper.create(LocaleOverride.class, "locale_override", io.github.shadow578.music_dl.LocaleOverride.SystemDefault);
 }

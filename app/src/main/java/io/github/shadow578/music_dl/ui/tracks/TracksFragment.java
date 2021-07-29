@@ -20,7 +20,7 @@ import io.github.shadow578.music_dl.databinding.FragmentTracksBinding;
 import io.github.shadow578.music_dl.db.TracksDB;
 import io.github.shadow578.music_dl.db.model.TrackInfo;
 import io.github.shadow578.music_dl.db.model.TrackStatus;
-import io.github.shadow578.music_dl.ui.BaseFragment;
+import io.github.shadow578.music_dl.ui.base.BaseFragment;
 import io.github.shadow578.music_dl.util.Async;
 import io.github.shadow578.music_dl.util.storage.StorageHelper;
 

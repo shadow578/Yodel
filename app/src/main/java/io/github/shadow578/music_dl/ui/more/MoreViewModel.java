@@ -14,11 +14,12 @@ import androidx.lifecycle.MutableLiveData;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import io.github.shadow578.music_dl.LocaleOverride;
 import io.github.shadow578.music_dl.R;
 import io.github.shadow578.music_dl.backup.BackupData;
 import io.github.shadow578.music_dl.backup.BackupHelper;
 import io.github.shadow578.music_dl.downloader.TrackDownloadFormat;
-import io.github.shadow578.music_dl.ui.BaseActivity;
+import io.github.shadow578.music_dl.ui.base.BaseActivity;
 import io.github.shadow578.music_dl.util.Async;
 import io.github.shadow578.music_dl.util.preferences.Prefs;
 
@@ -46,6 +47,11 @@ public class MoreViewModel extends AndroidViewModel {
     private final MutableLiveData<Boolean> enableTagging = new MutableLiveData<>(Prefs.EnableMetadataTagging.get());
 
     /**
+     * currently selected locale override
+     */
+    private final MutableLiveData<LocaleOverride> localeOverride = new MutableLiveData<>(Prefs.LocaleOverride.get());
+
+    /**
      * open the about page
      *
      * @param activity parent activity
@@ -63,21 +69,6 @@ public class MoreViewModel extends AndroidViewModel {
         if (activity instanceof BaseActivity) {
             ((BaseActivity) activity).maybeSelectDownloadsDir(true);
         }
-    }
-
-    /**
-     * set the download format
-     *
-     * @param format new download format
-     */
-    public void setDownloadFormat(@NonNull TrackDownloadFormat format) {
-        // ignore if no change
-        if (format.equals(downloadFormat.getValue())) {
-            return;
-        }
-
-        Prefs.DownloadFormat.set(format);
-        downloadFormat.setValue(format);
     }
 
     /**
@@ -131,6 +122,21 @@ public class MoreViewModel extends AndroidViewModel {
     }
 
     /**
+     * set the download format
+     *
+     * @param format new download format
+     */
+    public void setDownloadFormat(@NonNull TrackDownloadFormat format) {
+        // ignore if no change
+        if (format.equals(downloadFormat.getValue())) {
+            return;
+        }
+
+        Prefs.DownloadFormat.set(format);
+        downloadFormat.setValue(format);
+    }
+
+    /**
      * @return currently selected download format
      */
     @NonNull
@@ -144,6 +150,11 @@ public class MoreViewModel extends AndroidViewModel {
      * @param enable enable ssl fix?
      */
     public void setEnableSSLFix(boolean enable) {
+        if(Boolean.valueOf(enable).equals(enableSSLFix.getValue()))
+        {
+            return;
+        }
+
         Prefs.EnableSSLFix.set(enable);
         enableSSLFix.setValue(enable);
     }
@@ -162,6 +173,11 @@ public class MoreViewModel extends AndroidViewModel {
      * @param enable is tagging enabled?
      */
     public void setEnableTagging(boolean enable) {
+        if(Boolean.valueOf(enable).equals(enableTagging.getValue()))
+        {
+            return;
+        }
+
         Prefs.EnableMetadataTagging.set(enable);
         enableTagging.setValue(enable);
     }
@@ -172,5 +188,30 @@ public class MoreViewModel extends AndroidViewModel {
     @NonNull
     public LiveData<Boolean> getEnableTagging() {
         return enableTagging;
+    }
+
+    /**
+     * set the currently selected locale override
+     *
+     * @param localeOverride the currently selected locale override
+     * @return  was the locale changed?
+     */
+    public boolean setLocaleOverride(@NonNull LocaleOverride localeOverride) {
+        if(localeOverride.equals(this.localeOverride.getValue()))
+        {
+            return false;
+        }
+
+        Prefs.LocaleOverride.set(localeOverride);
+        this.localeOverride.setValue(localeOverride);
+        return true;
+    }
+
+    /**
+     * @return the currently selected locale override
+     */
+    @NonNull
+    public LiveData<LocaleOverride> getLocaleOverride() {
+        return localeOverride;
     }
 }

@@ -47,6 +47,12 @@
                 android:text="@string/more_select_downloads_dir"
                 android:textAllCaps="false" />
 
+            <!-- language override -->
+            <androidx.appcompat.widget.AppCompatSpinner
+                android:id="@+id/language_override"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
             <!-- download format -->
             <androidx.appcompat.widget.AppCompatSpinner
                 android:id="@+id/downloads_format"

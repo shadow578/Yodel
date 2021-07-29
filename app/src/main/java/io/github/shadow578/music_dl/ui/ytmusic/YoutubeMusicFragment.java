@@ -17,7 +17,7 @@ import androidx.lifecycle.ViewModelProvider;
 import java.util.Optional;
 
 import io.github.shadow578.music_dl.databinding.FragmentExploreBinding;
-import io.github.shadow578.music_dl.ui.BaseFragment;
+import io.github.shadow578.music_dl.ui.base.BaseFragment;
 import io.github.shadow578.music_dl.util.Async;
 import io.github.shadow578.music_dl.util.Payload;
 import io.github.shadow578.music_dl.util.Url;

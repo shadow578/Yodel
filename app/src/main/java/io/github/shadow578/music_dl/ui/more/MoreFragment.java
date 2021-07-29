@@ -20,10 +20,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import io.github.shadow578.music_dl.LocaleOverride;
 import io.github.shadow578.music_dl.R;
 import io.github.shadow578.music_dl.databinding.FragmentMoreBinding;
 import io.github.shadow578.music_dl.downloader.TrackDownloadFormat;
-import io.github.shadow578.music_dl.ui.BaseFragment;
+import io.github.shadow578.music_dl.ui.base.BaseFragment;
 
 /**
  * more / about fragment
@@ -104,6 +105,9 @@ public class MoreFragment extends BaseFragment {
         // select downloads dir
         b.selectDownloadsDir.setOnClickListener(v -> model.chooseDownloadsDir(requireActivity()));
 
+        // populate language selection
+        setupLanguageSelection();
+
         // populate download formats
         setupFormatSelection();
 
@@ -152,5 +156,39 @@ public class MoreFragment extends BaseFragment {
         // sync with model
         model.getDownloadFormat().observe(requireActivity(), trackDownloadFormat
                 -> b.downloadsFormat.setSelection(formatValues.indexOf(trackDownloadFormat)));
+    }
+
+    /**
+     * setup the language override selector
+     */
+    private void setupLanguageSelection() {
+        // create a list of the locale overrides and a list of display names
+        // both lists are in the same order
+        final Context ctx = requireContext();
+        final List<LocaleOverride> localeValues = Arrays.asList(LocaleOverride.values());
+        final List<String> localeDisplayNames = localeValues.stream()
+                .map(locale -> locale.displayName(ctx))
+                .collect(Collectors.toList());
+
+        // set values to display
+        b.languageOverride.setAdapter(new ArrayAdapter<>(ctx, android.R.layout.simple_dropdown_item_1line, localeDisplayNames));
+
+        // set change listener
+        b.languageOverride.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                final boolean changed = model.setLocaleOverride(localeValues.get(position));
+                if (changed) {
+                    requireActivity().recreate();
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+
+        // sync with model
+        model.getLocaleOverride().observe(requireActivity(), localeOverride -> b.languageOverride.setSelection(localeValues.indexOf(localeOverride)));
     }
 }

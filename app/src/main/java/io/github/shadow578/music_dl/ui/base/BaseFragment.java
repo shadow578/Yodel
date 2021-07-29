@@ -1,4 +1,4 @@
-package io.github.shadow578.music_dl.ui;
+package io.github.shadow578.music_dl.ui.base;
 
 import androidx.fragment.app.Fragment;
 

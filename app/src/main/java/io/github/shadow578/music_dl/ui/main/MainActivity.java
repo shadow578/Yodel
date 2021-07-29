@@ -16,7 +16,7 @@ import java.util.List;
 
 import io.github.shadow578.music_dl.R;
 import io.github.shadow578.music_dl.databinding.ActivityMainBinding;
-import io.github.shadow578.music_dl.ui.BaseActivity;
+import io.github.shadow578.music_dl.ui.base.BaseActivity;
 import io.github.shadow578.music_dl.ui.more.MoreFragment;
 import io.github.shadow578.music_dl.ui.tracks.TracksFragment;
 import io.github.shadow578.music_dl.ui.ytmusic.YoutubeMusicFragment;
