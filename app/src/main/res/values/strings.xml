@@ -1,6 +1,6 @@
 <resources>
     <!-- shared -->
-    <string name="app_name">YTMusic-DL</string>
+    <string name="app_name" translatable="false">YTMusic-DL</string>
     <string name="share_to_download_label">Download from YouTube</string>
     <string name="empty_text">Empty,\nlike my soul</string>
     <string name="fallback_title">Unknown</string>
@@ -19,7 +19,7 @@
 
     <!-- replace track dialog -->
     <string name="tracks_replace_existing_title">Replace Track?</string>
-    <string name="tracks_replace_existing_message" formatted="true">\'%1$s\' was already downloaded? <br>\nDo you want to replace it?</br></string>
+    <string name="tracks_replace_existing_message" formatted="true">\'%1$s\' was already downloaded? <br/> Do you want to replace it?</string>
     <string name="tracks_replace_existing_positive">Yes, Replace</string>
     <string name="tracks_replace_existing_negative">No</string>
 
