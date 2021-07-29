@@ -48,4 +48,5 @@
     <string name="file_format_flac">FLAC</string>
     <string name="file_format_wav">WAV</string>
     <string name="locale_system_default">Systemeinstellung folgen</string>
+    <string name="tracks_undo_delete">Wiederherstellen</string>
 </resources>

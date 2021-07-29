@@ -11,7 +11,9 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.Optional;
 
@@ -22,6 +24,7 @@ import io.github.shadow578.music_dl.db.model.TrackInfo;
 import io.github.shadow578.music_dl.db.model.TrackStatus;
 import io.github.shadow578.music_dl.ui.base.BaseFragment;
 import io.github.shadow578.music_dl.util.Async;
+import io.github.shadow578.music_dl.util.SwipeToDeleteCallback;
 import io.github.shadow578.music_dl.util.storage.StorageHelper;
 
 /**
@@ -52,12 +55,33 @@ public class TracksFragment extends BaseFragment {
         model = new ViewModelProvider(this).get(TracksViewModel.class);
 
         // setup recycler with data from model
+        final TracksAdapter tracksAdapter = new TracksAdapter(requireActivity(), model.getTracks(), this::playTrack, this::reDownloadTrack);
         b.tracksRecycler.setLayoutManager(new LinearLayoutManager(requireContext()));
-        b.tracksRecycler.setAdapter(new TracksAdapter(requireActivity(), model.getTracks(), this::playTrack, this::reDownloadTrack));
 
         // show empty label if no tracks available
         model.getTracks().observe(requireActivity(), tracks
                 -> b.emptyLabel.setVisibility(tracks.size() > 0 ? View.GONE : View.VISIBLE));
+
+        // setup swipe to delete
+        final ItemTouchHelper swipeToDelete = new ItemTouchHelper(new SwipeToDeleteCallback(requireContext(),
+                R.color.delete_track,
+                R.drawable.ic_round_close_24,
+                R.color.on_delete_track,
+                15) {
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                if (!(viewHolder instanceof TracksAdapter.Holder)) {
+                    throw new IllegalStateException("got a wrong typed view holder");
+                }
+
+                tracksAdapter.deleteLater((TracksAdapter.Holder) viewHolder, track
+                        -> Async.runAsync(() -> TracksDB.getInstance().tracks().remove(track)));
+            }
+        });
+        swipeToDelete.attachToRecyclerView(b.tracksRecycler);
+
+
+        b.tracksRecycler.setAdapter(tracksAdapter);
     }
 
     /**

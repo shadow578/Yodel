@@ -128,7 +128,7 @@ public class MainActivity extends BaseActivity {
         /**
          * the tracks library fragment
          */
-        Tracks(R.id.nav_tracks, true),
+        Tracks(R.id.nav_tracks, false),
 
         /**
          * the explore fragment

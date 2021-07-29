@@ -11,10 +11,34 @@
     app:cardElevation="5dp"
     tools:showIn="@layout/fragment_tracks">
 
+    <!-- deleted layout -->
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/container_undo"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/delete_track"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/undo"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/tracks_undo_delete"
+            android:textColor="@color/on_delete_track"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- main layout -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/container_main"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="0dp">
+        android:layout_margin="0dp"
+        tools:visibility="invisible">
 
         <!-- cover art -->
         <androidx.appcompat.widget.AppCompatImageView

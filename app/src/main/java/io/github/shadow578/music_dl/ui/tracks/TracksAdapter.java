@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,6 +22,7 @@ import io.github.shadow578.music_dl.R;
 import io.github.shadow578.music_dl.databinding.RecyclerTrackViewBinding;
 import io.github.shadow578.music_dl.db.model.TrackInfo;
 import io.github.shadow578.music_dl.db.model.TrackStatus;
+import io.github.shadow578.music_dl.util.Async;
 import io.github.shadow578.music_dl.util.Util;
 import io.github.shadow578.music_dl.util.storage.StorageHelper;
 
@@ -37,6 +39,13 @@ public class TracksAdapter extends RecyclerView.Adapter<TracksAdapter.Holder> {
 
     @NonNull
     private final ItemListener reDownloadListener;
+
+    /**
+     * items that should be removed later.
+     * key is item position, value if remove was aborted
+     */
+    @NonNull
+    private final HashMap<Integer, Boolean> itemsToDelete = new HashMap<>();
 
     public TracksAdapter(@NonNull LifecycleOwner owner, @NonNull LiveData<List<TrackInfo>> tracks,
                          @NonNull ItemListener clickListener,
@@ -138,6 +147,51 @@ public class TracksAdapter extends RecyclerView.Adapter<TracksAdapter.Holder> {
 
         // set click listener
         holder.b.getRoot().setOnClickListener(v -> clickListener.onClick(track));
+
+
+        // deleted mode:
+        // setup delete listener
+        holder.b.undo.setOnClickListener(v -> {
+            itemsToDelete.put(position, false);
+            notifyItemChanged(position);
+        });
+
+        // make view go into delete mode
+        final Boolean isToDelete = itemsToDelete.get(position);
+        holder.setDeletedMode(isToDelete != null && isToDelete);
+    }
+
+    /**
+     * show a undo button for a while, then remove the item
+     *
+     * @param item           the item to remove
+     * @param deleteCallback callback to actually delete the item. called on main thread
+     */
+    public void deleteLater(@NonNull Holder item, @NonNull ItemListener deleteCallback) {
+        final int position = item.getAdapterPosition();
+        final TrackInfo track = tracks.get(position);
+
+        // mark as to delete
+        itemsToDelete.put(position, true);
+
+        // delete after a delay
+        Async.runLaterOnMain(() -> {
+            if (Boolean.FALSE.equals(itemsToDelete.get(position))) {
+                return;
+            }
+
+            // remove from map
+            itemsToDelete.remove(position);
+
+            // animate removal nicely
+            notifyItemRemoved(position);
+
+            // actually remove
+            Async.runLaterOnMain(() -> deleteCallback.onClick(track), 100);
+        }, 5000);
+
+        // update to reflect new deleted state
+        notifyItemChanged(position);
     }
 
     @Override
@@ -157,6 +211,16 @@ public class TracksAdapter extends RecyclerView.Adapter<TracksAdapter.Holder> {
         public Holder(@NonNull RecyclerTrackViewBinding b) {
             super(b.getRoot());
             this.b = b;
+        }
+
+        /**
+         * set if the 'deleted mode' view should be used
+         *
+         * @param deletedMode is this item in deleted mode?
+         */
+        public void setDeletedMode(boolean deletedMode) {
+            b.containerMain.setVisibility(deletedMode ? View.INVISIBLE : View.VISIBLE);
+            b.containerUndo.setVisibility(deletedMode ? View.VISIBLE : View.GONE);
         }
     }
 

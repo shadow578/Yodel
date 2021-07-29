@@ -17,6 +17,7 @@
     <string name="tracks_artist_and_album" formatted="true">%1$s • %2$s</string>
     <string name="tracks_re_download">Retry Download</string>
     <string name="tracks_play_failed">Failed to open audio player</string>
+    <string name="tracks_undo_delete">Undo</string>
 
     <!-- replace track dialog -->
     <string name="tracks_replace_existing_title">Replace Track?</string>
