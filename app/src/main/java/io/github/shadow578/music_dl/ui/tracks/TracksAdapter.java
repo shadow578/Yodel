@@ -77,13 +77,13 @@ public class TracksAdapter extends RecyclerView.Adapter<TracksAdapter.Holder> {
             // load cover from fs using glide
             Glide.with(holder.b.coverArt)
                     .load(coverUri.get())
-                    .placeholder(R.drawable.ic_round_placeholder_24)
-                    .fallback(R.drawable.ic_round_placeholder_24)
+                    .placeholder(R.drawable.ic_splash_foreground)
+                    .fallback(R.drawable.ic_splash_foreground)
                     .into(holder.b.coverArt);
         } else {
             // load fallback image
             Glide.with(holder.b.coverArt)
-                    .load(R.drawable.ic_round_placeholder_24)
+                    .load(R.drawable.ic_splash_foreground)
                     .into(holder.b.coverArt);
         }
 

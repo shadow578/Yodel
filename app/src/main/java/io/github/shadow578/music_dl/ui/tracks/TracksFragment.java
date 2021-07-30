@@ -3,11 +3,14 @@ package io.github.shadow578.music_dl.ui.tracks;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import androidx.annotation.AttrRes;
+import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
@@ -64,9 +67,9 @@ public class TracksFragment extends BaseFragment {
 
         // setup swipe to delete
         final ItemTouchHelper swipeToDelete = new ItemTouchHelper(new SwipeToDeleteCallback(requireContext(),
-                R.color.delete_track,
+                resolveColor(R.attr.colorError),
                 R.drawable.ic_round_close_24,
-                R.color.on_delete_track,
+                resolveColor(R.attr.colorOnError),
                 15) {
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
@@ -117,5 +120,19 @@ public class TracksFragment extends BaseFragment {
 
         // overwrite entry in db
         Async.runAsync(() -> TracksDB.init(requireContext()).tracks().insert(track));
+    }
+
+    /**
+     * resolve a color from a attribute
+     *
+     * @param attr the color attribute to resolve
+     * @return the resolved color int
+     */
+    @ColorInt
+    private int resolveColor(@AttrRes int attr) {
+        final TypedValue value = new TypedValue();
+        requireContext().getTheme().resolveAttribute(attr, value, true);
+        return value.data;
+
     }
 }

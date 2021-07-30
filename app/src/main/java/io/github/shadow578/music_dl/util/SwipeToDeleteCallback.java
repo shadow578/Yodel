@@ -8,7 +8,7 @@ import android.graphics.drawable.Drawable;
 import android.util.TypedValue;
 import android.view.View;
 
-import androidx.annotation.ColorRes;
+import androidx.annotation.ColorInt;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
@@ -38,17 +38,17 @@ public abstract class SwipeToDeleteCallback extends ItemTouchHelper.SimpleCallba
     /**
      * create a new handler
      *
-     * @param ctx                context to work in
-     * @param backgroundColorRes background drawable
-     * @param iconRes            icon to draw
-     * @param iconTintRes        icon tint color
-     * @param iconMarginDp       margins of the icon, in dp
+     * @param ctx             context to work in
+     * @param backgroundColor background drawable
+     * @param iconRes         icon to draw
+     * @param iconTint        icon tint color
+     * @param iconMarginDp    margins of the icon, in dp
      */
-    public SwipeToDeleteCallback(@NonNull Context ctx, @ColorRes int backgroundColorRes, @DrawableRes int iconRes, @ColorRes int iconTintRes, int iconMarginDp) {
+    public SwipeToDeleteCallback(@NonNull Context ctx, @ColorInt int backgroundColor, @DrawableRes int iconRes, @ColorInt int iconTint, int iconMarginDp) {
         super(0, ItemTouchHelper.LEFT);
 
         // create background color drawable
-        background = new ColorDrawable(ContextCompat.getColor(ctx, backgroundColorRes));
+        background = new ColorDrawable(backgroundColor);
 
         // load icon drawable
         icon = ContextCompat.getDrawable(ctx, iconRes);
@@ -56,7 +56,7 @@ public abstract class SwipeToDeleteCallback extends ItemTouchHelper.SimpleCallba
             throw new IllegalArgumentException("could not load icon resource");
         }
 
-        icon.setColorFilter(ContextCompat.getColor(ctx, iconTintRes), PorterDuff.Mode.SRC_ATOP);
+        icon.setColorFilter(iconTint, PorterDuff.Mode.SRC_ATOP);
 
         // load margin
         iconMargin = (int) TypedValue.applyDimension(

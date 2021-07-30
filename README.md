@@ -1,9 +1,12 @@
-# ![App Icon](.github/res/app-icon.png) Music_DL
-Music_DL is a free & open source application to download music from YouTube.
+# ![App Icon =32x32](app/src/main/ic_launcher-playstore.png) Yodel
+Yodel is a free & open source <b>Yo</b>uTube Music <b>D</b>ownload<b>e</b>r ...<b>l</b>\*
+
+\* i'm not good with acronyms
+
 
 ## Features
 
-- Based on [youtube-dl](https://github.com/ytdl-org/youtube-dl), with automatic updates for extractors
+- Based on [youtube-dl](https://github.com/ytdl-org/youtube-dl)
 - [ID3v2](https://en.wikipedia.org/wiki/ID3) tagging for MP3
 - Material Design
 - Day & Night Theme

@@ -8,7 +8,7 @@ android {
     buildToolsVersion "30.0.3"
 
     defaultConfig {
-        applicationId "io.github.shadow578.music_dl"
+        applicationId "io.github.shadow578.yodel"
         minSdkVersion 23
         targetSdkVersion 30
         compileSdkVersion 30

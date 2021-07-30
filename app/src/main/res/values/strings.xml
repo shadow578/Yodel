@@ -1,6 +1,6 @@
 <resources>
     <!-- shared -->
-    <string name="app_name" translatable="false">YTMusic-DL</string>
+    <string name="app_name" translatable="false">Yodel</string>
     <string name="share_to_download_label">Download from YouTube</string>
     <string name="empty_text">Empty,\nlike my soul</string>
     <string name="fallback_title">Unknown</string>
