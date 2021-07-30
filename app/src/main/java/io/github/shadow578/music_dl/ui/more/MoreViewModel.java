@@ -11,6 +11,8 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.mikepenz.aboutlibraries.LibsBuilder;
+
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -57,7 +59,12 @@ public class MoreViewModel extends AndroidViewModel {
      * @param activity parent activity
      */
     public void openAboutPage(@NonNull Activity activity) {
-
+        final LibsBuilder libs = new LibsBuilder();
+       // libs.setAboutShowIcon(true);
+        libs.setAboutAppName(activity.getString(R.string.app_name));
+        //libs.setShowLicense(true);
+        //libs.setShowVersion(true);
+        libs.start(activity);
     }
 
     /**

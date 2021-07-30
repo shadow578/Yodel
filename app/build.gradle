@@ -1,5 +1,6 @@
 plugins {
     id 'com.android.application'
+    id 'com.mikepenz.aboutlibraries.plugin'
 }
 
 android {
@@ -78,6 +79,10 @@ dependencies {
     // glide
     implementation 'com.github.bumptech.glide:glide:4.12.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.12.0'
+
+    // about libraries
+    implementation 'com.mikepenz:aboutlibraries-core:8.9.1'
+    implementation 'com.mikepenz:aboutlibraries:8.9.1'
 
     // desugaring
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
