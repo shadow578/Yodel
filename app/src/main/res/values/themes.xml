@@ -14,9 +14,8 @@
         <!-- Customize your theme here. -->
     </style>
 
-
     <!-- splash screen theme -->
-    <style name="Theme.SplashScreen" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="Theme.SplashScreen" parent="Theme.YTMusicDL">
         <item name="android:windowBackground">@drawable/splash_screen_background</item>
     </style>
 </resources>
