@@ -23,12 +23,24 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <!-- app version -->
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="@string/app_name"
+            app:layout_constraintLeft_toLeftOf="@id/app_icon"
+            app:layout_constraintRight_toRightOf="@id/app_icon"
+            app:layout_constraintTop_toBottomOf="@id/app_icon" />
+
         <!-- options -->
         <androidx.appcompat.widget.LinearLayoutCompat
-            android:layout_width="300dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="100dp"
             android:orientation="vertical"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@id/app_icon">
@@ -49,6 +61,36 @@
                 android:layout_marginTop="5dp"
                 android:text="@string/more_select_downloads_dir"
                 android:textAllCaps="false" />
+
+            <!-- import / export -->
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:orientation="horizontal">
+
+                <!-- export tracks -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/backup_tracks"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
+                    android:layout_weight="1"
+                    android:text="@string/more_backup"
+                    android:textAllCaps="false"
+                    app:icon="@drawable/ic_round_upload_24" />
+
+                <!-- import tracks -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/restore_tracks"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_weight="1"
+                    android:text="@string/more_restore"
+                    android:textAllCaps="false"
+                    app:icon="@drawable/ic_round_download_24" />
+            </androidx.appcompat.widget.LinearLayoutCompat>
 
             <!-- language override -->
             <com.google.android.material.textfield.TextInputLayout
@@ -95,36 +137,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
                 android:text="@string/more_enable_ssl_fix" />
-
-            <!-- import / export -->
-            <androidx.appcompat.widget.LinearLayoutCompat
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:orientation="horizontal">
-
-                <!-- export tracks -->
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/backup_tracks"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="5dp"
-                    android:layout_weight="1"
-                    android:text="@string/more_backup"
-                    android:textAllCaps="false"
-                    app:icon="@drawable/ic_round_upload_24" />
-
-                <!-- import tracks -->
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/restore_tracks"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="5dp"
-                    android:layout_weight="1"
-                    android:text="@string/more_restore"
-                    android:textAllCaps="false"
-                    app:icon="@drawable/ic_round_download_24" />
-            </androidx.appcompat.widget.LinearLayoutCompat>
         </androidx.appcompat.widget.LinearLayoutCompat>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>
