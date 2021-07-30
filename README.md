@@ -1,5 +1,5 @@
-# ![App Icon =32x32](app/src/main/ic_launcher-playstore.png) Yodel
-Yodel is a free & open source <b>Yo</b>uTube Music <b>D</b>ownload<b>e</b>r ...<b>l</b>\*
+# ![App Icon](.github/res/ic_launcher_round.png) Yodel
+Yodel is a free & open source <b>Yo</b>uTube Music <b>D</b>ownload<b>e</b>r ...<b>L</b>\*
 
 \* i'm not good with acronyms
 
