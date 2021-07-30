@@ -35,7 +35,7 @@ public class StorageHelper {
         encodedUri = Uri.encode(encodedUri);
 
         // base- 64 encode to ensure android does not cry about leaked paths or something...
-        return new StorageKey(Base64.encodeToString(encodedUri.getBytes(StandardCharsets.UTF_8), Base64.DEFAULT));
+        return new StorageKey(Base64.encodeToString(encodedUri.getBytes(StandardCharsets.UTF_8), Base64.NO_WRAP | Base64.URL_SAFE));
     }
 
     /**
@@ -49,7 +49,7 @@ public class StorageHelper {
     public static Optional<Uri> decodeUri(@NonNull StorageKey key) {
         try {
             // base- 64 decode
-            String uriString = new String(Base64.decode(key.toString(), Base64.DEFAULT), StandardCharsets.UTF_8);
+            String uriString = new String(Base64.decode(key.toString(), Base64.NO_WRAP | Base64.URL_SAFE), StandardCharsets.UTF_8);
 
             // decode uri
             uriString = Uri.decode(uriString);
