@@ -1,0 +1,4 @@
+com_github_yausername_youtubedl_android__library:Youtube-DL 
+com_github_yausername_youtubedl_android__common:Youtube-DL Common
+com_github_yausername_youtubedl_android__ffmpeg:Youtube-DL FFMPEG
+androidx_databinding__viewbinding:Android ViewBinding

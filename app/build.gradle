@@ -51,6 +51,9 @@ android {
         }
     }
 }
+aboutLibraries{
+    configPath = 'aboutlibraries'
+}
 
 dependencies {
     // androidX

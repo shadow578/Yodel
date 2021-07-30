@@ -73,4 +73,9 @@
     <string name="file_format_ogg">OGG</string>
     <string name="file_format_flac">FLAC</string>
     <string name="file_format_wav">WAV</string>
+
+    <!-- about libraries -->
+    <string name="aboutLibraries_description_showIcon" translatable="false">true</string>
+    <string name="aboutLibraries_description_showVersion" translatable="false">true</string>
+    <string name="aboutLibraries_description_text">a app for downloading music from YouTube</string>
 </resources>
