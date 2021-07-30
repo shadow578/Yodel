@@ -18,11 +18,9 @@ public class SplashScreenActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // minimum time of 1 seconds
         Async.runLaterOnMain(() -> {
             startActivity(new Intent(this, MainActivity.class));
             finish();
-        }, 1000);
+        }, 50);
     }
 }
