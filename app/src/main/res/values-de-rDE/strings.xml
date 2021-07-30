@@ -50,4 +50,6 @@
     <string name="locale_system_default">Systemeinstellung folgen</string>
     <string name="tracks_undo_delete">Wiederherstellen</string>
     <string name="aboutLibraries_description_text">eine App, um Musik von YouTube herunterzuladen</string>
+    <string name="more_app_language_hint">Sprache</string>
+    <string name="more_download_format_hint">Download- Format</string>
 </resources>

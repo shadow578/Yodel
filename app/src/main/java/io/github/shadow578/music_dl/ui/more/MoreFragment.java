@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
@@ -139,23 +138,25 @@ public class MoreFragment extends BaseFragment {
                 .collect(Collectors.toList());
 
         // set values to display
-        b.downloadsFormat.setAdapter(new ArrayAdapter<>(ctx, android.R.layout.simple_dropdown_item_1line, formatDisplayNames));
+        final ArrayAdapter<String> adapter = new ArrayAdapter<>(ctx, android.R.layout.simple_dropdown_item_1line, formatDisplayNames);
+        b.downloadsFormat.setAdapter(adapter);
 
         // set change listener
-        b.downloadsFormat.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                model.setDownloadFormat(formatValues.get(position));
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-            }
-        });
+        b.downloadsFormat.setOnItemClickListener((parent, view, position, id)
+                -> model.setDownloadFormat(formatValues.get(position)));
 
         // sync with model
         model.getDownloadFormat().observe(requireActivity(), trackDownloadFormat
-                -> b.downloadsFormat.setSelection(formatValues.indexOf(trackDownloadFormat)));
+                -> {
+            final int i = formatValues.indexOf(trackDownloadFormat);
+            b.downloadsFormat.setText(formatDisplayNames.get(i), false);
+        });
+
+        // always show all items
+        b.downloadsFormat.setOnClickListener(v -> {
+            adapter.getFilter().filter(null);
+            b.downloadsFormat.showDropDown();
+        });
     }
 
     /**
@@ -171,24 +172,27 @@ public class MoreFragment extends BaseFragment {
                 .collect(Collectors.toList());
 
         // set values to display
-        b.languageOverride.setAdapter(new ArrayAdapter<>(ctx, android.R.layout.simple_dropdown_item_1line, localeDisplayNames));
+        final ArrayAdapter<String> adapter = new ArrayAdapter<>(ctx, android.R.layout.simple_dropdown_item_1line, localeDisplayNames);
+        b.languageOverride.setAdapter(adapter);
 
         // set change listener
-        b.languageOverride.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                final boolean changed = model.setLocaleOverride(localeValues.get(position));
-                if (changed) {
-                    requireActivity().recreate();
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
+        b.languageOverride.setOnItemClickListener((parent, view, position, id) -> {
+            final boolean changed = model.setLocaleOverride(localeValues.get(position));
+            if (changed) {
+                requireActivity().recreate();
             }
         });
 
         // sync with model
-        model.getLocaleOverride().observe(requireActivity(), localeOverride -> b.languageOverride.setSelection(localeValues.indexOf(localeOverride)));
+        model.getLocaleOverride().observe(requireActivity(), localeOverride -> {
+            final int i = localeValues.indexOf(localeOverride);
+            b.languageOverride.setText(localeDisplayNames.get(i), false);
+        });
+
+        // always show all items
+        b.languageOverride.setOnClickListener(v -> {
+            adapter.getFilter().filter(null);
+            b.languageOverride.showDropDown();
+        });
     }
 }
