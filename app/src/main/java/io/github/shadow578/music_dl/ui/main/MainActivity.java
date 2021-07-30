@@ -138,7 +138,7 @@ public class MainActivity extends BaseActivity {
         /**
          * the more / about fragment
          */
-        More(R.id.nav_more, true);
+        More(R.id.nav_more, false);
 
         /**
          * the id of the menu item for this section (in bottom navigation)
