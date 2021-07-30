@@ -1,5 +1,6 @@
 package io.github.shadow578.music_dl.ui.base;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -9,12 +10,14 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.documentfile.provider.DocumentFile;
 
 import java.util.Optional;
 
 import io.github.shadow578.music_dl.R;
 import io.github.shadow578.music_dl.downloader.DownloaderService;
+import io.github.shadow578.music_dl.util.LocaleUtil;
 import io.github.shadow578.music_dl.util.preferences.Prefs;
 import io.github.shadow578.music_dl.util.storage.StorageHelper;
 import io.github.shadow578.music_dl.util.storage.StorageKey;
@@ -23,12 +26,17 @@ import io.github.shadow578.music_dl.util.storage.StorageKey;
  * topmost base activity. this is to be extended when creating a new activity.
  * handles app- specific stuff
  */
-public class BaseActivity extends LocaleOverrideActivity {
+public class BaseActivity extends AppCompatActivity {
 
     /**
      * result launcher for download directory select
      */
     private ActivityResultLauncher<Uri> downloadDirectorySelectLauncher;
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(LocaleUtil.wrapContext(newBase));
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

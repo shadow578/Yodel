@@ -1,6 +1,7 @@
 package io.github.shadow578.music_dl.downloader;
 
 import android.app.Notification;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
@@ -42,6 +43,7 @@ import io.github.shadow578.music_dl.db.model.TrackInfo;
 import io.github.shadow578.music_dl.db.model.TrackStatus;
 import io.github.shadow578.music_dl.downloader.wrapper.MP3agicWrapper;
 import io.github.shadow578.music_dl.downloader.wrapper.YoutubeDLWrapper;
+import io.github.shadow578.music_dl.util.LocaleUtil;
 import io.github.shadow578.music_dl.util.Util;
 import io.github.shadow578.music_dl.util.notifications.NotificationChannels;
 import io.github.shadow578.music_dl.util.preferences.Prefs;
@@ -150,6 +152,11 @@ public class DownloaderService extends LifecycleService {
         downloadThread.interrupt();
         hideNotification();
         super.onDestroy();
+    }
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(LocaleUtil.wrapContext(newBase));
     }
 
     /**
