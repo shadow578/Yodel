@@ -1,0 +1,236 @@
+name: Build-And-Publish
+
+# when to run this job
+on:
+  # manual build
+  workflow_dispatch:
+
+  # new tag
+  push:
+    tags:
+      - '*'
+
+# job configuration
+env:
+  target_repo: shadow578/Yodel
+  target_ref: main
+
+jobs:
+  # don't run if already released this tag
+  check_tag:
+    runs-on: ubuntu-latest
+    steps:
+      # check out repo
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+        with:
+          repository: ${{ env.target_repo }}
+          ref: ${{ env.target_ref }}
+          fetch-depth: 0
+
+      # get the last release
+      - name: Get last release
+        id: last_release
+        uses: InsonusK/get-latest-release@v1.0.1
+        with:
+          myToken: ${{ github.token }}
+          exclude_types: "draft|prerelease"
+          view_top: 1
+
+      # get difference between last release and current release
+      - name: compare last release with current
+        id: compare_releases
+        shell: bash
+        run: |
+          set -x
+
+          # get current tag name and commit sha
+          currentTag=$(git describe --abbrev=0 --tags)
+          currentSha=$(git rev-parse --short tags/$currentTag)
+
+          # get latest release commit sha
+          lastTag=${{ steps.last_release.outputs.tag_name }}
+          lastSha=$(git rev-parse --short tags/$lastTag || true)
+
+          # write info to log
+          echo "Current tag is $currentTag with SHA $currentSha"
+          echo "Last release is $lastTag with SHA $lastSha"
+
+          # compare sha and tag name
+          if [ "$currentSha" == "$lastSha" ] || [ "$currentTag" == "$lastTag" ]; then
+            echo "Current SHA or Tag is equal to previous release."
+            echo "❌ There is nothing new to build, so we skip the run"
+            echo ::set-output name=ABORT_RUN::true
+          else
+            echo "Current SHA and Tag are not equal to previous release."
+            echo "✔ We have a new release, lets start building!"
+            echo ::set-output name=ABORT_RUN::false
+          fi
+
+      # cancel run 
+      - name: Cancel run if no changes
+        if: steps.compare_releases.outputs.ABORT_RUN == 'true'
+        uses: andymckay/cancel-action@0.2
+
+  # build the apk for release
+  build:
+    needs: check_tag
+    runs-on: ubuntu-latest
+    steps:
+      # check out repo
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+        with:
+          repository: ${{ env.target_repo }}
+          ref: ${{ env.target_ref }}
+          fetch-depth: 0
+      
+      # setup jdk
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+
+      # prepare build.properties
+      - name: Prepare build and signing config
+        shell: bash
+        run: |
+          # write keystore
+          # path here is relative to repository root
+          echo "${{ secrets.SIGNING_KEY }}" | base64 -d > ./keystore.jks
+          
+          # write build.properties
+          cat <<EOT > ./app/build.properties
+          # signing config for assembleRelease
+          # keystore file, may be relative (to /app directory, that is) like so: ..\\Your-KeyStore.jks
+          SIGN_STORE_FILE=../keystore.jks
+
+          # password of the keystore
+          SIGN_STORE_PASSWORD=${{ secrets.KEY_STORE_PASSWORD}}
+
+          # key alias to use for signing the release
+          SIGN_KEY_ALIAS=${{ secrets.ALIAS }}
+
+          # password for the key
+          SIGN_KEY_PASSWORD=${{ secrets.KEY_PASSWORD }}
+          EOT
+
+      # make gradlew executeable
+      - name: Make Gradle Executable
+        run: chmod +x ./gradlew
+
+      # build app
+      - name: Build App
+        uses: eskatos/gradle-command-action@v1
+        with:
+          arguments: assembleRelease
+          wrapper-cache-enabled: true
+          dependencies-cache-enabled: true
+          configuration-cache-enabled: true
+
+      # rename apk for generic artifact upload
+      - name: Rename APK
+        run: mv ./app/build/outputs/apk/release/app-release.apk ./app.apk
+
+      # upload apk as artifact
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: apk
+          path: ./app.apk
+
+  # create a new release and attach the built APK
+  upload_github:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      # check out repo
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+        with:
+          repository: ${{ env.target_repo }}
+          ref: ${{ env.target_ref }}
+          fetch-depth: 0
+
+      # get difference between last release and current release
+      - name: Prepare Build Details
+        id: build_details
+        shell: bash
+        run: |
+          set -x
+
+          # get current tag name and commit sha
+          currentTag=$(git describe --abbrev=0 --tags)
+          currentSha=$(git rev-parse --short tags/$currentTag)
+
+          # write to outputs and log
+          echo ::set-output name=CURRENT_TAG::$currentTag
+          echo ::set-output name=CURRENT_SHA::$currentSha
+          echo "Current tag is $currentTag with SHA $currentSha"
+
+          # get previous tag name and commit sha
+          # use --always since it otherwise fails with only one tag in the repo
+          previousSha=$(git rev-parse --short tags/$currentTag^)
+          previousTag=$(git describe --abbrev=0 --tags $previousSha --always) 
+
+          # write to outputs and log
+          echo ::set-output name=PREV_TAG::$previousTag
+          echo ::set-output name=PREV_SHA::$previousSha
+          echo "Previous tag is $previousTag with SHA $previousSha"
+
+          # get diff url
+          diffUrl="https://github.com/${{ env.target_repo }}/compare/$previousTag...$currentTag"
+          echo ::set-output name=DIFF_URL::$diffUrl
+          echo "DIFF url is $diffUrl"
+
+          # build filename
+          apkPath="./yodel_release_$currentTag.apk"
+          echo ::set-output name=APK_PATH::$apkPath
+          echo "APK path is $apkPath"
+
+      # download built apk artifact
+      - name: Get APK Artifact
+        id: download_artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: apk
+          path: ./
+
+      # rename the apk artifact
+      - name: Rename APK
+        shell: bash
+        run: mv ./app.apk ${{ steps.build_details.outputs.APK_PATH }}
+
+      # generate apk checksum
+      - name: "Generate APK Checksum"
+        id: apk_hash
+        shell: bash
+        run: |
+          fileHash=$(sha256sum ${{ steps.build_details.outputs.APK_PATH }})
+          echo ::set-output name=SHA::$fileHash
+
+      # create new release
+      - name: Create the Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.build_details.outputs.CURRENT_TAG }}
+          name: Tenshi Release ${{ steps.build_details.outputs.CURRENT_TAG }}
+          body: |
+            [Changes since Release ${{ steps.build_details.outputs.PREV_TAG }}](${{ steps.build_details.outputs.DIFF_URL }})
+            
+            APK SHA256: ${{ steps.apk_hash.outputs.SHA }}
+
+            > 🤖 this release was created automatically
+          files: |
+            ${{ steps.build_details.outputs.APK_PATH }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # remove old releases (PREVIEW)
+      #- name: Purge old releases
+      #  uses: dev-drprasad/delete-older-releases@v0.2.0
+      #  with:
+      #    keep_latest: 10
+      #    delete_tags: true
+      #  env:
+      #    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
