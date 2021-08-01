@@ -10,7 +10,6 @@
 
     <!-- bottom navigation in main -->
     <string name="main_nav_tracks">Tracks</string>
-    <string name="main_nav_explore">Explore</string>
     <string name="main_nav_more">More</string>
 
     <!-- tracks -->

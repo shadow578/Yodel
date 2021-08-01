@@ -6,7 +6,6 @@
     <string name="base_toast_select_download_directory">Bitte wähle den Order aus, in dem du Songs speichern willst</string>
     <string name="base_toast_set_download_directory_fail">Konnte den Song- Download- Ordner nicht setzen! Versuch es bitte noch mal, oder melde diesen Fehler</string>
     <string name="main_nav_tracks">Songs</string>
-    <string name="main_nav_explore">Stöbern</string>
     <string name="main_nav_more">Mehr</string>
     <string name="tracks_artist_and_album">%1$s • %2$s</string>
     <string name="tracks_re_download">Erneut Herunterladen</string>

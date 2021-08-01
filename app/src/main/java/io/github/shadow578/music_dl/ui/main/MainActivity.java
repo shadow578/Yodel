@@ -19,14 +19,12 @@ import io.github.shadow578.music_dl.databinding.ActivityMainBinding;
 import io.github.shadow578.music_dl.ui.base.BaseActivity;
 import io.github.shadow578.music_dl.ui.more.MoreFragment;
 import io.github.shadow578.music_dl.ui.tracks.TracksFragment;
-import io.github.shadow578.music_dl.ui.ytmusic.YoutubeMusicFragment;
 
 /**
  * the main activity
  */
 public class MainActivity extends BaseActivity {
 
-    private final YoutubeMusicFragment exploreFragment = new YoutubeMusicFragment();
     private final TracksFragment tracksFragment = new TracksFragment();
     private final MoreFragment moreFragment = new MoreFragment();
 
@@ -35,7 +33,6 @@ public class MainActivity extends BaseActivity {
      */
     private final List<Section> sectionOrder = Arrays.asList(
             Section.Tracks,
-            Section.Explore,
             Section.More
     );
 
@@ -114,8 +111,6 @@ public class MainActivity extends BaseActivity {
             default:
             case Tracks:
                 return tracksFragment;
-            case Explore:
-                return exploreFragment;
             case More:
                 return moreFragment;
         }
@@ -128,17 +123,12 @@ public class MainActivity extends BaseActivity {
         /**
          * the tracks library fragment
          */
-        Tracks(R.id.nav_tracks, false),
-
-        /**
-         * the explore fragment
-         */
-        Explore(R.id.nav_explore, false),
+        Tracks(R.id.nav_tracks, true),
 
         /**
          * the more / about fragment
          */
-        More(R.id.nav_more, false);
+        More(R.id.nav_more, true);
 
         /**
          * the id of the menu item for this section (in bottom navigation)
