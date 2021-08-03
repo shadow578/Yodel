@@ -8,12 +8,14 @@ import android.os.LocaleList;
 
 import androidx.annotation.NonNull;
 
+import io.github.shadow578.music_dl.KtPorted;
 import io.github.shadow578.music_dl.LocaleOverride;
 import io.github.shadow578.music_dl.util.preferences.Prefs;
 
 /**
  * locale utility class
  */
+@KtPorted
 public class LocaleUtil {
     /**
      * wrap the config to use the target locale from {@link Prefs#LocaleOverride}

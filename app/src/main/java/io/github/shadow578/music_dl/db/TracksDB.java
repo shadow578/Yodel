@@ -13,6 +13,7 @@ import java.io.File;
 import java.util.List;
 import java.util.Optional;
 
+import io.github.shadow578.music_dl.KtPorted;
 import io.github.shadow578.music_dl.db.model.TrackInfo;
 import io.github.shadow578.music_dl.db.model.TrackStatus;
 import io.github.shadow578.music_dl.util.storage.StorageHelper;
@@ -20,6 +21,7 @@ import io.github.shadow578.music_dl.util.storage.StorageHelper;
 /**
  * the tracks database
  */
+@KtPorted
 @TypeConverters({
         DBTypeConverters.class
 })

@@ -14,6 +14,7 @@ import androidx.viewpager2.widget.ViewPager2;
 import java.util.Arrays;
 import java.util.List;
 
+import io.github.shadow578.music_dl.KtPorted;
 import io.github.shadow578.music_dl.R;
 import io.github.shadow578.music_dl.databinding.ActivityMainBinding;
 import io.github.shadow578.music_dl.ui.base.BaseActivity;
@@ -23,6 +24,7 @@ import io.github.shadow578.music_dl.ui.tracks.TracksFragment;
 /**
  * the main activity
  */
+@KtPorted
 public class MainActivity extends BaseActivity {
 
     private final TracksFragment tracksFragment = new TracksFragment();

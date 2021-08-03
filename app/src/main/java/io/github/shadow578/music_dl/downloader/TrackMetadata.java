@@ -11,11 +11,14 @@ import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Optional;
 
+import io.github.shadow578.music_dl.KtPorted;
+
 /**
  * track metadata POJO. this is in the format that youtube-dl writes with the --write-info-json option
  * a lot of data is left out, as it's not really relevant for what we're doing (stuff like track info, thumbnails, ...)
  */
 @SuppressWarnings("unused")
+@KtPorted
 public class TrackMetadata {
 
     /**

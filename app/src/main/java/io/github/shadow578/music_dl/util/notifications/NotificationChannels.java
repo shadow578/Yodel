@@ -8,12 +8,14 @@ import androidx.annotation.StringRes;
 import androidx.core.app.NotificationChannelCompat;
 import androidx.core.app.NotificationManagerCompat;
 
+import io.github.shadow578.music_dl.KtPorted;
 import io.github.shadow578.music_dl.R;
 
 /**
  * class to handle notification channels
  */
 @SuppressWarnings("unused")
+@KtPorted
 public enum NotificationChannels {
     /**
      * default notification channel.

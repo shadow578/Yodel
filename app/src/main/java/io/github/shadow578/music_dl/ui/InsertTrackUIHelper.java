@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 
+import io.github.shadow578.music_dl.KtPorted;
 import io.github.shadow578.music_dl.R;
 import io.github.shadow578.music_dl.db.TracksDB;
 import io.github.shadow578.music_dl.db.model.TrackInfo;
@@ -14,6 +15,7 @@ import io.github.shadow578.music_dl.util.Async;
 /**
  * helper class for inserting tracks into the db from UI
  */
+@KtPorted
 public class InsertTrackUIHelper {
 
     /**

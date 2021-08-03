@@ -12,9 +12,12 @@ import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import io.github.shadow578.music_dl.KtPorted;
+
 /**
  * general utility
  */
+@KtPorted
 public final class Util {
 
     //region youtube util

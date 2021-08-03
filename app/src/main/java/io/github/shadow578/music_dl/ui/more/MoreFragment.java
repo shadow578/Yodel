@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import io.github.shadow578.music_dl.KtPorted;
 import io.github.shadow578.music_dl.LocaleOverride;
 import io.github.shadow578.music_dl.R;
 import io.github.shadow578.music_dl.databinding.FragmentMoreBinding;
@@ -28,6 +29,7 @@ import io.github.shadow578.music_dl.ui.base.BaseFragment;
 /**
  * more / about fragment
  */
+@KtPorted
 public class MoreFragment extends BaseFragment {
 
     /**

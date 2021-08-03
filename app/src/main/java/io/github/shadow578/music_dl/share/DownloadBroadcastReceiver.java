@@ -29,6 +29,7 @@ import io.github.shadow578.music_dl.util.Util;
  * this.sendBroadcast(broadcast);
  * </pre>
  */
+//TODO probably dropped in KT rewrite
 public class DownloadBroadcastReceiver extends BroadcastReceiver {
 
     /**

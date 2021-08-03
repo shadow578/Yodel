@@ -3,6 +3,7 @@ package io.github.shadow578.music_dl.downloader;
 import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 
+import io.github.shadow578.music_dl.KtPorted;
 import io.github.shadow578.music_dl.R;
 
 /**
@@ -11,6 +12,7 @@ import io.github.shadow578.music_dl.R;
  * TODO validate all formats actually work
  * TODO check if more formats support ID3
  */
+@KtPorted
 public enum TrackDownloadFormat {
 
     /**

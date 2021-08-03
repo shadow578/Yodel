@@ -2,9 +2,12 @@ package io.github.shadow578.music_dl.util.storage;
 
 import androidx.annotation.NonNull;
 
+import io.github.shadow578.music_dl.KtPorted;
+
 /**
  * a storage key, used by {@link StorageHelper}
  */
+@KtPorted
 public class StorageKey {
 
     /**

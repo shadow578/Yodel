@@ -4,17 +4,19 @@ import androidx.room.TypeConverter;
 
 import java.time.LocalDate;
 
+import io.github.shadow578.music_dl.KtPorted;
 import io.github.shadow578.music_dl.db.model.TrackStatus;
 import io.github.shadow578.music_dl.util.storage.StorageKey;
 
 /**
  * type converters for room
  */
+@KtPorted
 class DBTypeConverters {
 
     //region StorageKey
     @TypeConverter
-    public String fromStorageKey(StorageKey key) {
+    public static String fromStorageKey(StorageKey key) {
         if (key == null) {
             return null;
         }
@@ -23,7 +25,7 @@ class DBTypeConverters {
     }
 
     @TypeConverter
-    public StorageKey toStorageKey(String key) {
+    public static StorageKey toStorageKey(String key) {
         if (key == null) {
             return null;
         }
@@ -34,7 +36,7 @@ class DBTypeConverters {
 
     //region TrackStatus
     @TypeConverter
-    public String fromTrackStatus(TrackStatus status) {
+    public static String fromTrackStatus(TrackStatus status) {
         if (status == null) {
             return null;
         }
@@ -43,7 +45,7 @@ class DBTypeConverters {
     }
 
     @TypeConverter
-    public TrackStatus toTrackStatus(String key) {
+    public static TrackStatus toTrackStatus(String key) {
         if (key == null) {
             return null;
         }

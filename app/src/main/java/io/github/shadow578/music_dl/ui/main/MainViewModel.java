@@ -8,11 +8,13 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import io.github.shadow578.music_dl.KtPorted;
 import io.github.shadow578.music_dl.downloader.DownloaderService;
 
 /**
  * view model for the main activity
  */
+@KtPorted
 public class MainViewModel extends AndroidViewModel {
     public MainViewModel(@NonNull Application application) {
         super(application);

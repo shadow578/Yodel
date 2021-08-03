@@ -8,10 +8,13 @@ import androidx.annotation.NonNull;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
+import io.github.shadow578.music_dl.KtPorted;
+
 /**
  * async operation utilities
  */
 @SuppressWarnings("unused")
+@KtPorted
 public class Async {
     /**
      * handler to run functions on the main thread.

@@ -19,6 +19,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import io.github.shadow578.music_dl.KtPorted;
 import io.github.shadow578.music_dl.db.TracksDB;
 import io.github.shadow578.music_dl.db.model.TrackInfo;
 
@@ -26,6 +27,7 @@ import io.github.shadow578.music_dl.db.model.TrackInfo;
  * tracks db backup helper class.
  * all functions must be called from a background thread
  */
+@KtPorted
 public class BackupHelper {
     /**
      * gson for backup serialization and deserialization

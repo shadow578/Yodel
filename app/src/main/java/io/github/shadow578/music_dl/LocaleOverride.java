@@ -11,6 +11,7 @@ import java.util.Locale;
 /**
  * locale overrides
  */
+@KtPorted
 public enum LocaleOverride {
 
     SystemDefault,

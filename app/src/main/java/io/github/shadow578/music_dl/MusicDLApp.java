@@ -12,6 +12,7 @@ import io.github.shadow578.music_dl.util.preferences.PreferenceWrapper;
 /**
  * application instance, for boilerplate init
  */
+@KtPorted
 public class MusicDLApp extends Application {
 
     @Override

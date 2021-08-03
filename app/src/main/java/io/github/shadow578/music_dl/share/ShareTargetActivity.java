@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.Optional;
 
+import io.github.shadow578.music_dl.KtPorted;
 import io.github.shadow578.music_dl.R;
 import io.github.shadow578.music_dl.downloader.DownloaderService;
 import io.github.shadow578.music_dl.ui.InsertTrackUIHelper;
@@ -18,6 +19,7 @@ import io.github.shadow578.music_dl.util.Util;
 /**
  * activity that handles shared youtube links (for download)
  */
+@KtPorted
 public class ShareTargetActivity extends AppCompatActivity {
 
     @Override

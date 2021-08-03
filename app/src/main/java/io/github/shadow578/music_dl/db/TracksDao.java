@@ -10,12 +10,14 @@ import androidx.room.Update;
 
 import java.util.List;
 
+import io.github.shadow578.music_dl.KtPorted;
 import io.github.shadow578.music_dl.db.model.TrackInfo;
 
 /**
  * DAO for tracks
  */
 @Dao
+@KtPorted
 @SuppressWarnings("unused")
 public interface TracksDao {
 

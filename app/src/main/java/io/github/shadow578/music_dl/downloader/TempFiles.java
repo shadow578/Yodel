@@ -5,9 +5,12 @@ import androidx.annotation.NonNull;
 import java.io.File;
 import java.util.Optional;
 
+import io.github.shadow578.music_dl.KtPorted;
+
 /**
  * temporary files created by youtube-dl
  */
+@KtPorted
 public class TempFiles {
 
     /**

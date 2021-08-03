@@ -6,6 +6,7 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import io.github.shadow578.music_dl.KtPorted;
 import io.github.shadow578.music_dl.ui.main.MainActivity;
 import io.github.shadow578.music_dl.util.Async;
 
@@ -13,6 +14,7 @@ import io.github.shadow578.music_dl.util.Async;
  * basic splash- screen activity.
  * displays a splash- screen, then redirects the user to the correct activity
  */
+@KtPorted
 public class SplashScreenActivity extends AppCompatActivity {
 
     @Override

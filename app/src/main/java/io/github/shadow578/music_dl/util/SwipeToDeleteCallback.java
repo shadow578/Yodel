@@ -15,9 +15,12 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
+import io.github.shadow578.music_dl.KtPorted;
+
 /**
  * swipe to delete handler for {@link ItemTouchHelper}
  */
+@KtPorted
 public abstract class SwipeToDeleteCallback extends ItemTouchHelper.SimpleCallback {
 
     /**

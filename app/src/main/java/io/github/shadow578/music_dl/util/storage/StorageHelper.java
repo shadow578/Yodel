@@ -12,10 +12,13 @@ import androidx.documentfile.provider.DocumentFile;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
+import io.github.shadow578.music_dl.KtPorted;
+
 /**
  * helper class for storage framework
  */
 @SuppressWarnings("unused")
+@KtPorted
 public class StorageHelper {
     // region URI encode / decode
 

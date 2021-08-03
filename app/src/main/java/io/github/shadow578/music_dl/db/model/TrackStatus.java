@@ -3,9 +3,12 @@ package io.github.shadow578.music_dl.db.model;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import io.github.shadow578.music_dl.KtPorted;
+
 /**
  * status of a track
  */
+@KtPorted
 public enum TrackStatus {
     /**
      * the track is not yet downloaded.

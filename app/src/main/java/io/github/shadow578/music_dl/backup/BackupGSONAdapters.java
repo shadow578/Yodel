@@ -10,11 +10,15 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+import io.github.shadow578.music_dl.KtPorted;
+
 /**
  * gson adapters for backup data
  */
+@KtPorted
 public class BackupGSONAdapters {
 
+    @KtPorted
     public static class LocalDateTimeAdapter extends TypeAdapter<LocalDateTime> {
 
         private static final DateTimeFormatter FORMAT = DateTimeFormatter.ISO_DATE_TIME;
@@ -39,6 +43,7 @@ public class BackupGSONAdapters {
         }
     }
 
+    @KtPorted
     public static class LocalDateAdapter extends TypeAdapter<LocalDate> {
 
         private static final DateTimeFormatter FORMAT = DateTimeFormatter.ISO_DATE;

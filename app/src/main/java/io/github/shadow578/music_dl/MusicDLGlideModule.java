@@ -7,5 +7,6 @@ import com.bumptech.glide.module.AppGlideModule;
  * glide module. ikd what it does, but glide says we need it, so here it is
  */
 @GlideModule
+@KtPorted
 public class MusicDLGlideModule extends AppGlideModule {
 }

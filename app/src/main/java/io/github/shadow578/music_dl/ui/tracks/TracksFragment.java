@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.Optional;
 
+import io.github.shadow578.music_dl.KtPorted;
 import io.github.shadow578.music_dl.R;
 import io.github.shadow578.music_dl.databinding.FragmentTracksBinding;
 import io.github.shadow578.music_dl.db.TracksDB;
@@ -33,6 +34,7 @@ import io.github.shadow578.music_dl.util.storage.StorageHelper;
 /**
  * downloaded and downloading tracks UI
  */
+@KtPorted
 public class TracksFragment extends BaseFragment {
 
     /**

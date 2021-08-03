@@ -16,6 +16,7 @@ import com.mikepenz.aboutlibraries.LibsBuilder;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import io.github.shadow578.music_dl.KtPorted;
 import io.github.shadow578.music_dl.LocaleOverride;
 import io.github.shadow578.music_dl.R;
 import io.github.shadow578.music_dl.backup.BackupData;
@@ -28,6 +29,7 @@ import io.github.shadow578.music_dl.util.preferences.Prefs;
 /**
  * view model for more fragment
  */
+@KtPorted
 public class MoreViewModel extends AndroidViewModel {
     public MoreViewModel(@NonNull Application application) {
         super(application);

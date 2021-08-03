@@ -10,6 +10,7 @@ import androidx.room.PrimaryKey;
 import java.time.LocalDate;
 import java.util.Objects;
 
+import io.github.shadow578.music_dl.KtPorted;
 import io.github.shadow578.music_dl.util.storage.StorageKey;
 
 /**
@@ -19,6 +20,7 @@ import io.github.shadow578.music_dl.util.storage.StorageKey;
         indices = {
                 @Index("first_added_at")
         })
+@KtPorted
 public class TrackInfo {
 
     /**

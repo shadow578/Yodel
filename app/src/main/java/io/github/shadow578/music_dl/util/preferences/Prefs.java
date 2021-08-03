@@ -1,5 +1,6 @@
 package io.github.shadow578.music_dl.util.preferences;
 
+import io.github.shadow578.music_dl.KtPorted;
 import io.github.shadow578.music_dl.LocaleOverride;
 import io.github.shadow578.music_dl.downloader.TrackDownloadFormat;
 import io.github.shadow578.music_dl.downloader.wrapper.YoutubeDLWrapper;
@@ -8,6 +9,7 @@ import io.github.shadow578.music_dl.util.storage.StorageKey;
 /**
  * app preferences storage
  */
+@KtPorted
 public final class Prefs {
 
     /**

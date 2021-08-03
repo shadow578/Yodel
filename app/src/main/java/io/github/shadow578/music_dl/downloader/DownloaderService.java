@@ -37,6 +37,7 @@ import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import io.github.shadow578.music_dl.KtPorted;
 import io.github.shadow578.music_dl.R;
 import io.github.shadow578.music_dl.db.TracksDB;
 import io.github.shadow578.music_dl.db.model.TrackInfo;
@@ -53,6 +54,7 @@ import io.github.shadow578.music_dl.util.storage.StorageKey;
 /**
  * tracks downloading service
  */
+@KtPorted
 public class DownloaderService extends LifecycleService {
 
     /**

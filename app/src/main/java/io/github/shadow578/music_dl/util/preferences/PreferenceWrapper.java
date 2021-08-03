@@ -7,11 +7,14 @@ import androidx.annotation.Nullable;
 
 import com.google.gson.Gson;
 
+import io.github.shadow578.music_dl.KtPorted;
+
 /**
  * wrapper class for shared preferences. init before first use using {@link #init(SharedPreferences)}
  *
  * @param <T> the type of this preference
  */
+@KtPorted
 public class PreferenceWrapper<T> {
 
     /**

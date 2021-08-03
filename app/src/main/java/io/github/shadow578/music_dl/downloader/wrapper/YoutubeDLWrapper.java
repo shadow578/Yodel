@@ -16,12 +16,14 @@ import com.yausername.youtubedl_android.YoutubeDLResponse;
 import java.io.File;
 
 import io.github.shadow578.music_dl.BuildConfig;
+import io.github.shadow578.music_dl.KtPorted;
 
 /**
  * wrapper for {@link com.yausername.youtubedl_android.YoutubeDL}.
  * all functions in this class should be run in a background thread only
  */
 @SuppressWarnings({"unused", "UnusedReturnValue"})
+@KtPorted
 public class YoutubeDLWrapper {
 
     /**

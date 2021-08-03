@@ -15,6 +15,7 @@ import androidx.documentfile.provider.DocumentFile;
 
 import java.util.Optional;
 
+import io.github.shadow578.music_dl.KtPorted;
 import io.github.shadow578.music_dl.R;
 import io.github.shadow578.music_dl.downloader.DownloaderService;
 import io.github.shadow578.music_dl.util.LocaleUtil;
@@ -26,6 +27,7 @@ import io.github.shadow578.music_dl.util.storage.StorageKey;
  * topmost base activity. this is to be extended when creating a new activity.
  * handles app- specific stuff
  */
+@KtPorted
 public class BaseActivity extends AppCompatActivity {
 
     /**

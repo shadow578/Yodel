@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
+import io.github.shadow578.music_dl.KtPorted;
 import io.github.shadow578.music_dl.R;
 import io.github.shadow578.music_dl.databinding.RecyclerTrackViewBinding;
 import io.github.shadow578.music_dl.db.model.TrackInfo;
@@ -29,6 +30,7 @@ import io.github.shadow578.music_dl.util.storage.StorageHelper;
 /**
  * recyclerview adapter for tracks livedata
  */
+@KtPorted
 public class TracksAdapter extends RecyclerView.Adapter<TracksAdapter.Holder> {
 
     @NonNull

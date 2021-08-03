@@ -8,9 +8,11 @@ import androidx.lifecycle.LiveData;
 
 import java.util.List;
 
+import io.github.shadow578.music_dl.KtPorted;
 import io.github.shadow578.music_dl.db.TracksDB;
 import io.github.shadow578.music_dl.db.model.TrackInfo;
 
+@KtPorted
 public class TracksViewModel extends AndroidViewModel {
     public TracksViewModel(@NonNull Application application) {
         super(application);

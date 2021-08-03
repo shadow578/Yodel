@@ -16,11 +16,13 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import io.github.shadow578.music_dl.KtPorted;
 import io.github.shadow578.music_dl.util.Util;
 
 /**
  * wrapper for MP3agic to make working with it on android easier
  */
+@KtPorted
 public class MP3agicWrapper {
 
     /**
