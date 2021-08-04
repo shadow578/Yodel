@@ -4,10 +4,8 @@ import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
 import androidx.test.filters.SmallTest
 import androidx.test.platform.app.InstrumentationRegistry
-import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.core.IsEqual.equalTo
-import org.hamcrest.core.IsNot.not
-import org.hamcrest.core.IsNull
+import io.kotest.matchers.*
+import io.kotest.matchers.nulls.*
 import org.junit.Test
 import java.io.File
 
@@ -16,31 +14,28 @@ import java.io.File
  */
 @SmallTest
 class StorageHelperAndroidTest {
+    private fun beNonEmptyStorageKey() = object : Matcher<StorageKey> {
+        override fun test(value: StorageKey): MatcherResult = MatcherResult(
+            value.key.isNotBlank(),
+            "$value should be a non-empty storage key",
+            "$value should be a empty storage key"
+        )
+    }
+
     /**
      * [decodeToFile] and [decodeToUri]
      */
     @Test
     fun shouldEncodeAndDecodeUri() {
-        val uri = Uri.fromFile(
-            File(
-                InstrumentationRegistry.getInstrumentation().targetContext.cacheDir,
-                "test.bar"
-            )
-        )
+        val cache = InstrumentationRegistry.getInstrumentation().targetContext.cacheDir
+        val uri = Uri.fromFile(File(cache, "foo.bar"))
 
         // encode
         val key: StorageKey = uri.encodeToKey()
-        assertThat(
-            key, IsNull.notNullValue(
-                StorageKey::class.java
-            )
-        )
+        key should beNonEmptyStorageKey()
 
         // decode
-        assertThat(
-            key.decodeToUri(),
-            equalTo(uri)
-        )
+        key.decodeToUri() shouldBe uri
     }
 
     /**
@@ -48,7 +43,7 @@ class StorageHelperAndroidTest {
      */
     @Test
     fun shouldNotDecodeUri() {
-        assertThat(StorageKey.EMPTY.decodeToUri(), equalTo(null))
+        StorageKey.EMPTY.decodeToUri().shouldBeNull()
     }
 
     /**
@@ -57,24 +52,20 @@ class StorageHelperAndroidTest {
     @Test
     fun shouldEncodeAndDecodeFile() {
         val ctx = InstrumentationRegistry.getInstrumentation().targetContext
-        val uri = Uri.fromFile(File(ctx.cacheDir, "test.bar"))
+        val uri = Uri.fromFile(File(ctx.cacheDir, "foo.bar"))
         val file = DocumentFile.fromSingleUri(ctx, uri)
 
         // check test setup
-        assertThat(file, IsNull.notNullValue())
+        file.shouldNotBeNull()
 
         // encode
-        val key: StorageKey = file!!.encodeToKey()
-        assertThat(
-            key, IsNull.notNullValue(
-                StorageKey::class.java
-            )
-        )
+        val key: StorageKey = file.encodeToKey()
+        key should beNonEmptyStorageKey()
 
         // decode
         val decodedFile: DocumentFile? = key.decodeToFile(ctx)
-        assertThat(decodedFile, not(equalTo(null)))
-        assertThat(decodedFile!!.uri, equalTo(file.uri))
+        decodedFile.shouldNotBeNull()
+        decodedFile.uri shouldBe file.uri
     }
 
     /**
@@ -85,6 +76,6 @@ class StorageHelperAndroidTest {
         val ctx = InstrumentationRegistry.getInstrumentation().targetContext
 
         //empty key
-        assertThat(StorageKey.EMPTY.decodeToFile(ctx), equalTo(null))
+        StorageKey.EMPTY.decodeToFile(ctx).shouldBeNull()
     }
 }

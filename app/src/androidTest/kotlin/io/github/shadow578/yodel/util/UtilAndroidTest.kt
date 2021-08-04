@@ -3,9 +3,9 @@ package io.github.shadow578.yodel.util
 import androidx.test.filters.SmallTest
 import androidx.test.platform.app.InstrumentationRegistry
 import com.bumptech.glide.util.Util
-import org.hamcrest.MatcherAssert
-import org.hamcrest.core.Is
-import org.hamcrest.core.IsNull
+import io.kotest.assertions.withClue
+import io.kotest.matchers.file.*
+import io.kotest.matchers.nulls.shouldNotBeNull
 import org.junit.Test
 import java.io.File
 
@@ -19,12 +19,13 @@ class UtilAndroidTest {
      */
     @Test
     fun shouldGetTempFile() {
-        val temp: File =
-            InstrumentationRegistry.getInstrumentation().targetContext.cacheDir.getTempFile(
-                "foo",
-                "bar"
-            )
-        MatcherAssert.assertThat(temp, IsNull.notNullValue())
-        MatcherAssert.assertThat(temp.exists(), Is.`is`(false))
+        withClue("getTempFile() should return a file in the parent directory that does not exist") {
+            val cache = InstrumentationRegistry.getInstrumentation().targetContext.cacheDir
+            val temp: File = cache.getTempFile("foo", "bar")
+
+            temp.shouldNotBeNull()
+            temp.shouldNotExist()
+            temp.shouldStartWithPath(cache)
+        }
     }
 }

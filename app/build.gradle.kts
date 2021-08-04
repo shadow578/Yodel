@@ -30,7 +30,10 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
     compileOptions {
@@ -55,8 +58,12 @@ android {
             isUniversalApk = true
         }
     }
+    packagingOptions.resources {
+        excludes.add("META-INF/LICENSE.md")
+        excludes.add("META-INF/LICENSE-notice.md")
+    }
 }
-aboutLibraries{
+aboutLibraries {
     configPath = "aboutlibraries"
 }
 
@@ -99,9 +106,8 @@ dependencies {
 
     // unit testing
     testImplementation("junit:junit:4.13.2")
-    testImplementation("org.hamcrest:hamcrest:2.2")
-    testImplementation("com.github.npathai:hamcrest-optional:2.0.0")
+    testImplementation("io.kotest:kotest-assertions-core:4.6.1")
     androidTestImplementation("androidx.test:runner:1.4.0")
     androidTestImplementation("androidx.test:rules:1.4.0")
-    androidTestImplementation("com.github.npathai:hamcrest-optional:2.0.0")
+    androidTestImplementation("io.kotest:kotest-assertions-core:4.6.1")
 }

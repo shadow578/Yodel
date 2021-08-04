@@ -1,8 +1,8 @@
 package io.github.shadow578.yodel.downloader.wrapper
 
 import com.yausername.youtubedl_android.YoutubeDLRequest
-import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers.*
+import io.kotest.matchers.collections.shouldContainAll
+import io.kotest.matchers.nulls.shouldNotBeNull
 import org.junit.Test
 import java.io.File
 
@@ -30,38 +30,46 @@ class YoutubeDLWrapperTest {
 
         // check internal request has correct parameters
         val request: YoutubeDLRequest = session.request
-        assertThat(request, notNullValue(YoutubeDLRequest::class.java))
-        var args = request.buildCommand()
-        assertThat(args, hasItem("--no-continue"))
-        assertThat(
-            args,
-            hasItems("--no-check-certificate", "--prefer-insecure")
-        )
-        assertThat(args, hasItems("-f", "best"))
-        assertThat(args, hasItem("--write-info-json"))
-        assertThat(args, hasItem("--write-thumbnail"))
-        assertThat(args, hasItems("-o", targetFile.absolutePath))
-        assertThat(args, hasItems("--cache-dir", cacheDir.absolutePath))
-        assertThat(args, hasItem(videoUrl))
+        request.shouldNotBeNull()
+
+        // technically, this could be done with only one shouldContainAll
+        // but this makes it more structured (every shouldContainAll == a parameter with (optional) value)
+        with(request.buildCommand())
+        {
+            shouldContainAll("--no-continue")
+            shouldContainAll("--no-check-certificate", "--prefer-insecure")
+            shouldContainAll("-f", "best")
+            shouldContainAll("--write-info-json")
+            shouldContainAll("--write-thumbnail")
+            shouldContainAll("-o", targetFile.absolutePath)
+            shouldContainAll("--cache-dir", cacheDir.absolutePath)
+            shouldContainAll(videoUrl)
+        }
 
         // audio only
         session.audioOnly("mp3")
-        args = session.request.buildCommand()
-        assertThat(args, hasItems("-f", "bestaudio"))
-        assertThat(args, hasItems("--extract-audio"))
-        assertThat(args, hasItems("--audio-quality", "0"))
-        assertThat(args, hasItems("--audio-format", "mp3"))
-
+        with(session.request.buildCommand())
+        {
+            shouldContainAll("-f", "bestaudio")
+            shouldContainAll("--extract-audio")
+            shouldContainAll("--audio-quality", "0")
+            shouldContainAll("--audio-format", "mp3")
+        }
 
         // video only
         session.videoOnly()
-        args = session.request.buildCommand()
-        assertThat(args, hasItems("-f", "bestvideo"))
+        with(session.request.buildCommand())
+        {
+            shouldContainAll("-f", "bestvideo")
+        }
 
         // custom option
         session.setOption("--foo", "bar")
             .setOption("--yee", null)
-        args = session.request.buildCommand()
-        assertThat(args, hasItems("--foo", "bar", "--yee"))
+        with(session.request.buildCommand())
+        {
+            shouldContainAll("--foo", "bar")
+            shouldContainAll("--yee")
+        }
     }
 }

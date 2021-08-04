@@ -1,10 +1,10 @@
 package io.github.shadow578.yodel.util
 
 import com.bumptech.glide.util.Util
-import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers
-import org.hamcrest.core.IsEqual.equalTo
-import org.hamcrest.text.IsEqualIgnoringCase.equalToIgnoringCase
+import io.kotest.assertions.withClue
+import io.kotest.matchers.nulls.*
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.string.*
 import org.junit.Test
 
 /**
@@ -16,66 +16,59 @@ class UtilTest {
      */
     @Test
     fun shouldExtractVideoId() {
-        // youtube full
-        assertThat(
-            extractTrackId("https://www.youtube.com/watch?v=6Xs26b4RSu4"),
-            equalToIgnoringCase("6Xs26b4RSu4")
-        )
+        withClue("extractTrackId() for full youtube URL")
+        {
+            extractTrackId("https://www.youtube.com/watch?v=6Xs26b4RSu4") shouldBe "6Xs26b4RSu4"
+        }
 
-        // youtube short (https)
-        assertThat(
-            extractTrackId("https://youtu.be/6Xs26b4RSu4"),
-            equalToIgnoringCase("6Xs26b4RSu4")
-        )
+        withClue("extractTrackId() for short youtube URL (https)")
+        {
+            extractTrackId("https://youtu.be/6Xs26b4RSu4") shouldBe "6Xs26b4RSu4"
+        }
 
-        // youtube short (http)
-        assertThat(
-            extractTrackId("http://youtu.be/6Xs26b4RSu4"),
-            equalToIgnoringCase("6Xs26b4RSu4")
-        )
+        withClue("extractTrackId() for short youtube URL (http)")
+        {
+            extractTrackId("http://youtu.be/6Xs26b4RSu4") shouldBe "6Xs26b4RSu4"
+        }
 
-        // youtube short (no protocol)
-        assertThat(
-            extractTrackId("youtu.be/6Xs26b4RSu4"),
-            equalToIgnoringCase("6Xs26b4RSu4")
-        )
+        withClue("extractTrackId() for short youtube URL (no protocol)")
+        {
+            extractTrackId("youtu.be/6Xs26b4RSu4") shouldBe "6Xs26b4RSu4"
+        }
 
-        // youtube full with playlist
-        assertThat(
-            extractTrackId("https://www.youtube.com/watch?v=6Xs26b4RSu4&list=RD6Xs26b4RSu4&start_radio=1&rv=6Xs26b4RSu4&t=0"),
-            equalToIgnoringCase("6Xs26b4RSu4")
-        )
+        withClue("extractTrackId() for youtube URL with playlist")
+        {
+            extractTrackId("https://www.youtube.com/watch?v=6Xs26b4RSu4&list=RD6Xs26b4RSu4&start_radio=1&rv=6Xs26b4RSu4&t=0") shouldBe "6Xs26b4RSu4"
+        }
 
+        withClue("extractTrackId() for youtube music URL")
+        {
+            extractTrackId("https://music.youtube.com/watch?v=wbJwhx29O5U&list=RDAMVMwbJwhx29O5U") shouldBe "wbJwhx29O5U"
+        }
 
-        // youtube music
-        assertThat(
-            extractTrackId("https://music.youtube.com/watch?v=wbJwhx29O5U&list=RDAMVMwbJwhx29O5U"),
-            equalToIgnoringCase("wbJwhx29O5U")
-        )
+        withClue("extractTrackId() for URL from share dialog of youtube music app")
+        {
+            extractTrackId("https://music.youtube.com/watch?v=wbJwhx29O5U&feature=share") shouldBe "wbJwhx29O5U"
+        }
 
-        // youtube music by share dialog
-        assertThat(
-            extractTrackId("https://music.youtube.com/watch?v=wbJwhx29O5U&feature=share"),
-            equalToIgnoringCase("wbJwhx29O5U")
-        )
-
-        // invalid link
-        assertThat(extractTrackId("foobar"), equalTo(null))
+        withClue("extractTrackId() for invalid URL")
+        {
+            extractTrackId("foobar").shouldBeNull()
+        }
     }
 
     /**
-     * [Util.generateRandomAlphaNumeric]
+     * [generateRandomAlphaNumeric]
      */
     @Test
     fun shouldGenerateRandomString() {
-        val random: String = generateRandomAlphaNumeric(128)
-        assertThat(
-            random, Matchers.notNullValue(
-                String::class.java
-            )
-        )
-        assertThat(random.length, Matchers.`is`(128))
-        assertThat(random.isEmpty(), Matchers.`is`(false))
+        withClue("generateRandomAlphaNumeric(128) generates a string with 128 chars")
+        {
+            val random = generateRandomAlphaNumeric(128)
+            random.shouldNotBeNull()
+            random shouldHaveLength 128
+            random.shouldNotBeBlank()
+        }
     }
 
     /**
@@ -83,14 +76,17 @@ class UtilTest {
      */
     @Test
     fun shouldConvertSecondsToString() {
-        // < 1h
-        assertThat(620.secondsToTimeString(), Matchers.equalTo("10:20"))
-        assertThat(520.secondsToTimeString(), Matchers.equalTo("8:40"))
+        withClue("secondsToTimeString() should give correct results")
+        {
+            // < 1h
+            620.secondsToTimeString() shouldBe "10:20"
+            520.secondsToTimeString() shouldBe "8:40"
 
-        // > 1h
-        assertThat(7300.secondsToTimeString(), Matchers.equalTo("2:01:40"))
+            // > 1h
+            7300.secondsToTimeString() shouldBe "2:01:40"
 
-        // > 10d
-        assertThat(172800.secondsToTimeString(), Matchers.equalTo("48:00:00"))
+            // > 10h
+            172800.secondsToTimeString() shouldBe "48:00:00"
+        }
     }
 }
