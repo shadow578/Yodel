@@ -1,12 +1,8 @@
 package io.github.shadow578.yodel.db
 
 import android.content.Context
-import androidx.room.Database
-import androidx.room.Room
-import androidx.room.RoomDatabase
-import androidx.room.TypeConverters
-import io.github.shadow578.yodel.db.model.TrackInfo
-import io.github.shadow578.yodel.db.model.TrackStatus
+import androidx.room.*
+import io.github.shadow578.yodel.db.model.*
 import io.github.shadow578.yodel.util.storage.decodeToFile
 
 /**
@@ -64,7 +60,7 @@ abstract class TracksDB : RoomDatabase() {
         /**
          * database name
          */
-        const val DB_NAME = "tracks"
+        private const val DB_NAME = "tracks"
 
         /**
          * the instance singleton
@@ -82,7 +78,8 @@ abstract class TracksDB : RoomDatabase() {
                 // have to initialize db
                 instance = Room.databaseBuilder(
                     ctx,
-                    TracksDB::class.java, DB_NAME
+                    TracksDB::class.java,
+                    DB_NAME
                 )
                     .fallbackToDestructiveMigration()
                     .build()

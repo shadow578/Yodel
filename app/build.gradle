@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
+    id 'kotlin-kapt'
     id 'com.mikepenz.aboutlibraries.plugin'
 }
 
@@ -73,7 +74,7 @@ dependencies {
 
     // Room
     implementation "androidx.room:room-runtime:2.3.0"
-    annotationProcessor "androidx.room:room-compiler:2.3.0"
+    kapt "androidx.room:room-compiler:2.3.0"
 
     // youtube-dl
     implementation 'com.github.yausername.youtubedl-android:library:0.12.4'
@@ -87,7 +88,7 @@ dependencies {
 
     // glide
     implementation 'com.github.bumptech.glide:glide:4.12.0'
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.12.0'
+    kapt 'com.github.bumptech.glide:compiler:4.12.0'
 
     // about libraries
     implementation 'com.mikepenz:aboutlibraries-core:8.9.1'

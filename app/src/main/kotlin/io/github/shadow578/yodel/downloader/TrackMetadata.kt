@@ -2,8 +2,7 @@ package io.github.shadow578.yodel.downloader
 
 import com.google.gson.annotations.SerializedName
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-import java.time.format.DateTimeParseException
+import java.time.format.*
 
 /**
  * track metadata POJO. this is in the format that youtube-dl writes with the --write-info-json option
@@ -13,96 +12,96 @@ data class TrackMetadata(
     /**
      * the full video title. for music videos, this often is in the format 'Artist - Song Title'
      */
-    @field:SerializedName("title")
+    @SerializedName("title")
     val title: String? = null,
 
     /**
      * the alternative video title. for music videos, this often is just the 'Song Title' (in contrast to [.title]).
      * seems to be the same value as [.track]
      */
-    @field:SerializedName("alt_title")
+    @SerializedName("alt_title")
     val alt_title: String? = null,
 
     /**
      * the upload date, in the format yyyyMMdd (that is without ANY spaces: 20200924 == 2020-09-24)
      */
-    @field:SerializedName("upload_date")
+    @SerializedName("upload_date")
     val upload_date: String? = null,
 
     /**
      * the display name of the channel that uploaded the video
      */
-    @field:SerializedName("channel")
+    @SerializedName("channel")
     val channel: String? = null,
 
     /**
      * the duration of the video, in seconds
      */
-    @field:SerializedName("duration")
+    @SerializedName("duration")
     val duration: Long? = null,
 
     /**
      * the title of the track. this seems to be the same as [.alt_title]
      */
-    @field:SerializedName("track")
+    @SerializedName("track")
     val track: String? = null,
 
     /**
      * the name of the actual song creator (not uploader channel).
      * This seems to be data from Content-ID
      */
-    @field:SerializedName("creator")
+    @SerializedName("creator")
     val creator: String? = null,
 
     /**
      * the name of the actual song artist (not uploader channel).
      * This seems to be data from Content-ID
      */
-    @field:SerializedName("artist")
+    @SerializedName("artist")
     val artist: String? = null,
 
     /**
      * the display name of the album this track is from.
      * only included for songs that are part of a album
      */
-    @field:SerializedName("album")
+    @SerializedName("album")
     val album: String? = null,
 
     /**
      * categories of the video (like 'Music', 'Entertainment', 'Gaming' ...)
      */
-    @field:SerializedName("categories")
+    @SerializedName("categories")
     val categories: List<String>? = null,
 
     /**
      * tags on the video
      */
-    @field:SerializedName("tags")
+    @SerializedName("tags")
     val tags: List<String>? = null,
 
     /**
      * total view count of the video
      */
-    @field:SerializedName("view_count")
+    @SerializedName("view_count")
     val view_count: Long? = null,
 
     /**
      * total likes on the video
      */
-    @field:SerializedName("like_count")
+    @SerializedName("like_count")
     val like_count: Long? = null,
 
     /**
      * total dislikes on the video
      */
-    @field:SerializedName("dislike_count")
+    @SerializedName("dislike_count")
     val dislike_count: Long? = null,
 
     /**
      * the average video like/dislike rating.
      * range seems to be 0-5
      */
-    @field:SerializedName("average_rating")
+    @SerializedName("average_rating")
     val average_rating: Double? = null
 ) {
     /**

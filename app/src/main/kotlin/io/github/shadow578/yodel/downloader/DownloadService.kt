@@ -73,6 +73,7 @@ class DownloaderService : LifecycleService() {
 
     override fun onCreate() {
         super.onCreate()
+        notificationManager = NotificationManagerCompat.from(this)
 
         // ensure downloads are accessible
         if (!checkDownloadsDirSet()) {
@@ -85,9 +86,6 @@ class DownloaderService : LifecycleService() {
             stopSelf()
             return
         }
-
-        // create progress notification
-        notificationManager = NotificationManagerCompat.from(this)
 
         // init db and observe changes to pending tracks
         Log.i(TAG, "start observing pending tracks...")
