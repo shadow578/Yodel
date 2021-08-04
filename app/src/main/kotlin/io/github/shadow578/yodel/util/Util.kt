@@ -5,8 +5,8 @@ import android.content.ContextWrapper
 import android.content.res.Configuration
 import android.os.Build
 import android.os.LocaleList
-import io.github.shadow578.music_dl.LocaleOverride
-import io.github.shadow578.music_dl.util.preferences.Prefs
+import io.github.shadow578.yodel.LocaleOverride
+import io.github.shadow578.yodel.util.preferences.Prefs
 import java.io.File
 import java.util.regex.Pattern
 
@@ -78,6 +78,15 @@ fun File.getTempFile(prefix: String, suffix: String): File {
  *
  * @return the formatted string
  */
+fun Int.secondsToTimeString(): String {
+    return this.toLong().secondsToTimeString()
+}
+
+/**
+ * format a seconds value to HH:mm:ss or mm:ss format
+ *
+ * @return the formatted string
+ */
 fun Long.secondsToTimeString(): String {
     val hours = this / 3600
     return if (hours <= 0) {
@@ -97,13 +106,13 @@ fun Long.secondsToTimeString(): String {
 }
 
 /**
- * wrap the config to use the target locale from [Prefs.LocaleOverride]
+ * wrap the config to use the target locale from [LocaleOverride]
  *
  * @return the (maybe) wrapped context with the target locale
  */
 fun Context.wrapLocale(): Context {
     // get preference setting
-    val localeOverride = Prefs.LocaleOverride.get()
+    val localeOverride = Prefs.AppLocaleOverride.get()
 
     // do no overrides when using system default
     if (localeOverride == LocaleOverride.SystemDefault)
@@ -112,9 +121,9 @@ fun Context.wrapLocale(): Context {
     // create configuration with that locale
     val config = Configuration(this.resources.configuration)
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-        config.setLocales(LocaleList(localeOverride.locale()))
+        config.setLocales(LocaleList(localeOverride.locale))
     else
-        config.setLocale(localeOverride.locale())
+        config.setLocale(localeOverride.locale)
 
     // wrap the context
     return ContextWrapper(this.createConfigurationContext(config))
