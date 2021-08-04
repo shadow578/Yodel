@@ -2,36 +2,25 @@ package io.github.shadow578.yodel.downloader
 
 import android.app.Notification
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
+import android.graphics.*
 import android.util.Log
 import android.widget.Toast
 import androidx.annotation.StringRes
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
+import androidx.core.app.*
 import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.LifecycleService
-import com.google.gson.Gson
-import com.google.gson.JsonIOException
-import com.google.gson.JsonSyntaxException
-import com.mpatric.mp3agic.InvalidDataException
-import com.mpatric.mp3agic.NotSupportedException
-import com.mpatric.mp3agic.UnsupportedTagException
-import io.github.shadow578.music_dl.R
+import com.google.gson.*
+import com.mpatric.mp3agic.*
+import io.github.shadow578.yodel.R
 import io.github.shadow578.yodel.db.TracksDB
-import io.github.shadow578.yodel.db.model.TrackInfo
-import io.github.shadow578.yodel.db.model.TrackStatus
-import io.github.shadow578.yodel.downloader.wrapper.MP3agicWrapper
-import io.github.shadow578.yodel.downloader.wrapper.YoutubeDLWrapper
+import io.github.shadow578.yodel.db.model.*
+import io.github.shadow578.yodel.downloader.wrapper.*
 import io.github.shadow578.yodel.util.*
 import io.github.shadow578.yodel.util.preferences.Prefs
-import io.github.shadow578.yodel.util.storage.StorageKey
-import io.github.shadow578.yodel.util.storage.encodeToKey
-import io.github.shadow578.yodel.util.storage.getPersistedFilePermission
+import io.github.shadow578.yodel.util.storage.*
 import java.io.*
 import java.util.*
-import java.util.concurrent.BlockingQueue
-import java.util.concurrent.LinkedBlockingQueue
+import java.util.concurrent.*
 import kotlin.math.floor
 
 /**

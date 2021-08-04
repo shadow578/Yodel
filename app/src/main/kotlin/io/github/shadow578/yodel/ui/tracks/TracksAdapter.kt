@@ -1,22 +1,20 @@
 package io.github.shadow578.yodel.ui.tracks
 
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.annotation.DrawableRes
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import io.github.shadow578.music_dl.R
-import io.github.shadow578.music_dl.databinding.RecyclerTrackViewBinding
-import io.github.shadow578.yodel.db.model.TrackInfo
-import io.github.shadow578.yodel.db.model.TrackStatus
-import io.github.shadow578.yodel.util.launchMain
-import io.github.shadow578.yodel.util.secondsToTimeString
+import io.github.shadow578.yodel.R
+import io.github.shadow578.yodel.databinding.RecyclerTrackViewBinding
+import io.github.shadow578.yodel.db.model.*
+import io.github.shadow578.yodel.util.*
 import io.github.shadow578.yodel.util.storage.decodeToUri
 import kotlinx.coroutines.delay
 import java.util.*
+import kotlin.collections.List
+import kotlin.collections.set
 
 /**
  * recyclerview adapter for tracks livedata

@@ -4,11 +4,11 @@ import android.content.Context
 import android.util.Log
 import com.yausername.ffmpeg.FFmpeg
 import com.yausername.youtubedl_android.*
-import io.github.shadow578.music_dl.BuildConfig
+import io.github.shadow578.yodel.BuildConfig
 import java.io.File
 
 /**
- * wrapper for [com.yausername.youtubedl_android.YoutubeDL].
+ * wrapper for [YoutubeDL].
  * all functions in this class should be run in a background thread only
  *
  * @param videoUrl the video url to download

@@ -95,12 +95,4 @@ interface TracksDao {
      */
     @Delete
     fun remove(track: TrackInfo)
-
-    /**
-     * remove multiple tracks from the db
-     *
-     * @param tracks the tracks to remove
-     */
-    @Delete
-    fun removeAll(tracks: List<TrackInfo>)
 }

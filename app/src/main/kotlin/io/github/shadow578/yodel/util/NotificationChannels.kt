@@ -2,9 +2,8 @@ package io.github.shadow578.yodel.util
 
 import android.content.Context
 import androidx.annotation.StringRes
-import androidx.core.app.NotificationChannelCompat
-import androidx.core.app.NotificationManagerCompat
-import io.github.shadow578.music_dl.R
+import androidx.core.app.*
+import io.github.shadow578.yodel.R
 
 /**
  * class to handle notification channels

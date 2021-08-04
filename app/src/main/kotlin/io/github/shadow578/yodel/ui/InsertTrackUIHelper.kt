@@ -2,12 +2,10 @@ package io.github.shadow578.yodel.ui
 
 import android.content.Context
 import androidx.appcompat.app.AlertDialog
-import io.github.shadow578.music_dl.R
-import io.github.shadow578.music_dl.util.Async
+import io.github.shadow578.yodel.R
 import io.github.shadow578.yodel.db.TracksDB
 import io.github.shadow578.yodel.db.model.TrackInfo
-import io.github.shadow578.yodel.util.launchIO
-import io.github.shadow578.yodel.util.launchMain
+import io.github.shadow578.yodel.util.*
 
 /**
  * helper class for inserting tracks into the db from UI
@@ -59,7 +57,7 @@ object InsertTrackUIHelper {
             .setTitle(R.string.tracks_replace_existing_title)
             .setMessage(ctx.getString(R.string.tracks_replace_existing_message, title))
             .setPositiveButton(R.string.tracks_replace_existing_positive) { dialog, _ ->
-                Async.runAsync {
+                launchIO {
                     insert(
                         ctx,
                         id,

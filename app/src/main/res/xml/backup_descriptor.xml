@@ -3,7 +3,7 @@
     <!-- shared_prefs -->
     <include
         domain="sharedpref"
-        path="io.github.shadow578.music_dl_preferences.xml" />
+        path="io.github.shadow578.yodel_preferences.xml" />
 
     <!-- databases -->
     <include

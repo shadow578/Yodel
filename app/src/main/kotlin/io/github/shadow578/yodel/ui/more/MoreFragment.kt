@@ -2,19 +2,15 @@ package io.github.shadow578.yodel.ui.more
 
 import android.net.Uri
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.Toast
+import android.view.*
+import android.widget.*
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts.CreateDocument
 import androidx.activity.result.contract.ActivityResultContracts.OpenDocument
 import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.ViewModelProvider
-import io.github.shadow578.music_dl.R
-import io.github.shadow578.music_dl.databinding.FragmentMoreBinding
-import io.github.shadow578.yodel.LocaleOverride
+import io.github.shadow578.yodel.*
+import io.github.shadow578.yodel.databinding.FragmentMoreBinding
 import io.github.shadow578.yodel.downloader.TrackDownloadFormat
 import io.github.shadow578.yodel.ui.base.BaseFragment
 import java.util.*
@@ -214,7 +210,7 @@ class MoreFragment : BaseFragment() {
         })
 
         // always show all items
-        b.languageOverride.setOnClickListener { v ->
+        b.languageOverride.setOnClickListener {
             adapter.filter.filter(null)
             b.languageOverride.showDropDown()
         }

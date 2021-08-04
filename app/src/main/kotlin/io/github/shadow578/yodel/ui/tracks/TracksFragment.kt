@@ -3,24 +3,17 @@ package io.github.shadow578.yodel.ui.tracks
 import android.content.Intent
 import android.os.Bundle
 import android.util.TypedValue
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.Toast
-import androidx.annotation.AttrRes
-import androidx.annotation.ColorInt
+import androidx.annotation.*
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.ItemTouchHelper
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import io.github.shadow578.music_dl.R
-import io.github.shadow578.music_dl.databinding.FragmentTracksBinding
+import androidx.recyclerview.widget.*
+import io.github.shadow578.yodel.R
+import io.github.shadow578.yodel.databinding.FragmentTracksBinding
 import io.github.shadow578.yodel.db.TracksDB
-import io.github.shadow578.yodel.db.model.TrackInfo
-import io.github.shadow578.yodel.db.model.TrackStatus
+import io.github.shadow578.yodel.db.model.*
 import io.github.shadow578.yodel.ui.base.BaseFragment
-import io.github.shadow578.yodel.util.SwipeToDeleteCallback
-import io.github.shadow578.yodel.util.launchIO
+import io.github.shadow578.yodel.util.*
 import io.github.shadow578.yodel.util.storage.decodeToUri
 
 /**

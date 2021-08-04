@@ -1,6 +1,5 @@
 package io.github.shadow578.yodel.downloader
 
-import io.github.shadow578.music_dl.downloader.DownloaderService
 import java.io.IOException
 
 /**

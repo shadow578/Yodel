@@ -1,7 +1,6 @@
 package io.github.shadow578.yodel
 
 import android.content.Context
-import io.github.shadow578.music_dl.R
 import java.util.*
 
 /**

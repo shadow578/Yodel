@@ -4,7 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import io.github.shadow578.music_dl.R
+import io.github.shadow578.yodel.R
 import io.github.shadow578.yodel.downloader.DownloaderService
 import io.github.shadow578.yodel.ui.InsertTrackUIHelper
 import io.github.shadow578.yodel.util.extractTrackId

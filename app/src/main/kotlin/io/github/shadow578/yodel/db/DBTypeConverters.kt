@@ -8,6 +8,7 @@ import java.time.LocalDate
 /**
  * type converters for room
  */
+@Suppress("unused")
 class DBTypeConverters {
     //region StorageKey
     @TypeConverter

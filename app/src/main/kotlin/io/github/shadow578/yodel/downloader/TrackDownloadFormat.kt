@@ -1,7 +1,7 @@
 package io.github.shadow578.yodel.downloader
 
 import androidx.annotation.StringRes
-import io.github.shadow578.music_dl.R
+import io.github.shadow578.yodel.R
 
 /**
  * file formats for track download

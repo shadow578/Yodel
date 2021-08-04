@@ -2,13 +2,12 @@ package io.github.shadow578.yodel.ui.main
 
 import android.os.Bundle
 import androidx.annotation.IdRes
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.*
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
-import io.github.shadow578.music_dl.R
-import io.github.shadow578.music_dl.databinding.ActivityMainBinding
+import io.github.shadow578.yodel.R
+import io.github.shadow578.yodel.databinding.ActivityMainBinding
 import io.github.shadow578.yodel.ui.base.BaseActivity
 import io.github.shadow578.yodel.ui.more.MoreFragment
 import io.github.shadow578.yodel.ui.tracks.TracksFragment

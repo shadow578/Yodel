@@ -3,15 +3,10 @@ package io.github.shadow578.yodel.backup
 import android.content.Context
 import android.util.Log
 import androidx.documentfile.provider.DocumentFile
-import com.google.gson.GsonBuilder
-import com.google.gson.JsonIOException
-import com.google.gson.JsonSyntaxException
-import io.github.shadow578.music_dl.db.TracksDB
-import java.io.IOException
-import java.io.InputStreamReader
-import java.io.OutputStreamWriter
-import java.time.LocalDate
-import java.time.LocalDateTime
+import com.google.gson.*
+import io.github.shadow578.yodel.db.TracksDB
+import java.io.*
+import java.time.*
 import java.util.*
 
 /**
@@ -41,8 +36,8 @@ object BackupHelper {
      */
     fun createBackup(ctx: Context, file: DocumentFile): Boolean {
         // get all tracks in DB
-        val tracks = TracksDB.init(ctx).tracks().all
-        if (tracks.size <= 0) return false
+        val tracks = TracksDB.get(ctx).tracks().all
+        if (tracks.isEmpty()) return false
 
         // create backup data
         val backup = BackupData(tracks, LocalDateTime.now())
@@ -97,12 +92,12 @@ object BackupHelper {
      */
     fun restoreBackup(ctx: Context, data: BackupData, replaceExisting: Boolean) {
         // check there are tracks to import
-        if (data.tracks.size <= 0) return
+        if (data.tracks.isEmpty()) return
 
         // insert the tracks
         if (replaceExisting)
-            TracksDB.init(ctx).tracks().insertAll(data.tracks)
+            TracksDB.get(ctx).tracks().insertAll(data.tracks)
         else
-            TracksDB.init(ctx).tracks().insertAllNew(data.tracks)
+            TracksDB.get(ctx).tracks().insertAllNew(data.tracks)
     }
 }

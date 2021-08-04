@@ -1,21 +1,16 @@
 package io.github.shadow578.yodel.ui.more
 
-import android.app.Activity
-import android.app.Application
+import android.app.*
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.documentfile.provider.DocumentFile
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.*
 import com.mikepenz.aboutlibraries.LibsBuilder
-import io.github.shadow578.music_dl.R
-import io.github.shadow578.music_dl.util.Async
-import io.github.shadow578.yodel.LocaleOverride
+import io.github.shadow578.yodel.*
 import io.github.shadow578.yodel.backup.BackupHelper
 import io.github.shadow578.yodel.downloader.TrackDownloadFormat
 import io.github.shadow578.yodel.ui.base.BaseActivity
-import io.github.shadow578.yodel.util.launchIO
-import io.github.shadow578.yodel.util.launchMain
+import io.github.shadow578.yodel.util.*
 import io.github.shadow578.yodel.util.preferences.Prefs
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -74,7 +69,7 @@ class MoreViewModel(application: Application) : AndroidViewModel(application) {
             // read the backup data
             val backup = BackupHelper.readBackupData(getApplication(), file)
             if (!backup.isPresent) {
-                Async.runOnMain {
+                launchMain {
                     Toast.makeText(
                         getApplication(),
                         R.string.restore_toast_failed,
