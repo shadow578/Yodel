@@ -1,0 +1,45 @@
+name: ⭐ Feature Request
+description: Suggest a feature that would improve Yodel
+title: "[FEATURE]: "
+labels: [enhancement]
+body:
+  # a short welcome to the user <3
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for your interest in the development of Yodel!
+
+  # feature description 
+  - type: textarea
+    id: feature-description
+    attributes:
+      label: Feature Description
+      description: Describe your feature here
+      placeholder: |
+        You should add this thing...
+    validations:
+      required: true
+
+  # extra details
+  - type: textarea
+    id: extra
+    attributes:
+      label: Extra Details
+      placeholder: |
+        Additional Details, Attachments, maybe mockups for UI changes, ...
+
+  # acknowledgements before finishing the issue
+  - type: checkboxes
+    id: acknowledgements
+    attributes:
+      label: Acknowledgements
+      description: Please make sure to read through this carefully. IF you skimmed through this, your feature request will be closed.
+      options:
+        - label: I have searched the existing issues and this is a **new** feature request
+          required: true
+        - label: I have written a **informative** title
+          required: true
+        - label: I filled out **all** the information requested in this form
+          required: true
+        - label: I have updated to the **[latest app version](https://github.com/shadow578/Yodel/releases/latest)** and the feature is still missing
+          required: true
