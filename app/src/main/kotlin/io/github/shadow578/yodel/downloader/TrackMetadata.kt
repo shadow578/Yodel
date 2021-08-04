@@ -137,7 +137,7 @@ data class TrackMetadata(
         }
 
         // fallback to channel
-        return channel
+        return if(channel.isNullOrBlank()) null else channel
     }
 
     /**

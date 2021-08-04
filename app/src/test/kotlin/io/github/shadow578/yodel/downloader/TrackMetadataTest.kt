@@ -3,8 +3,7 @@ package io.github.shadow578.yodel.downloader
 import com.google.gson.Gson
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.*
-import org.junit.Before
-import org.junit.Test
+import org.junit.*
 import java.time.LocalDate
 
 /**
@@ -104,14 +103,14 @@ class TrackMetadataTest {
     ],
     "view_count": 128898492,
     "average_rating": 4.888588,
-    "upload_date": "foobar",
-    "channel": "Otseit",
+    "upload_date": "",
+    "channel": "",
     "duration": 192,
     "creator": "",
     "dislike_count": 34855,
     "artist": "",
     "album": "The Commerce",
-    "title": "Otseit - The Commerce (Official Music Video)",
+    "title": "",
     "alt_title": "",
     "categories": [
         "Music"
