@@ -1,9 +1,19 @@
+import java.io.FileInputStream
+import java.util.*
+
 plugins {
     id("com.android.application")
     id("kotlin-android")
     id("kotlin-kapt")
     id("com.mikepenz.aboutlibraries.plugin")
 }
+
+// load signing config
+val signProps = Properties()
+val signPropsFile = project.file("../sign.properties")
+val useSignProps = signPropsFile.exists()
+if (useSignProps)
+    FileInputStream(signPropsFile).use { signProps.load(it) }
 
 android {
     compileSdk = 30
@@ -18,22 +28,33 @@ android {
         versionName = "1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        ndk {
-            abiFilters += setOf("x86", "x86_64", "armeabi-v7a", "arm64-v8a")
-        }
         kapt {
             arguments {
                 arg("room.schemaLocation", "$projectDir/schemas")
             }
         }
     }
+    signingConfigs {
+        create("from_props") {
+            keyAlias = signProps.getProperty("key_alias")
+            keyPassword = signProps.getProperty("key_password")
+            storeFile = file("../" + signProps.getProperty("keystore_path"))
+            storePassword = signProps.getProperty("keystore_password")
+        }
+    }
     buildTypes {
-        release {
+        getByName("release") {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+
+            // use sign.properties
+            if (useSignProps) {
+                println("using sign.properties for release build signing")
+                signingConfig = signingConfigs.getByName("from_props")
+            }
         }
     }
     compileOptions {
@@ -55,7 +76,7 @@ android {
             isEnable = true
             reset()
             include("x86", "x86_64", "armeabi-v7a", "arm64-v8a")
-            isUniversalApk = true
+            isUniversalApk = false
         }
     }
     packagingOptions.resources {

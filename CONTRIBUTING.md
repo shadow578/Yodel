@@ -30,6 +30,22 @@ When creating a fork, remember to:
   - Change the 'applicationId' in build.gradle
 
 
+if you want to use Yodels automatic build system, have a look [at the build guide](BUILDING.md)
+
+
+# Branches
+
+Use the following prefixes for branches:
+
+Prefix | Function
+-|-
+feature/ | new features and improvements to existing features
+fix/ | bugfixes\*
+locale/ | for locale additions and updates
+
+
+> \* sometimes, a bugfix is implemented alongside a new feature. this is ok. you do __not__ have to create an additional branch just to fix a bug. instead, just include it with your feature.
+
 
 # Code Style Guidelines
 

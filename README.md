@@ -15,7 +15,10 @@ Yodel is a free & open source <b>Yo</b>uTube Music <b>D</b>own<b>L</b>oader\*
 
 
 ## Download
-Get the app from the [releases page](https://github.com/shadow578/Yodel/releases/latest).
+
+Yodel is automatically built using Github Actions. <br>
+If you just want to download the apk, take a look at the [releases page](https://github.com/shadow578/Yodel/releases/latest). <br>
+If you want to know more about the build system, have a look [at the build guide](BUILDING.md)
 
 
 ## Issues, Feature Requests and Contributing

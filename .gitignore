@@ -1,5 +1,7 @@
 .exclude/
 /app/build.properties
+sign.properties
+*.jks
 
 # AS default
 .gradle
