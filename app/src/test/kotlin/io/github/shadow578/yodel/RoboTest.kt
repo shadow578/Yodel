@@ -15,10 +15,12 @@ import org.robolectric.annotation.Config
 
 /**
  * base class for all robolectric test classes.
- * this handles the config. put shared test code in here
+ * this handles the config. put shared test code in here.
+ *
+ * tests from M (minSdk) to R (targetSdk)
  */
 @RunWith(RobolectricTestRunner::class)
-@Config(application = YodelTestApp::class, sdk = [O, P, Q, R])
+@Config(application = YodelTestApp::class, sdk = [M, /*N,*/ /*N_MR1,*/ O, /*O_MR1,*/ P, /*Q,*/ R])
 open class RoboTest {
 
     /**
