@@ -83,6 +83,9 @@ android {
         excludes.add("META-INF/LICENSE.md")
         excludes.add("META-INF/LICENSE-notice.md")
     }
+    testOptions.unitTests {
+        isIncludeAndroidResources = true
+    }
 }
 aboutLibraries {
     configPath = "aboutlibraries"
@@ -126,7 +129,8 @@ dependencies {
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.5")
 
     // unit testing
-    testImplementation("junit:junit:4.13.2")
+    testImplementation("androidx.test.ext:junit:1.1.3")
+    testImplementation("org.robolectric:robolectric:4.6.1")
     testImplementation("io.kotest:kotest-assertions-core:4.6.1")
     androidTestImplementation("androidx.test:runner:1.4.0")
     androidTestImplementation("androidx.test:rules:1.4.0")

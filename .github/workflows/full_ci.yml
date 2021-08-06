@@ -1,3 +1,6 @@
+# FULL CI is currently disabled as there are no tests in androidTest (thanks to robolectric)
+# if you need instrumented tests, uncomment '- main' here and comment it in short_ci
+
 # Action to automatically (and magically) run unit and instrumentation tests on the project
 # and publish the results as a comment on the PR
 # main action used to make this work are:
@@ -8,9 +11,9 @@
 name: CI (Unit + Instrumentation Tests)
 on:
   # run on pull request to main (release) & develop (feature merge)
-  pull_request:
-    branches:
-      - main
+  #pull_request:
+  #  branches:
+      #- main
       #- develop
 
   # and manual run

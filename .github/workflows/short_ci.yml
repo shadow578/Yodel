@@ -9,7 +9,7 @@ on:
   # run on pull request to main (release) & develop (feature merge)
   pull_request:
     branches:
-      #- main
+      - main
       - develop
 
   # and manual run
