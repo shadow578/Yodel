@@ -1,14 +1,17 @@
 package io.github.shadow578.yodel.util
 
 import com.bumptech.glide.util.Util
-import io.github.shadow578.yodel.*
+import io.github.shadow578.yodel.LocaleOverride
+import io.github.shadow578.yodel.RoboTest
 import io.github.shadow578.yodel.util.preferences.Prefs
 import io.kotest.assertions.withClue
-import io.kotest.matchers.file.*
+import io.kotest.matchers.file.shouldNotExist
+import io.kotest.matchers.file.shouldStartWithPath
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import org.junit.Test
 import java.io.File
+
 /**
  * robolectric test for [Util]
  */
@@ -33,12 +36,21 @@ class UtilRoboTest : RoboTest() {
      *  [wrapLocale]
      */
     @Test
-    fun testWrapLocale(){
+    fun testWrapLocale() {
         Prefs.AppLocaleOverride.set(LocaleOverride.German)
         Prefs.AppLocaleOverride.get() shouldBe LocaleOverride.German
 
         val wrapped = context.wrapLocale()
         wrapped.shouldNotBeNull()
-        wrapped.resources.configuration.locales.get(0) shouldBe LocaleOverride.German.locale
+
+        // .locales was only added in SDK 24
+        // before that, we have to use .locale (which is now deprecated)
+        untilSDK(23) {
+            wrapped.resources.configuration.locale shouldBe LocaleOverride.German.locale
+        }
+
+        aboveSDK(23) {
+            wrapped.resources.configuration.locales.get(0) shouldBe LocaleOverride.German.locale
+        }
     }
 }

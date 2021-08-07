@@ -2,6 +2,7 @@ package io.github.shadow578.yodel
 
 import android.app.Application
 import android.content.Context
+import android.os.Build
 import android.os.Build.VERSION_CODES.*
 import androidx.preference.PreferenceManager
 import androidx.test.core.app.ApplicationProvider
@@ -29,6 +30,22 @@ open class RoboTest {
     @Test
     fun validateInstrumentation() {
         context.shouldNotBeNull()
+    }
+
+    /**
+     * run a function block only if the SDK version is above the target
+     */
+    fun aboveSDK(targetSdk: Int, block: () -> Unit) {
+        if (Build.VERSION.SDK_INT > targetSdk)
+            block()
+    }
+
+    /**
+     * run a function block only if the SDK version is below or equal the target
+     */
+    fun untilSDK(targetSdk: Int, block: () -> Unit) {
+        if (Build.VERSION.SDK_INT <= targetSdk)
+            block()
     }
 
     /**
