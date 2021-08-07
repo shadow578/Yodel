@@ -136,3 +136,8 @@ dependencies {
     androidTestImplementation("androidx.test:rules:1.4.0")
     androidTestImplementation("io.kotest:kotest-assertions-core:4.6.1")
 }
+
+tasks.withType<Test>().all {
+    // fix for AS code coverage with robolectric
+    jvmArgs("-noverify", "-ea")
+}
