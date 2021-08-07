@@ -3,40 +3,52 @@ package io.github.shadow578.yodel.backup
 import android.content.Context
 import android.util.Log
 import androidx.documentfile.provider.DocumentFile
-import com.google.gson.*
+import com.google.gson.GsonBuilder
+import com.google.gson.JsonIOException
+import com.google.gson.JsonSyntaxException
 import io.github.shadow578.yodel.db.TracksDB
-import java.io.*
-import java.time.*
-import java.util.*
+import java.io.IOException
+import java.io.InputStreamReader
+import java.io.OutputStreamWriter
+import java.time.LocalDate
+import java.time.LocalDateTime
 
 /**
  * tracks db backup helper class.
  * all functions must be called from a background thread
+ *
+ * @param ctx  the context to work in
+ * @param db database to read from / write to
  */
-object BackupHelper {
-    /**
-     * gson for backup serialization and deserialization
-     */
-    private val gson = GsonBuilder()
-        .registerTypeAdapter(LocalDateTime::class.java, LocalDateTimeAdapter())
-        .registerTypeAdapter(LocalDate::class.java, LocalDateAdapter())
-        .create()
+class BackupHelper(
+        private val ctx: Context,
+        private val db: TracksDB = TracksDB.get(ctx)
+) {
+    companion object {
 
-    /**
-     * tag for logging
-     */
-    private const val TAG = "BackupHelper"
+        /**
+         * gson for backup serialization and deserialization
+         */
+        private val gson = GsonBuilder()
+                .registerTypeAdapter(LocalDateTime::class.java, LocalDateTimeAdapter())
+                .registerTypeAdapter(LocalDate::class.java, LocalDateAdapter())
+                .create()
+
+        /**
+         * tag for logging
+         */
+        private const val TAG = "BackupHelper"
+    }
 
     /**
      * create a new backup of all tracks
      *
-     * @param ctx  the context to work in
      * @param file the file to write the backup to
      * @return was the backup successful
      */
-    fun createBackup(ctx: Context, file: DocumentFile): Boolean {
+    fun createBackup(file: DocumentFile): Boolean {
         // get all tracks in DB
-        val tracks = TracksDB.get(ctx).tracks().all
+        val tracks = db.tracks().all
         if (tracks.isEmpty()) return false
 
         // create backup data
@@ -57,47 +69,43 @@ object BackupHelper {
     /**
      * read backup data from a file
      *
-     * @param ctx  the context to read in
      * @param file the file to read the data from
      * @return the backup data
      */
-    fun readBackupData(ctx: Context, file: DocumentFile): Optional<BackupData> {
+    fun readBackup(file: DocumentFile): BackupData? {
         try {
             InputStreamReader(ctx.contentResolver.openInputStream(file.uri)).use { src ->
-                return Optional.ofNullable(
-                    gson.fromJson(
+                return gson.fromJson(
                         src,
                         BackupData::class.java
-                    )
                 )
             }
         } catch (e: IOException) {
             Log.e(TAG, "failed to read backup data!", e)
-            return Optional.empty()
+            return null
         } catch (e: JsonSyntaxException) {
             Log.e(TAG, "failed to read backup data!", e)
-            return Optional.empty()
+            return null
         } catch (e: JsonIOException) {
             Log.e(TAG, "failed to read backup data!", e)
-            return Optional.empty()
+            return null
         }
     }
 
     /**
      * restore a backup into the db
      *
-     * @param ctx             the context to work in
      * @param data            the data to restore
      * @param replaceExisting if true, existing entries are overwritten. if false, existing entries are not added
      */
-    fun restoreBackup(ctx: Context, data: BackupData, replaceExisting: Boolean) {
+    fun restoreBackup(data: BackupData, replaceExisting: Boolean) {
         // check there are tracks to import
         if (data.tracks.isEmpty()) return
 
         // insert the tracks
         if (replaceExisting)
-            TracksDB.get(ctx).tracks().insertAll(data.tracks)
+            db.tracks().insertAll(data.tracks)
         else
-            TracksDB.get(ctx).tracks().insertAllNew(data.tracks)
+            db.tracks().insertAllNew(data.tracks)
     }
 }

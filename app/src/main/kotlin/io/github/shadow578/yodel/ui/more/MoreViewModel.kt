@@ -65,15 +65,16 @@ class MoreViewModel(application: Application) : AndroidViewModel(application) {
      * @param file the file to import from
      */
     fun importTracks(file: DocumentFile, parent: Activity) {
+        val backupHelper = BackupHelper(getApplication())
         launchIO {
             // read the backup data
-            val backup = BackupHelper.readBackupData(getApplication(), file)
-            if (!backup.isPresent) {
+            val backup = backupHelper.readBackup(file)
+            if (backup == null) {
                 launchMain {
                     Toast.makeText(
-                        getApplication(),
-                        R.string.restore_toast_failed,
-                        Toast.LENGTH_SHORT
+                            getApplication(),
+                            R.string.restore_toast_failed,
+                            Toast.LENGTH_SHORT
                     ).show()
                 }
                 return@launchIO
@@ -82,39 +83,38 @@ class MoreViewModel(application: Application) : AndroidViewModel(application) {
             // show confirmation dialog
             launchMain {
                 val replaceExisting = AtomicBoolean(false)
-                val tracksCount = backup.get().tracks.size
+                val tracksCount = backup.tracks.size
                 AlertDialog.Builder(parent)
-                    .setTitle(
-                        getApplication<Application>().getString(
-                            R.string.restore_dialog_title,
-                            tracksCount
+                        .setTitle(
+                                getApplication<Application>().getString(
+                                        R.string.restore_dialog_title,
+                                        tracksCount
+                                )
                         )
-                    )
-                    .setSingleChoiceItems(
-                        R.array.restore_dialog_modes,
-                        0
-                    ) { _, mode -> replaceExisting.set(mode == 1) }
-                    .setNegativeButton(R.string.restore_dialog_negative) { dialog, _ -> dialog.dismiss() }
-                    .setPositiveButton(R.string.restore_dialog_positive) { _, _ ->
-                        // restore the backup
-                        Toast.makeText(
-                            getApplication(),
-                            getApplication<Application>().getString(
-                                R.string.restore_toast_success,
-                                tracksCount
-                            ),
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        .setSingleChoiceItems(
+                                R.array.restore_dialog_modes,
+                                0
+                        ) { _, mode -> replaceExisting.set(mode == 1) }
+                        .setNegativeButton(R.string.restore_dialog_negative) { dialog, _ -> dialog.dismiss() }
+                        .setPositiveButton(R.string.restore_dialog_positive) { _, _ ->
+                            // restore the backup
+                            Toast.makeText(
+                                    getApplication(),
+                                    getApplication<Application>().getString(
+                                            R.string.restore_toast_success,
+                                            tracksCount
+                                    ),
+                                    Toast.LENGTH_SHORT
+                            ).show()
 
-                        launchIO {
-                            BackupHelper.restoreBackup(
-                                getApplication(),
-                                backup.get(),
-                                replaceExisting.get()
-                            )
+                            launchIO {
+                                backupHelper.restoreBackup(
+                                        backup,
+                                        replaceExisting.get()
+                                )
+                            }
                         }
-                    }
-                    .show()
+                        .show()
             }
         }
     }
@@ -126,17 +126,13 @@ class MoreViewModel(application: Application) : AndroidViewModel(application) {
      */
     fun exportTracks(file: DocumentFile) {
         launchIO {
-            val success =
-                BackupHelper.createBackup(
-                    getApplication(),
-                    file
-                )
+            val success = BackupHelper(getApplication()).createBackup(file)
             if (!success) {
                 launchMain {
                     Toast.makeText(
-                        getApplication(),
-                        R.string.backup_toast_failed,
-                        Toast.LENGTH_SHORT
+                            getApplication(),
+                            R.string.backup_toast_failed,
+                            Toast.LENGTH_SHORT
                     ).show()
                 }
             }
