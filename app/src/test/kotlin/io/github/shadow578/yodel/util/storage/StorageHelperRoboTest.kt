@@ -2,18 +2,17 @@ package io.github.shadow578.yodel.util.storage
 
 import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
-import androidx.test.filters.SmallTest
 import androidx.test.platform.app.InstrumentationRegistry
+import io.github.shadow578.yodel.RoboTest
 import io.kotest.matchers.*
 import io.kotest.matchers.nulls.*
 import org.junit.Test
 import java.io.File
 
 /**
- * instrumented test for StorageHelper
+ * robolectric test for StorageHelper
  */
-@SmallTest
-class StorageHelperAndroidTest {
+class StorageHelperRoboTest : RoboTest() {
     private fun beNonEmptyStorageKey() = object : Matcher<StorageKey> {
         override fun test(value: StorageKey): MatcherResult = MatcherResult(
             value.key.isNotBlank(),
@@ -27,7 +26,7 @@ class StorageHelperAndroidTest {
      */
     @Test
     fun shouldEncodeAndDecodeUri() {
-        val cache = InstrumentationRegistry.getInstrumentation().targetContext.cacheDir
+        val cache = context.cacheDir
         val uri = Uri.fromFile(File(cache, "foo.bar"))
 
         // encode
@@ -51,9 +50,8 @@ class StorageHelperAndroidTest {
      */
     @Test
     fun shouldEncodeAndDecodeFile() {
-        val ctx = InstrumentationRegistry.getInstrumentation().targetContext
-        val uri = Uri.fromFile(File(ctx.cacheDir, "foo.bar"))
-        val file = DocumentFile.fromSingleUri(ctx, uri)
+        val uri = Uri.fromFile(File(context.cacheDir, "foo.bar"))
+        val file = DocumentFile.fromSingleUri(context, uri)
 
         // check test setup
         file.shouldNotBeNull()
@@ -63,7 +61,7 @@ class StorageHelperAndroidTest {
         key should beNonEmptyStorageKey()
 
         // decode
-        val decodedFile: DocumentFile? = key.decodeToFile(ctx)
+        val decodedFile: DocumentFile? = key.decodeToFile(context)
         decodedFile.shouldNotBeNull()
         decodedFile.uri shouldBe file.uri
     }

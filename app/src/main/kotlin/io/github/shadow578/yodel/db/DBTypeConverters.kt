@@ -4,6 +4,7 @@ import androidx.room.TypeConverter
 import io.github.shadow578.yodel.db.model.TrackStatus
 import io.github.shadow578.yodel.util.storage.StorageKey
 import java.time.LocalDate
+import java.time.format.DateTimeParseException
 
 /**
  * type converters for room
@@ -52,6 +53,10 @@ class DBTypeConverters {
     fun toLocalDate(string: String?): LocalDate? {
         return if (string == null) {
             null
-        } else LocalDate.parse(string)
+        } else try {
+            LocalDate.parse(string)
+        } catch (_ : DateTimeParseException) {
+            null
+        }
     } //endregion
 }

@@ -37,11 +37,11 @@ if you want to use Yodels automatic build system, have a look [at the build guid
 
 Use the following prefixes for branches:
 
-Prefix | Function
--|-
-feature/ | new features and improvements to existing features
-fix/ | bugfixes\*
-locale/ | for locale additions and updates
+| Prefix   | Function                                           |
+| -------- | -------------------------------------------------- |
+| feature/ | new features and improvements to existing features |
+| fix/     | bugfixes\*                                         |
+| locale/  | for locale additions and updates                   |
 
 
 > \* sometimes, a bugfix is implemented alongside a new feature. this is ok. you do __not__ have to create an additional branch just to fix a bug. instead, just include it with your feature.
@@ -66,5 +66,19 @@ These Guidelines outline what I think are useful rules to create readable and ma
   - comments should describe the class/field/method, but don't have to be too long
 - do __not__ ignore lint warnings
 - Try to include tests for your contribution (where applicable)
-  - Yodel uses [Kotest](https://kotest.io/) with JUnit for unit and instrumented tests
+  - See [Testing](#testing) for details
 
+
+## Testing
+
+- Try to include test cases where possible
+  - test- only contributions are welcome too
+- Yodel uses [Kotest](https://kotest.io/) for assertion statements
+- Unit tests and Robolectric tests go into /src/test
+  - Name normal unit test classes `(MyClass)Test.kt`
+  - Robolectric test classes shall be named `(MyClass)RoboTest.kt` and extend `RoboTest`
+  - Robolectric tests run across multiple SKD versions. If you only need robolectric for some test cases, please split your class
+- Instrumentation tests go into /src/androidTest
+  - Name instrumentation tests classes `(MyClass)AndroidTest.kt`
+- If possible, use [Robolectric](http://robolectric.org/) instead of instrumentation tests
+  - instrumentation tests are supported, but require adjustments to the full_ci and short_ci workflows
