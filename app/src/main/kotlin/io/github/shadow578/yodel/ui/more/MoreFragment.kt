@@ -103,6 +103,9 @@ class MoreFragment : BaseFragment() {
             MoreViewModel::class.java
         )
 
+        // show app version
+        b.appVersion.text = BuildConfig.VERSION_NAME
+
         // about button
         b.about.setOnClickListener { model.openAboutPage(requireActivity()) }
 
