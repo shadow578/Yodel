@@ -1,20 +1,24 @@
-# ![App Icon](.github/res/ic_launcher_round.png) Yodel
-Yodel is a free & open source <b>Yo</b>uTube Music <b>D</b>ownload<b>e</b>r ...<b>L</b>\*
+# ![App Icon](.github/res/app_icon_smol.png) Yodel
+Yodel is a free & open source <b>Yo</b>uTube Music <b>D</b>own<b>L</b>oader\*
 
 \* i'm not good with acronyms
 
 
 ## Features
 
-- Based on [youtube-dl](https://github.com/ytdl-org/youtube-dl)
-- [ID3v2](https://en.wikipedia.org/wiki/ID3) tagging for MP3
 - Material Design
 - Day & Night Theme
+- Written in Kotlin with [MVVM](https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93viewmodel)
+- [youtube-dl](https://github.com/ytdl-org/youtube-dl) for downloading
+- [ID3v2](https://en.wikipedia.org/wiki/ID3) tagging for MP3 using [MP3agic](https://github.com/mpatric/mp3agic)
 - IDK, it's neat i guess
 
 
 ## Download
-Get the app from the [releases page](/releases).
+
+Yodel is automatically built using Github Actions. <br>
+If you just want to download the apk, take a look at the [releases page](https://github.com/shadow578/Yodel/releases/latest). <br>
+If you want to know more about the build system, have a look [at the build guide](BUILDING.md)
 
 
 ## Issues, Feature Requests and Contributing
@@ -24,7 +28,7 @@ Please read the full guidelines first. Your issue may be closed if you don't.
 <details>
 <summary>Issues</summary>
 
-- Before reporting a new issue, take a look at already opened [issues](/issues).
+- Before reporting a new issue, take a look at already opened [issues](https://github.com/shadow578/Yodel/issues).
 - Do not group unrelated requests into one issue.
 
 </details>

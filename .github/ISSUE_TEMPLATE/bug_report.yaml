@@ -1,0 +1,104 @@
+name: 🐞 Bug Report
+description: Report a bug to help improve Yodel
+title: "[BUG]: "
+labels: [bug]
+body:
+  # a short welcome to the user <3
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for taking the time to fill out this bug report!
+  
+  # app version (totally not a trick- question :P)
+  - type: input
+    id: app-version
+    attributes: 
+      label: Yodel version
+      description: You can find the Yodel version in the app settings
+      placeholder: |
+        Example: '1.0'
+    validations:
+      required: true
+
+  # android version
+  - type: input
+    id: android-version
+    attributes:
+      label: Android Version
+      description: You can find your Android version somewhere in the Android Settings (often in 'About this Phone')
+      placeholder: |
+        Example: 'Android 11'
+    validations:
+      required: true
+
+  # device model
+  - type: input
+    id: device-model
+    attributes:
+      label: Device
+      description: Please State your Device model and Manufacturer
+      placeholder: |
+        Example: 'Google Pixel 4a'
+    validations:
+      required: true
+
+  # issue details
+  - type: textarea
+    id: steps-to-reproduce
+    attributes:
+      label: Steps to reproduce
+      description: Explain what you did when the bug happened
+      placeholder: |
+        1. Click This
+        2. Do that
+        3. Stuff breaks
+    validations:
+      required: true
+
+  # what should happen
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: Expected Behavior
+      description: Explain what should've happened
+      placeholder: |
+        This thing should have happened
+    validations:
+      required: true
+
+  # what actually happened
+  - type: textarea
+    id: actual-behavior
+    attributes:
+      label: Actual Behavior
+      description: Explain what actually happened
+      placeholder: |
+        This thing actually happened
+    validations:
+      required: true
+
+  # extra details
+  - type: textarea
+    id: extra
+    attributes:
+      label: Extra Details
+      placeholder: |
+        Additional Details, Attachments, or logs
+  
+  # acknowledgements before finishing the issue
+  - type: checkboxes
+    id: acknowledgements
+    attributes:
+      label: Acknowledgements
+      description: Please make sure to read through this carefully. IF you skimmed through this, your issue will be closed.
+      options:
+        - label: I have searched the existing issues and this is a **new** bug
+          required: true
+        - label: I have written a **informative** title
+          required: true
+        - label: I filled out **all** the information requested in this form
+          required: true
+        - label: I have updated to the **[latest app version](https://github.com/shadow578/Yodel/releases/latest)**
+          required: true
+        - label: My Phone runs on at least Android 6.0
+          required: true

@@ -1,0 +1,82 @@
+# Action to automatically run unit tests on the project
+# and publish the results as a comment on the PR
+# main action used to make this work are:
+# - eskatos/gradle-command-action@v1
+# - EnricoMi/publish-unit-test-result-action@v1
+
+name: Short CI (Unit Tests only)
+on:
+  # run on pull request to main (release) & develop (feature merge)
+  pull_request:
+    branches:
+      - main
+      - develop
+
+  # and manual run
+  workflow_dispatch:
+jobs:
+  # run unit tests
+  unit_test:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      JAVA_TOOL_OPTIONS: -Xmx5g -XX:+UseParallelGC
+    steps:
+      # setup env
+      - uses: actions/checkout@v2
+      - uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - run: |
+          mkdir -p ~/.gradle
+          cp .github/gh-gradle.properties ~/.gradle/gradle.properties
+          chmod +x ./gradlew
+
+      # run gradle unit test task
+      - name: Run unit tests
+        uses: eskatos/gradle-command-action@v1
+        with:
+          arguments: testDebugUnitTest
+          wrapper-cache-enabled: true
+          dependencies-cache-enabled: true
+          configuration-cache-enabled: true
+
+      # print contents of artifact dir
+      - run: ls ./app/build/test-results/testDebugUnitTest
+
+      # upload results
+      - name: Upload Test Results
+        uses: actions/upload-artifact@v2
+        with:
+          name: unit-test-results
+          path: ./app/build/test-results/testDebugUnitTest/*.xml
+  
+  # publish test results (even if tests failed)
+  publish_results:
+    name: Publish Test Results
+    needs: unit_test
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      # download unit test results
+      - run: mkdir ./results/
+      - name: Download Unit Test Results
+        uses: actions/download-artifact@v2
+        with:
+          name: unit-test-results
+          path: ./results/
+
+      # print contents of artifact dir
+      - run: ls ./results
+
+      # publish results
+      - name: Publish test results
+        uses: EnricoMi/publish-unit-test-result-action@v1
+        if: always()
+        with:
+          check_name: Test Results (Unit Tests Only)
+          report_individual_runs: true
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          files: |
+            ./results/*.xml

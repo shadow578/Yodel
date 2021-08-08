@@ -1,0 +1,19 @@
+# This file must *NOT* be checked into Version Control Systems,
+# as it contains confidential information.
+#
+# signing configuration and credentials for release builds (in automated builds)
+# you can also use this to create signed builds from the 
+# command line (using assembleRelease), but you can also just use Android Studio for manual releases
+
+# key alias to use for application signing
+key_alias=mykey
+
+# key password
+key_password=MyPassword
+
+# path of the keystore to use for signing
+# relative to the project root (where this file also is)
+keystore_path=my_keystore.jks
+
+# password for the keystore
+keystore_password=MyPassword

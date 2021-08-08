@@ -4,8 +4,10 @@ Looking to report a Bug or make a feature request? Take a look [here](https://gi
 
 ### Thank you for your interest in contributing to Yodel!
 
+<br>
+
 # Translations
-Translations are currently only possible by directly editing the strings.xml file. 
+Translations are currently only possible by directly editing the strings.xml file and creating a PR. 
 
 
 # Code Contributions
@@ -21,28 +23,62 @@ Forks are allowed so long they abide by [Yodel's LICENSE](LICENSE)
 
 When creating a fork, remember to:
 
-- Avoid confusion with the main app and conflicts by:
-    - Changing the app name (strings/app_name)
-    - Changing the app icon
-    - Change the 'applicationId' in build.gradle
- 
+- Avoid confusion with the main app by:
+  - Changing the app name (strings/app_name)
+  - Changing the app icon
+- Avoid installation conflicts by:
+  - Change the 'applicationId' in build.gradle
+
+
+if you want to use Yodels automatic build system, have a look [at the build guide](BUILDING.md)
+
+
+# Branches
+
+Use the following prefixes for branches:
+
+| Prefix   | Function                                           |
+| -------- | -------------------------------------------------- |
+| feature/ | new features and improvements to existing features |
+| fix/     | bugfixes\*                                         |
+| locale/  | for locale additions and updates                   |
+
+
+> \* sometimes, a bugfix is implemented alongside a new feature. this is ok. you do __not__ have to create an additional branch just to fix a bug. instead, just include it with your feature.
+
 
 # Code Style Guidelines
 
 These are the guidelines you should follow when contributing code to Yodel.<br>
 These Guidelines outline what I think are useful rules to create readable and manageable code, tho they are always open for discussion(i'm not a professional developer after all, so what do i know :P)
 
-- Yodel uses the [Model View ViewModel](https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93viewmodel) pattern. And you should too
-- Please use Java (I'm not familiar with Kotlin (yet), and don't have the time to learn it because of University)
+
+- Yodel uses the [Model View ViewModel](https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93viewmodel) pattern
+- Use Kotlin as the main development language
+  - I'm new to kotlin, so if i'm doing something stupid (or could do it better), please let me know
+  - if you use a language concept that is not obvious, please leave a comment
 - Do not hardcode stuff (intent extras/actions, urls, ...), but use constants in the appropriate classes instead
-- Enums in PascalCase (yes, java convention is to use ALL_UPPERCASE, but that looks ridiculous)
-- include javadoc comments for:
+- Enums in PascalCase (convention seems to be ALL_UPPERCASE, but that looks ridiculous)
+- include kdoc comments for:
   - __all__ classes, interfaces and enums
   - __all__ public fields, methods and constants
   - _optionally_ private fields, methods and constants
   - comments should describe the class/field/method, but don't have to be too long
-- Use @Nullable / @NonNull annotations on:
-  - __all__ parameters and return values of public methods
-  - _optionally_ private methods
-- Use Lambda expressions where java allows it
 - do __not__ ignore lint warnings
+- Try to include tests for your contribution (where applicable)
+  - See [Testing](#testing) for details
+
+
+## Testing
+
+- Try to include test cases where possible
+  - test- only contributions are welcome too
+- Yodel uses [Kotest](https://kotest.io/) for assertion statements
+- Unit tests and Robolectric tests go into /src/test
+  - Name normal unit test classes `(MyClass)Test.kt`
+  - Robolectric test classes shall be named `(MyClass)RoboTest.kt` and extend `RoboTest`
+  - Robolectric tests run across multiple SKD versions. If you only need robolectric for some test cases, please split your class
+- Instrumentation tests go into /src/androidTest
+  - Name instrumentation tests classes `(MyClass)AndroidTest.kt`
+- If possible, use [Robolectric](http://robolectric.org/) instead of instrumentation tests
+  - instrumentation tests are supported, but require adjustments to the full_ci and short_ci workflows

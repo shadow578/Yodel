@@ -24,14 +24,29 @@
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_splash_foreground" />
 
-        <!-- app version -->
+        <!-- app name -->
         <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/app_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/app_name"
+            android:textColor="?attr/colorOnSurface"
+            android:textSize="16sp"
+            android:textStyle="bold"
             app:layout_constraintLeft_toLeftOf="@id/app_icon"
             app:layout_constraintRight_toRightOf="@id/app_icon"
             app:layout_constraintTop_toBottomOf="@id/app_icon" />
+
+        <!-- app version -->
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/app_version"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            app:layout_constraintLeft_toLeftOf="@id/app_name"
+            app:layout_constraintRight_toRightOf="@id/app_name"
+            app:layout_constraintTop_toBottomOf="@id/app_name"
+            tools:text="1.0" />
 
         <!-- options -->
         <androidx.appcompat.widget.LinearLayoutCompat

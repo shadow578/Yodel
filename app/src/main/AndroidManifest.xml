@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="io.github.shadow578.music_dl">
+    package="io.github.shadow578.yodel">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
-    <permission android:name="io.github.shadow578.music_dl.permission.QUEUE_DOWNLOAD" />
-
     <application
-        android:name=".MusicDLApp"
+        android:name=".YodelApp"
         android:allowBackup="true"
         android:extractNativeLibs="true"
         android:fullBackupContent="@xml/backup_descriptor"
@@ -16,13 +14,14 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.YTMusicDL"
+        android:theme="@style/Theme.Yodel"
         android:usesCleartextTraffic="true">
 
         <!-- splash screen -->
         <activity
             android:name=".ui.splash.SplashScreenActivity"
-            android:theme="@style/Theme.SplashScreen">
+            android:theme="@style/Theme.SplashScreen"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -33,24 +32,14 @@
         <activity android:name=".ui.main.MainActivity" />
 
         <!-- share -->
-        <activity android:name=".share.ShareTargetActivity">
+        <activity android:name=".ui.share.ShareTargetActivity"
+            android:exported="true">
             <intent-filter android:label="@string/share_to_download_label">
                 <action android:name="android.intent.action.SEND" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:mimeType="text/plain" />
             </intent-filter>
         </activity>
-
-        <!-- download request receiver -->
-        <receiver
-            android:name=".share.DownloadBroadcastReceiver"
-            android:enabled="true"
-            android:exported="true"
-            android:permission="io.github.shadow578.music_dl.permission.QUEUE_DOWNLOAD">
-            <intent-filter>
-                <action android:name="io.github.shadow578.music_dl.action.QUEUE_DOWNLOAD" />
-            </intent-filter>
-        </receiver>
 
         <!-- services -->
         <service android:name=".downloader.DownloaderService" />
