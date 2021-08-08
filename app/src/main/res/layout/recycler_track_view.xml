@@ -59,7 +59,7 @@
             app:layout_constraintRight_toRightOf="@id/cover_art"
             app:layout_constraintTop_toTopOf="@id/cover_art"
             app:tint="@color/white"
-            tools:src="@drawable/ic_round_placeholder_24" />
+            tools:src="@drawable/ic_round_timer_24" />
 
         <!-- duration -->
         <androidx.appcompat.widget.AppCompatTextView

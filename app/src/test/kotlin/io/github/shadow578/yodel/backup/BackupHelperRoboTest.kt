@@ -23,9 +23,9 @@ import java.io.File
  * [BackupHelper]
  */
 class BackupHelperRoboTest : RoboTest() {
-    lateinit var db: TracksDB
+    private lateinit var db: TracksDB
 
-    lateinit var shadowContentResolver: ShadowContentResolver
+    private lateinit var shadowContentResolver: ShadowContentResolver
 
     @Before
     fun initDb() {

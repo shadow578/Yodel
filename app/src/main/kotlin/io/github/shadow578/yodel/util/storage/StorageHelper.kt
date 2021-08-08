@@ -8,7 +8,6 @@ import android.util.Log
 import androidx.documentfile.provider.DocumentFile
 import io.github.shadow578.yodel.util.unwrap
 import java.nio.charset.StandardCharsets
-import java.util.*
 
 // region URI encode / decode
 /**
@@ -86,18 +85,7 @@ fun StorageKey.decodeToFile(ctx: Context): DocumentFile? {
  * persist a file permission. see [android.content.ContentResolver.takePersistableUriPermission].
  * uses flags `Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION`
  *
- * @param ctx  the context to persist the permission in
- * @return the key for this file. can be read back using [.getPersistedFilePermission]
- */
-fun DocumentFile.persistFilePermission(ctx: Context): StorageKey =
-    this.uri.persistFilePermission(ctx)
-
-/**
- * persist a file permission. see [android.content.ContentResolver.takePersistableUriPermission].
- * uses flags `Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION`
- *
  * @param ctx the context to persist the permission in
- * @param uri the uri to take permission of
  * @return the key for this uri. can be read back using [.getPersistedFilePermission]
  */
 fun Uri.persistFilePermission(ctx: Context): StorageKey {

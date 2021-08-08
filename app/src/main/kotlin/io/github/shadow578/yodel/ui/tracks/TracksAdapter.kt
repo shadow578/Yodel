@@ -4,6 +4,7 @@ import android.view.*
 import androidx.annotation.DrawableRes
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import io.github.shadow578.yodel.R
@@ -13,60 +14,82 @@ import io.github.shadow578.yodel.util.*
 import io.github.shadow578.yodel.util.storage.decodeToUri
 import kotlinx.coroutines.delay
 import java.util.*
-import kotlin.collections.List
 import kotlin.collections.set
 
 /**
  * recyclerview adapter for tracks livedata
  */
 class TracksAdapter(
-    owner: LifecycleOwner,
-    tracks: LiveData<List<TrackInfo>>,
-    private val clickListener: ItemListener,
-    private val reDownloadListener: ItemListener
+        owner: LifecycleOwner,
+        tracks: LiveData<List<TrackInfo>>,
+        private val clickListener: ItemListener,
+        private val reDownloadListener: ItemListener
 ) : RecyclerView.Adapter<TracksAdapter.Holder?>() {
-
     init {
-        tracks.observe(owner, { trackInfoList: List<TrackInfo> ->
-            this.tracks = trackInfoList
-            notifyDataSetChanged()
+        tracks.observe(owner, { newTracks: List<TrackInfo> ->
+            // calculate difference
+            val difference = DiffUtil.calculateDiff(object : DiffUtil.Callback() {
+                override fun getOldListSize(): Int {
+                    return currentTracks.size
+                }
+
+                override fun getNewListSize(): Int {
+                    return newTracks.size
+                }
+
+                override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+                    return currentTracks[oldItemPosition].id == newTracks[newItemPosition].id
+                }
+
+                override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+                    return currentTracks[oldItemPosition].equalsContent(newTracks[newItemPosition])
+                }
+            })
+
+            // update data and apply the changes
+            currentTracks = newTracks
+            difference.dispatchUpdatesTo(this)
         })
     }
 
-    private var tracks: List<TrackInfo> = ArrayList()
+    /**
+     * current tracks list displayed
+     */
+    private var currentTracks: List<TrackInfo> = listOf()
 
     /**
      * items that should be removed later.
      * key is item position, value if remove was aborted
      */
     private val itemsToDelete = HashMap<Int, Boolean>()
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
         return Holder(
-            RecyclerTrackViewBinding.inflate(
-                LayoutInflater.from(parent.context),
-                parent,
-                false
-            )
+                RecyclerTrackViewBinding.inflate(
+                        LayoutInflater.from(parent.context),
+                        parent,
+                        false
+                )
         )
     }
 
     override fun onBindViewHolder(holder: Holder, position: Int) {
-        val track = tracks[position]
+        val track = currentTracks[position]
 
         // cover
         val coverUri = track.coverKey.decodeToUri()
         if (coverUri != null) {
             // load cover from fs using glide
             Glide.with(holder.b.coverArt)
-                .load(coverUri)
-                .placeholder(R.drawable.ic_splash_foreground)
-                .fallback(R.drawable.ic_splash_foreground)
-                .into(holder.b.coverArt)
+                    .load(coverUri)
+                    .placeholder(R.drawable.ic_splash_foreground)
+                    .fallback(R.drawable.ic_splash_foreground)
+                    .into(holder.b.coverArt)
         } else {
             // load fallback image
             Glide.with(holder.b.coverArt)
-                .load(R.drawable.ic_splash_foreground)
-                .into(holder.b.coverArt)
+                    .load(R.drawable.ic_splash_foreground)
+                    .into(holder.b.coverArt)
         }
 
         // title
@@ -74,19 +97,19 @@ class TracksAdapter(
 
         // build and set artist + album
         val albumAndArtist: String? =
-            if (track.artist != null && track.albumName != null) {
-                holder.b.root.context.getString(
-                    R.string.tracks_artist_and_album,
-                    track.artist,
+                if (track.artist != null && track.albumName != null) {
+                    holder.b.root.context.getString(
+                            R.string.tracks_artist_and_album,
+                            track.artist,
+                            track.albumName
+                    )
+                } else if (track.artist != null) {
+                    track.artist
+                } else if (track.albumName != null) {
                     track.albumName
-                )
-            } else if (track.artist != null) {
-                track.artist
-            } else if (track.albumName != null) {
-                track.albumName
-            } else {
-                null
-            }
+                } else {
+                    null
+                }
         holder.b.albumAndArtist.text = albumAndArtist ?: ""
 
         // status icon
@@ -141,7 +164,7 @@ class TracksAdapter(
      */
     fun deleteLater(item: Holder, deleteCallback: ItemListener) {
         val position = item.bindingAdapterPosition
-        val track = tracks[position]
+        val track = currentTracks[position]
 
         // mark as to delete
         itemsToDelete[position] = true
@@ -168,17 +191,17 @@ class TracksAdapter(
     }
 
     override fun getItemCount(): Int {
-        return tracks.size
+        return currentTracks.size
     }
 
     /**
      * a view holder for the items of this adapter
      */
     class Holder(
-        /**
-         * view binding of the view this holder holds
-         */
-        val b: RecyclerTrackViewBinding
+            /**
+             * view binding of the view this holder holds
+             */
+            val b: RecyclerTrackViewBinding
     ) : RecyclerView.ViewHolder(b.root) {
 
         /**

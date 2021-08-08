@@ -1,14 +1,14 @@
 package io.github.shadow578.yodel.util.storage
 
 /**
- * a storage key, used by [StorageHelper]
+ * a storage key, used by util/StorageHelper.kt
  */
 data class StorageKey(
     val key: String
 ) {
 
     override fun toString(): String {
-        return key;
+        return key
     }
 
     companion object {

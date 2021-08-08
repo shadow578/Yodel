@@ -198,7 +198,7 @@ class YoutubeDLWrapper(
      *
      * @return self instance
      */
-    fun printOutput(print: Boolean): YoutubeDLWrapper {
+    private fun printOutput(print: Boolean): YoutubeDLWrapper {
         printOutput = print
         return this
     }
