@@ -22,6 +22,7 @@ enum class NotificationChannels(
      * <p>
      * only for use when testing stuff (and the actual channel is not setup yet) or for notifications that are normally not shown
      */
+    @Suppress("unused")
     Default(
         R.string.channel_default_name,
         R.string.channel_default_description

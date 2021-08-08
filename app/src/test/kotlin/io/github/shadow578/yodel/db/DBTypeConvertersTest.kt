@@ -33,7 +33,7 @@ class DBTypeConvertersTest {
         conv.fromStorageKey(null).shouldBeNull()
         conv.toStorageKey(null).shouldBeNull()
 
-        // emtpy string
+        // empty string
         conv.toStorageKey("") shouldBe StorageKey.EMPTY
     }
 

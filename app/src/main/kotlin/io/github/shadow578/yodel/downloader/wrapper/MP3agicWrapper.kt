@@ -18,10 +18,12 @@ import java.io.IOException
 class MP3agicWrapper(
     private val file: File
 ) {
-    /**
-     * tag for logging
-     */
-    private val TAG = "MP3agicW"
+    companion object {
+        /**
+         * tag for logging
+         */
+        private const val TAG = "MP3agicW"
+    }
 
     /**
      * the mp3agic file instance
@@ -58,7 +60,7 @@ class MP3agicWrapper(
      * save the mp3 file, overwriting the original file
      *
      * @throws IOException           if io operation fails
-     * @throws NotSupportedException if mp3agic failes to save the file (see [Mp3File.save])
+     * @throws NotSupportedException if mp3agic fails to save the file (see [Mp3File.save])
      */
     @Throws(IOException::class, NotSupportedException::class)
     fun save() {

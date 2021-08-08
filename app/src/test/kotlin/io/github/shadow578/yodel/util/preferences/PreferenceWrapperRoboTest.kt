@@ -9,9 +9,9 @@ import org.junit.*
  * robolectric tests for [PreferenceWrapper]
  */
 class PreferenceWrapperRoboTest : RoboTest() {
-    lateinit var stringPref: PreferenceWrapper<String>
-    lateinit var booleanPref: PreferenceWrapper<Boolean>
-    lateinit var objectPref: PreferenceWrapper<CustomClass>
+    private lateinit var stringPref: PreferenceWrapper<String>
+    private lateinit var booleanPref: PreferenceWrapper<Boolean>
+    private lateinit var objectPref: PreferenceWrapper<CustomClass>
 
     @Before
     fun setupPrefs() {

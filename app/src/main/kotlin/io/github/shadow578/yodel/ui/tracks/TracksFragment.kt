@@ -19,7 +19,7 @@ import io.github.shadow578.yodel.util.storage.decodeToUri
 /**
  * downloaded and downloading tracks UI
  */
-class TracksFragment() : BaseFragment() {
+class TracksFragment : BaseFragment() {
     /**
      * the view binding instance
      */

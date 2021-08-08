@@ -10,6 +10,7 @@ import io.github.shadow578.yodel.util.preferences.PreferenceWrapper
 /**
  * application class, for boilerplate init
  */
+@Suppress("unused")
 class YodelApp : Application() {
     override fun onCreate() {
         super.onCreate()

@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <!-- shared -->
     <string name="app_name" translatable="false">Yodel</string>
     <string name="share_to_download_label">Download from YouTube</string>
@@ -76,7 +76,7 @@
     <string name="file_format_wav">WAV</string>
 
     <!-- about libraries -->
-    <string name="aboutLibraries_description_showIcon" translatable="false">true</string>
-    <string name="aboutLibraries_description_showVersion" translatable="false">true</string>
-    <string name="aboutLibraries_description_text">a app for downloading music from YouTube</string>
+    <string name="aboutLibraries_description_showIcon" translatable="false" tools:keep="@string/aboutLibraries_description_showIcon">true</string>
+    <string name="aboutLibraries_description_showVersion" translatable="false" tools:keep="@string/aboutLibraries_description_showVersion">true</string>
+    <string name="aboutLibraries_description_text" tools:keep="@string/aboutLibraries_description_text">a app for downloading music from YouTube</string>
 </resources>

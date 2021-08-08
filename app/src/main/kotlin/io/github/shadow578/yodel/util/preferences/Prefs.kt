@@ -3,6 +3,8 @@ package io.github.shadow578.yodel.util.preferences
 import io.github.shadow578.yodel.downloader.TrackDownloadFormat
 import io.github.shadow578.yodel.LocaleOverride
 import io.github.shadow578.yodel.util.storage.StorageKey
+import io.github.shadow578.yodel.downloader.wrapper.YoutubeDLWrapper
+import io.github.shadow578.yodel.downloader.DownloaderService
 
 /**
  * app preferences storage
@@ -27,7 +29,7 @@ object Prefs {
     )
 
     /**
-     * download format [YoutubeDLWrapper] should use for future downloads. existing downloads are not affected
+     * download format [DownloaderService] should use for future downloads. existing downloads are not affected
      */
     val DownloadFormat = PreferenceWrapper.create(
         TrackDownloadFormat::class.java,

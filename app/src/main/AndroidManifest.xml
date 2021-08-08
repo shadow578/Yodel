@@ -5,8 +5,6 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
-    <permission android:name="io.github.shadow578.music_dl.permission.QUEUE_DOWNLOAD" />
-
     <application
         android:name=".YodelApp"
         android:allowBackup="true"
@@ -22,7 +20,8 @@
         <!-- splash screen -->
         <activity
             android:name=".ui.splash.SplashScreenActivity"
-            android:theme="@style/Theme.SplashScreen">
+            android:theme="@style/Theme.SplashScreen"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -33,7 +32,8 @@
         <activity android:name=".ui.main.MainActivity" />
 
         <!-- share -->
-        <activity android:name=".ui.share.ShareTargetActivity">
+        <activity android:name=".ui.share.ShareTargetActivity"
+            android:exported="true">
             <intent-filter android:label="@string/share_to_download_label">
                 <action android:name="android.intent.action.SEND" />
                 <category android:name="android.intent.category.DEFAULT" />

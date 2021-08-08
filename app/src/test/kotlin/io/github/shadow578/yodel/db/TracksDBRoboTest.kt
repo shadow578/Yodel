@@ -12,7 +12,7 @@ import org.junit.*
  * [TracksDB]
  */
 class TracksDBRoboTest : RoboTest() {
-    lateinit var db: TracksDB
+    private lateinit var db: TracksDB
 
     @Before
     fun initDb() {

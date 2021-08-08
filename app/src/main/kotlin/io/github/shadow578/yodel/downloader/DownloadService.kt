@@ -395,7 +395,7 @@ class DownloaderService : LifecycleService() {
                 Log.w(TAG, "failed to delete final file on copy fail")
 
             throw DownloaderException(
-                "error copying temp file (${files.audio}) to final destination (${finalFile.uri.toString()})",
+                "error copying temp file (${files.audio}) to final destination (${finalFile.uri})",
                 e
             )
         }
