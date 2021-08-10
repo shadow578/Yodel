@@ -46,8 +46,8 @@ android {
         getByName("release") {
             isMinifyEnabled = false
             proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                    getDefaultProguardFile("proguard-android-optimize.txt"),
+                    "proguard-rules.pro"
             )
 
             // use sign.properties
@@ -124,6 +124,11 @@ dependencies {
     // about libraries
     implementation("com.mikepenz:aboutlibraries-core:8.9.1")
     implementation("com.mikepenz:aboutlibraries:8.9.1")
+
+    // exoplayer
+    implementation("com.google.android.exoplayer:exoplayer-core:2.14.2")
+    implementation("com.google.android.exoplayer:exoplayer-ui:2.14.2")
+    implementation("com.google.android.exoplayer:extension-mediasession:2.14.2")
 
     // desugaring
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.5")

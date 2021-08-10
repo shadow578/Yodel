@@ -8,10 +8,7 @@ import android.os.Build
 import android.util.Log
 import android.widget.Toast
 import androidx.annotation.StringRes
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
 import androidx.documentfile.provider.DocumentFile
-import androidx.lifecycle.LifecycleService
 import com.google.gson.Gson
 import com.google.gson.JsonIOException
 import com.google.gson.JsonSyntaxException
@@ -38,7 +35,10 @@ import kotlin.math.floor
 /**
  * tracks downloading service
  */
-class DownloaderService : LifecycleService() {
+class DownloaderService : YodelForegroundService(
+        123456,
+        NotificationChannels.DownloadProgress
+) {
     companion object {
         /**
          * tag for logging
@@ -49,11 +49,6 @@ class DownloaderService : LifecycleService() {
          * retries for youtube-dl operations
          */
         private const val YOUTUBE_DL_RETRIES = 10
-
-        /**
-         * notification id of the progress notification
-         */
-        private const val PROGRESS_NOTIFICATION_ID = 123456
     }
 
     /**
@@ -73,19 +68,8 @@ class DownloaderService : LifecycleService() {
      */
     private val gson = Gson()
 
-    /**
-     * notification manager, for progress notification
-     */
-    private lateinit var notificationManager: NotificationManagerCompat
-
-    /**
-     * is the service currently in foreground?
-     */
-    private var isInForeground = false
-
     override fun onCreate() {
         super.onCreate()
-        notificationManager = NotificationManagerCompat.from(this)
 
         // ensure downloads are accessible
         if (!checkDownloadsDirSet()) {
@@ -122,9 +106,7 @@ class DownloaderService : LifecycleService() {
     }
 
     override fun onDestroy() {
-        Log.i(TAG, "destroying service...")
         downloadThread.interrupt()
-        hideNotification()
         super.onDestroy()
     }
 
@@ -172,7 +154,7 @@ class DownloaderService : LifecycleService() {
                     downloadTrack(scheduledDownloads.take())
 
                     // remove notification
-                    hideNotification()
+                    cancelForeground()
                 }
             }
         } catch (ignored: InterruptedException) {
@@ -215,7 +197,7 @@ class DownloaderService : LifecycleService() {
         var files: TempFiles? = null
         return try {
             // create session
-            updateNotification(
+            updateForeground(
                     createStatusNotification(
                             track,
                             R.string.dl_status_starting_download
@@ -228,7 +210,7 @@ class DownloaderService : LifecycleService() {
             downloadTrack(track, session, files)
 
             // parse the metadata
-            updateNotification(createStatusNotification(track, R.string.dl_status_process_metadata))
+            updateForeground(createStatusNotification(track, R.string.dl_status_process_metadata))
             parseMetadata(track, files)
 
             // write id3v2 metadata for mp3 files
@@ -245,7 +227,7 @@ class DownloaderService : LifecycleService() {
                 }
 
             // copy audio file to downloads dir
-            updateNotification(createStatusNotification(track, R.string.dl_status_finish))
+            updateForeground(createStatusNotification(track, R.string.dl_status_finish))
             copyAudioToFinal(track, files, format)
 
             // copy cover to cover store
@@ -323,7 +305,7 @@ class DownloaderService : LifecycleService() {
                 .writeMetadata()
                 .writeThumbnail()
                 .download({ progress: Float, etaInSeconds: Long ->
-                    updateNotification(
+                    updateForeground(
                             createProgressNotification(track, progress / 100.0, etaInSeconds)
                     )
                 }, YOUTUBE_DL_RETRIES)
@@ -568,31 +550,6 @@ class DownloaderService : LifecycleService() {
 
     //region status notification
     /**
-     * update the progress notification
-     *
-     * @param newNotification the updated notification
-     */
-    private fun updateNotification(newNotification: Notification) {
-        if (isInForeground) {
-            // already in foreground, update the notification
-            notificationManager.notify(PROGRESS_NOTIFICATION_ID, newNotification)
-        } else {
-            // create foreground notification
-            isInForeground = true
-            startForeground(PROGRESS_NOTIFICATION_ID, newNotification)
-        }
-    }
-
-    /**
-     * cancel the progress notification and call [stopForeground]
-     */
-    private fun hideNotification() {
-        notificationManager.cancel(PROGRESS_NOTIFICATION_ID)
-        stopForeground(true)
-        isInForeground = false
-    }
-
-    /**
      * create a download progress display notification (during track download)
      *
      * @param track    the track that is being downloaded
@@ -605,7 +562,7 @@ class DownloaderService : LifecycleService() {
             progress: Double,
             eta: Long
     ): Notification {
-        return baseNotification
+        return newNotification()
                 .setContentTitle(track.title)
                 .setSubText(getString(R.string.dl_notification_subtext, eta.secondsToTimeString()))
                 .setProgress(100, floor(progress * 100).toInt(), false)
@@ -623,21 +580,11 @@ class DownloaderService : LifecycleService() {
             track: TrackInfo,
             @StringRes statusRes: Int
     ): Notification {
-        return baseNotification
+        return newNotification()
                 .setContentTitle(track.title)
                 .setSubText(getString(statusRes))
                 .setProgress(1, 0, true)
                 .build()
     }
-
-    /**
-     * get the base notification, shared between all status notifications
-     *
-     * @return the builder, with base settings applied
-     */ //endregion
-    private val baseNotification: NotificationCompat.Builder
-        get() = NotificationCompat.Builder(this, NotificationChannels.DownloadProgress.id)
-                .setSmallIcon(R.drawable.ic_launcher_foreground)
-                .setShowWhen(false)
-                .setOnlyAlertOnce(true)
+    //endregion
 }

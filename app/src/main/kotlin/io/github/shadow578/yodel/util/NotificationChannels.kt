@@ -2,7 +2,8 @@ package io.github.shadow578.yodel.util
 
 import android.content.Context
 import androidx.annotation.StringRes
-import androidx.core.app.*
+import androidx.core.app.NotificationChannelCompat
+import androidx.core.app.NotificationManagerCompat
 import io.github.shadow578.yodel.R
 
 /**
@@ -13,9 +14,9 @@ import io.github.shadow578.yodel.R
  * @param importance importance of this channel
  */
 enum class NotificationChannels(
-    @StringRes private val displayName: Int? = null,
-    @StringRes private val description: Int? = null,
-    @StringRes private val importance: Int = NotificationManagerCompat.IMPORTANCE_DEFAULT
+        @StringRes private val displayName: Int? = null,
+        @StringRes private val description: Int? = null,
+        @StringRes private val importance: Int = NotificationManagerCompat.IMPORTANCE_DEFAULT
 ) {
     /**
      * default notification channel.
@@ -24,17 +25,25 @@ enum class NotificationChannels(
      */
     @Suppress("unused")
     Default(
-        R.string.channel_default_name,
-        R.string.channel_default_description
+            R.string.channel_default_name,
+            R.string.channel_default_description
     ),
 
     /**
-     * notification channel used by {@link io.github.shadow578.music_dl.downloader.DownloaderService} to show download progress
+     * notification channel used by [io.github.shadow578.yodel.downloader.DownloaderService] to show download progress
      */
     DownloadProgress(
-        R.string.channel_downloader_name,
-        R.string.channel_downloader_description,
-        NotificationManagerCompat.IMPORTANCE_LOW
+            R.string.channel_downloader_name,
+            R.string.channel_downloader_description,
+            NotificationManagerCompat.IMPORTANCE_LOW
+    ),
+
+    /**
+     * current playback information, used by [io.github.shadow578.yodel.playback.PlaybackService]
+     */
+    PlaybackInfo(
+            //TODO display name and description
+            importance = NotificationManagerCompat.IMPORTANCE_LOW
     );
 
 

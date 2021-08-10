@@ -1,7 +1,12 @@
 package io.github.shadow578.yodel.ui.tracks
 
+import android.app.Service
+import android.content.ComponentName
 import android.content.Intent
+import android.content.ServiceConnection
 import android.os.Bundle
+import android.os.IBinder
+import android.util.Log
 import android.util.TypedValue
 import android.view.*
 import android.widget.Toast
@@ -12,6 +17,7 @@ import io.github.shadow578.yodel.R
 import io.github.shadow578.yodel.databinding.FragmentTracksBinding
 import io.github.shadow578.yodel.db.TracksDB
 import io.github.shadow578.yodel.db.model.*
+import io.github.shadow578.yodel.playback.PlaybackService
 import io.github.shadow578.yodel.ui.base.BaseFragment
 import io.github.shadow578.yodel.util.*
 import io.github.shadow578.yodel.util.storage.decodeToUri
@@ -98,20 +104,40 @@ class TracksFragment : BaseFragment() {
     private fun playTrack(track: TrackInfo) {
         // decode track audio file key
         val trackUri = track.audioFileKey.decodeToUri()
-        if (trackUri != null) {
+        if (trackUri == null) {
             Toast.makeText(requireContext(), R.string.tracks_play_failed, Toast.LENGTH_SHORT).show()
             return
         }
 
+        val intent = Intent(requireContext(), PlaybackService::class.java)
+                .putExtra(PlaybackService.EXTRA_PLAYBACK_URI_KEY, track.audioFileKey.key)
+        requireContext().bindService(intent, object : ServiceConnection {
+
+            override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+                Log.i("SVCC", "connect!")
+
+                (service as PlaybackService.Binder).play(track.audioFileKey)
+
+            }
+
+            override fun onServiceDisconnected(name: ComponentName?) {
+                Log.i("SVCC", "disconnect")
+            }
+        }, Service.BIND_AUTO_CREATE or Service.BIND_ABOVE_CLIENT)
+
+
+        /* TODO injected playback service call, make dynamic later
+
         // start external player
         val playIntent = Intent(Intent.ACTION_VIEW)
-            .setDataAndType(trackUri, "audio/*")
+            .setDataAndType(trackUri, "audio/") mimetype is missing * at end
             .addFlags(
                 Intent.FLAG_ACTIVITY_NEW_TASK
                         or Intent.FLAG_ACTIVITY_SINGLE_TOP
                         or Intent.FLAG_GRANT_READ_URI_PERMISSION
             )
         startActivity(playIntent)
+         */
     }
 
     /**

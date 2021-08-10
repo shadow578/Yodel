@@ -43,5 +43,6 @@
 
         <!-- services -->
         <service android:name=".downloader.DownloaderService" />
+        <service android:name=".playback.PlaybackService"/>
     </application>
 </manifest>
