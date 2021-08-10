@@ -111,19 +111,20 @@ class TracksFragment : BaseFragment() {
 
         val intent = Intent(requireContext(), PlaybackService::class.java)
                 .putExtra(PlaybackService.EXTRA_PLAYBACK_URI_KEY, track.audioFileKey.key)
+        requireContext().startService(intent)
         requireContext().bindService(intent, object : ServiceConnection {
 
             override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
                 Log.i("SVCC", "connect!")
 
                 (service as PlaybackService.Binder).play(track.audioFileKey)
-
             }
 
             override fun onServiceDisconnected(name: ComponentName?) {
                 Log.i("SVCC", "disconnect")
             }
         }, Service.BIND_AUTO_CREATE or Service.BIND_ABOVE_CLIENT)
+
 
 
         /* TODO injected playback service call, make dynamic later
