@@ -135,6 +135,9 @@ dependencies {
     androidTestImplementation("androidx.test:runner:1.4.0")
     androidTestImplementation("androidx.test:rules:1.4.0")
     androidTestImplementation("io.kotest:kotest-assertions-core:4.6.1")
+
+    // leakcanary (only on debug builds)
+    debugImplementation("com.squareup.leakcanary:leakcanary-android:2.7")
 }
 
 tasks.withType<Test>().all {

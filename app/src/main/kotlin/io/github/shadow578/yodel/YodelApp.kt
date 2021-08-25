@@ -17,6 +17,9 @@ class YodelApp : Application() {
         PreferenceWrapper.init(PreferenceManager.getDefaultSharedPreferences(this))
         NotificationChannels.registerAll(this)
 
+        // enable strict mode for diagnostics
+        maybeEnableStrictMode()
+
         // find tracks that were deleted
         launchIO {
             val removedCount = TracksDB.get(this@YodelApp).markDeletedTracks(this@YodelApp)
