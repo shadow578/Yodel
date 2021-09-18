@@ -14,6 +14,7 @@ import io.github.shadow578.yodel.db.TracksDB
 import io.github.shadow578.yodel.db.model.*
 import io.github.shadow578.yodel.ui.base.BaseFragment
 import io.github.shadow578.yodel.util.*
+import io.github.shadow578.yodel.util.storage.decodeToFile
 import io.github.shadow578.yodel.util.storage.decodeToUri
 
 /**
@@ -80,6 +81,13 @@ class TracksFragment : BaseFragment() {
                 ) { track: TrackInfo ->
 
                     launchIO {
+                        // remove the file
+                        track.audioFileKey.decodeToFile(this@TracksFragment.requireContext())?.delete()
+
+                        // remove the cover
+                        track.coverKey.decodeToFile(this@TracksFragment.requireContext())?.delete()
+
+                        // remove from DB
                         TracksDB.get(this@TracksFragment.requireContext()).tracks()
                             .remove(track)
                     }
