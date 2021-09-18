@@ -102,22 +102,15 @@ class TracksFragment : BaseFragment() {
      * @param track the track to play
      */
     private fun playTrack(track: TrackInfo) {
-        // decode track audio file key
-        val trackUri = track.audioFileKey.decodeToUri()
-        if (trackUri == null) {
-            Toast.makeText(requireContext(), R.string.tracks_play_failed, Toast.LENGTH_SHORT).show()
-            return
-        }
 
         val intent = Intent(requireContext(), PlaybackService::class.java)
-                .putExtra(PlaybackService.EXTRA_PLAYBACK_URI_KEY, track.audioFileKey.key)
         requireContext().startService(intent)
         requireContext().bindService(intent, object : ServiceConnection {
 
             override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
                 Log.i("SVCC", "connect!")
 
-                (service as PlaybackService.Binder).play(track.audioFileKey)
+                (service as PlaybackService.Binder).playSingle(track)
             }
 
             override fun onServiceDisconnected(name: ComponentName?) {
@@ -128,6 +121,13 @@ class TracksFragment : BaseFragment() {
 
 
         /* TODO injected playback service call, make dynamic later
+
+        // decode track audio file key
+        val trackUri = track.audioFileKey.decodeToUri()
+        if (trackUri == null) {
+            Toast.makeText(requireContext(), R.string.tracks_play_failed, Toast.LENGTH_SHORT).show()
+            return
+        }
 
         // start external player
         val playIntent = Intent(Intent.ACTION_VIEW)
