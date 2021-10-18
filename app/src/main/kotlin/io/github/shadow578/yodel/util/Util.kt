@@ -1,10 +1,10 @@
 package io.github.shadow578.yodel.util
 
-import android.content.Context
-import android.content.ContextWrapper
+import android.content.*
 import android.content.res.Configuration
-import android.os.Build
-import android.os.LocaleList
+import android.net.Uri
+import android.os.*
+import androidx.core.content.FileProvider
 import io.github.shadow578.yodel.LocaleOverride
 import io.github.shadow578.yodel.util.preferences.Prefs
 import java.io.File
@@ -127,4 +127,24 @@ fun Context.wrapLocale(): Context {
 
     // wrap the context
     return ContextWrapper(this.createConfigurationContext(config))
+}
+
+/**
+ * copy a message to the clipboard
+ *
+ * @param label the label for the data
+ * @param text the message to copy
+ */
+fun Context.copyToClipboard(label: String, text: String) {
+    val clipManager = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+    val data = ClipData.newPlainText(label, text)
+    clipManager.setPrimaryClip(data)
+}
+
+/**
+ * create a content uri for the file using the global file provider.
+ * the file's path has to be covered by provider_paths.xml
+ */
+fun Context.getContentUri(file: File): Uri {
+    return FileProvider.getUriForFile(this, this.packageName + ".global_file_provider", file)
 }

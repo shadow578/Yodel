@@ -103,6 +103,11 @@ class MoreFragment : BaseFragment() {
             MoreViewModel::class.java
         )
 
+        // clicking the app icon multiple times opens developer options screen
+        b.appIcon.setOnClickListener {
+            model.countAndOpenDeveloperTools(requireActivity())
+        }
+
         // show app version
         b.appVersion.text = BuildConfig.VERSION_NAME
 

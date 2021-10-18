@@ -1,6 +1,7 @@
 package io.github.shadow578.yodel.ui.more
 
 import android.app.*
+import android.content.Intent
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.documentfile.provider.DocumentFile
@@ -10,6 +11,7 @@ import io.github.shadow578.yodel.*
 import io.github.shadow578.yodel.backup.BackupHelper
 import io.github.shadow578.yodel.downloader.TrackDownloadFormat
 import io.github.shadow578.yodel.ui.base.BaseActivity
+import io.github.shadow578.yodel.ui.dev.DeveloperToolsActivity
 import io.github.shadow578.yodel.util.*
 import io.github.shadow578.yodel.util.preferences.Prefs
 import java.util.concurrent.atomic.AtomicBoolean
@@ -37,6 +39,25 @@ class MoreViewModel(application: Application) : AndroidViewModel(application) {
      * currently selected locale override
      */
     val localeOverride = MutableLiveData(Prefs.AppLocaleOverride.get())
+
+    /**
+     * how often [countAndOpenDeveloperTools] was called (== how often the app_icon was clicked)
+     */
+    private var developerToolsCounter: Int = 0
+
+    /**
+     * count how many times this function was called.
+     * if it was called more than 5 times, open the developer tools activity
+     *
+     * @param parent parent activity
+     */
+    fun countAndOpenDeveloperTools(parent: Activity) {
+        developerToolsCounter++
+        if(developerToolsCounter >= 5){
+            parent.startActivity(Intent(parent, DeveloperToolsActivity::class.java))
+            developerToolsCounter = 0
+        }
+    }
 
     /**
      * open the about page

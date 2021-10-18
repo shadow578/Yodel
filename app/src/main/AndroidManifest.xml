@@ -20,8 +20,8 @@
         <!-- splash screen -->
         <activity
             android:name=".ui.splash.SplashScreenActivity"
-            android:theme="@style/Theme.SplashScreen"
-            android:exported="true">
+            android:exported="true"
+            android:theme="@style/Theme.SplashScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -32,7 +32,8 @@
         <activity android:name=".ui.main.MainActivity" />
 
         <!-- share -->
-        <activity android:name=".ui.share.ShareTargetActivity"
+        <activity
+            android:name=".ui.share.ShareTargetActivity"
             android:exported="true">
             <intent-filter android:label="@string/share_to_download_label">
                 <action android:name="android.intent.action.SEND" />
@@ -40,6 +41,20 @@
                 <data android:mimeType="text/plain" />
             </intent-filter>
         </activity>
+
+        <!-- dev tools -->
+        <activity android:name=".ui.dev.DeveloperToolsActivity" />
+
+        <!-- global file provider -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.global_file_provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths" />
+        </provider>
 
         <!-- services -->
         <service android:name=".downloader.DownloaderService" />
