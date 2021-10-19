@@ -24,6 +24,13 @@
         android:layout_height="wrap_content"
         android:text="Dump Error Logcat" />
 
+    <!-- button to re- download all tracks -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/reload_all_tracks"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Reload all Tracks" />
+
     <!-- toggle to enable error notifications for the downloader service -->
     <com.google.android.material.switchmaterial.SwitchMaterial
         android:id="@+id/downloader_error_notifications"

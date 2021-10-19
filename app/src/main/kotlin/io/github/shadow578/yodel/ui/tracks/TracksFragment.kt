@@ -80,6 +80,12 @@ class TracksFragment : BaseFragment() {
                 ) { track: TrackInfo ->
 
                     launchIO {
+                        //TODO: when merging with develop, keep this version (this fixes a bug in the other implementation where the cover was not removed correctly)
+
+                        // remove files
+                        track.deleteLocalFiles(this@TracksFragment.requireContext())
+
+                        // remove from db
                         TracksDB.get(this@TracksFragment.requireContext()).tracks()
                             .remove(track)
                     }

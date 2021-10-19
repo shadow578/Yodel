@@ -6,7 +6,9 @@ import android.net.Uri
 import android.os.*
 import androidx.core.content.FileProvider
 import io.github.shadow578.yodel.LocaleOverride
+import io.github.shadow578.yodel.db.model.TrackInfo
 import io.github.shadow578.yodel.util.preferences.Prefs
+import io.github.shadow578.yodel.util.storage.*
 import java.io.File
 import java.util.regex.Pattern
 
@@ -147,4 +149,22 @@ fun Context.copyToClipboard(label: String, text: String) {
  */
 fun Context.getContentUri(file: File): Uri {
     return FileProvider.getUriForFile(this, this.packageName + ".global_file_provider", file)
+}
+
+/**
+ * delete a track's locally downloaded files (audio and cover) and clear [TrackInfo.audioFileKey] and [TrackInfo.coverKey]
+ */
+fun TrackInfo.deleteLocalFiles(ctx: Context) {
+    // remove the audio file
+    audioFileKey.decodeToFile(ctx)?.delete()
+
+    // remove cover image
+    val coverPath = coverKey.decodeToUri()?.path
+    if (!coverPath.isNullOrEmpty()) {
+        File(coverPath).delete()
+    }
+
+    // clear keys
+    audioFileKey = StorageKey.EMPTY
+    coverKey = StorageKey.EMPTY
 }

@@ -42,6 +42,11 @@ class DeveloperToolsActivity : BaseActivity() {
             model.dumpLogcat(this)
         }
 
+        // setup reload all
+        b.reloadAllTracks.setOnClickListener {
+            model.reloadAllTracks()
+        }
+
         // listen to error notifications
         b.downloaderErrorNotifications.setOnCheckedChangeListener { _, isChecked ->
             model.setEnableDownloaderErrorNotifications(isChecked)

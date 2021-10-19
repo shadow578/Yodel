@@ -7,6 +7,8 @@ import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.*
 import io.github.shadow578.yodel.BuildConfig
+import io.github.shadow578.yodel.db.TracksDB
+import io.github.shadow578.yodel.db.model.TrackStatus
 import io.github.shadow578.yodel.util.*
 import io.github.shadow578.yodel.util.preferences.Prefs
 import java.io.File
@@ -72,6 +74,29 @@ class DeveloperToolsViewModel(application: Application) : AndroidViewModel(appli
         }
         Prefs.EnableSSLFix.set(enable)
         enableSSLFix.value = enable
+    }
+
+    /**
+     * remove all downloaded files, and mark all tracks as 'pending'
+     */
+    fun reloadAllTracks() {
+        // get all tracks from db
+        val ctx = getApplication<Application>().applicationContext
+        launchIO {
+            TracksDB.get(ctx).tracks().all.forEach {
+                // remove files
+                it.deleteLocalFiles(ctx)
+
+                // reset track to pending status
+                it.status = TrackStatus.DownloadPending
+
+                // update the track
+                TracksDB.get(ctx).tracks().update(it)
+            }
+        }
+
+        // show toast
+        Toast.makeText(ctx, "Reloading all tracks...", Toast.LENGTH_SHORT).show()
     }
 
     /**
