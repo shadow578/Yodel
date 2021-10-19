@@ -38,6 +38,25 @@ class DeveloperToolsViewModel(application: Application) : AndroidViewModel(appli
     }
 
     /**
+     * current state of downloader_verbose_output enable
+     */
+    val enableDownloaderVerboseOutput =
+        MutableLiveData(Prefs.EnableDownloaderVerboseOutput.get())
+
+    /**
+     * set downloader_verbose_output enable
+     *
+     * @param enable enable downloader_verbose_output?
+     */
+    fun setEnableDownloaderVerboseOutput(enable: Boolean) {
+        if (java.lang.Boolean.valueOf(enable) == enableDownloaderVerboseOutput.value) {
+            return
+        }
+        Prefs.EnableDownloaderVerboseOutput.set(enable)
+        enableDownloaderVerboseOutput.value = enable
+    }
+
+    /**
      * get device and app debug info, formatted into a nice string
      */
     val debugInfo: String

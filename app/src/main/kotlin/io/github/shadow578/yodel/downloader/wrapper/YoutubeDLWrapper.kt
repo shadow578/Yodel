@@ -63,14 +63,14 @@ class YoutubeDLWrapper(
     /**
      * should the command output be printed to log?
      */
-    private var printOutput = false
+    var printOutput = false
 
     init {
         // enable verbose output on debug builds
         if (BuildConfig.DEBUG) {
-            request.addOption("--verbose")
+            verboseOutput()
+            printOutput = true
         }
-        printOutput(BuildConfig.DEBUG)
     }
 
     //region parameter wrapper
@@ -93,6 +93,16 @@ class YoutubeDLWrapper(
     fun fixSsl(): YoutubeDLWrapper {
         request.addOption("--no-check-certificate")
             .addOption("--prefer-insecure")
+        return this
+    }
+
+    /**
+     * add the '--verbose' option to the request
+     *
+     * @return self instance
+     */
+    fun verboseOutput(): YoutubeDLWrapper {
+        request.addOption("--verbose")
         return this
     }
 
@@ -189,18 +199,6 @@ class YoutubeDLWrapper(
         } else {
             request.addOption(key, value)
         }
-        return this
-    }
-
-    /**
-     * enable printing of the youtube-dl command output.
-     * by default on on DEBUG builds, and off on RELEASE builds.
-     * only for use with [.download] functions
-     *
-     * @return self instance
-     */
-    private fun printOutput(print: Boolean): YoutubeDLWrapper {
-        printOutput = print
         return this
     }
     //endregion

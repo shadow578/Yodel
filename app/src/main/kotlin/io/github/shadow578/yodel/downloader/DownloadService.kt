@@ -317,6 +317,13 @@ class DownloaderService : LifecycleService() {
             //overwriteExisting()
             writeMetadata()
             writeThumbnail()
+
+            // enable verbose output with devtools toggle
+            if(Prefs.EnableDownloaderVerboseOutput.get())
+            {
+                verboseOutput()
+                printOutput = true
+            }
         }
 
         // prepare a callback to show the progress in a notification

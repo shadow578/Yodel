@@ -62,4 +62,13 @@ object Prefs {
         "downloader_error_notifications",
         false
     )
+
+    /**
+     * enable verbose output on youtube-dl
+     */
+    val EnableDownloaderVerboseOutput = PreferenceWrapper.create(
+        Boolean::class.java,
+        "downloader_verbose_output",
+        false
+    )
 }

@@ -51,5 +51,15 @@ class DeveloperToolsActivity : BaseActivity() {
             { sslFix: Boolean ->
                 b.downloaderErrorNotifications.isChecked = sslFix
             })
+
+        // listen to verbose output
+        b.downloaderVerboseOutput.setOnCheckedChangeListener { _, isChecked ->
+            model.setEnableDownloaderVerboseOutput(isChecked)
+        }
+
+        model.enableDownloaderVerboseOutput.observe(this,
+            { sslFix: Boolean ->
+                b.downloaderVerboseOutput.isChecked = sslFix
+            })
     }
 }
