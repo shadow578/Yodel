@@ -62,7 +62,10 @@ class DeveloperToolsViewModel(application: Application) : AndroidViewModel(appli
     val debugInfo: String
         get() = """
             -- App Info --
+            App ID:       ${BuildConfig.APPLICATION_ID}
             Version:      ${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})
+            Build Type:   ${BuildConfig.BUILD_TYPE}
+            Is Debug:     ${BuildConfig.DEBUG}
             
             -- Android Info --
             Version:      ${Build.VERSION.RELEASE} (SDK ${Build.VERSION.SDK_INT}
