@@ -66,6 +66,8 @@
     <string name="channel_default_description">the fallback notification channel</string>
     <string name="channel_downloader_name">Downloads</string>
     <string name="channel_downloader_description">sends information about in- progress downloads</string>
+    <string name="channel_devtools_name">Developer Tools</string>
+    <string name="channel_devtools_description">sends error messages and similar things when enabled in devtools</string>
 
     <!-- file formats -->
     <string name="file_format_mp3">MP3 (with metadata)</string>

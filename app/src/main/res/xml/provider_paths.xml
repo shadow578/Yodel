@@ -4,4 +4,9 @@
     <cache-path
         name="logcat_dumps"
         path="logcat_dumps/" />
+
+    <!-- downloader service -> DownloadService::maybeShowErrorNotification() -->
+    <cache-path
+        name="downloader_errors"
+        path="downloader_errors/"/>
 </paths>

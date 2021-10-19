@@ -51,4 +51,6 @@
     <string name="aboutLibraries_description_text" tools:keep="@string/aboutLibraries_description_text">eine App, um Musik von YouTube herunterzuladen</string>
     <string name="more_app_language_hint">Sprache</string>
     <string name="more_download_format_hint">Download- Format</string>
+    <string name="channel_devtools_name">Entwicklerwerkzeuge</string>
+    <string name="channel_devtools_description">zeigt Fehlernachrichten und ähnliches wenn in den Entwickerwerkzeugen aktiviert</string>
 </resources>

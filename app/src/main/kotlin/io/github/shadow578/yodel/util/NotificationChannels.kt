@@ -35,6 +35,15 @@ enum class NotificationChannels(
         R.string.channel_downloader_name,
         R.string.channel_downloader_description,
         NotificationManagerCompat.IMPORTANCE_LOW
+    ),
+
+    /**
+     * notification channels for devtools
+     */
+    DeveloperTools(
+        R.string.channel_devtools_name,
+        R.string.channel_devtools_description,
+        NotificationManagerCompat.IMPORTANCE_LOW
     );
 
 

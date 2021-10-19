@@ -41,5 +41,15 @@ class DeveloperToolsActivity : BaseActivity() {
         b.dumpLogcat.setOnClickListener {
             model.dumpLogcat(this)
         }
+
+        // listen to error notifications
+        b.downloaderErrorNotifications.setOnCheckedChangeListener { _, isChecked ->
+            model.setEnableDownloaderErrorNotifications(isChecked)
+        }
+
+        model.enableDownloaderErrorNotifications.observe(this,
+            { sslFix: Boolean ->
+                b.downloaderErrorNotifications.isChecked = sslFix
+            })
     }
 }

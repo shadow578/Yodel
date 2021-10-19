@@ -58,5 +58,14 @@
 
         <!-- services -->
         <service android:name=".downloader.DownloaderService" />
+
+        <!-- broadcast receiver for downloader error notifications -->
+        <receiver
+            android:name=".downloader.DownloaderErrorOpenBroadcastReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="io.github.shadow578.yodel.OPEN_ERROR_OUTPUT" />
+            </intent-filter>
+        </receiver>
     </application>
 </manifest>

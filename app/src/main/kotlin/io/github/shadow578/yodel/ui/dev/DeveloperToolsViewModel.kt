@@ -5,9 +5,10 @@ import android.content.*
 import android.os.Build
 import android.util.Log
 import android.widget.Toast
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.*
 import io.github.shadow578.yodel.BuildConfig
 import io.github.shadow578.yodel.util.*
+import io.github.shadow578.yodel.util.preferences.Prefs
 import java.io.File
 import java.time.LocalDateTime
 import java.util.*
@@ -16,6 +17,25 @@ import java.util.*
  * view model for the developer tools activity
  */
 class DeveloperToolsViewModel(application: Application) : AndroidViewModel(application) {
+
+    /**
+     * current state of downloader_error_notifications enable
+     */
+    val enableDownloaderErrorNotifications =
+        MutableLiveData(Prefs.EnableDownloaderErrorNotifications.get())
+
+    /**
+     * set downloader_error_notifications enable
+     *
+     * @param enable enable downloader_error_notifications?
+     */
+    fun setEnableDownloaderErrorNotifications(enable: Boolean) {
+        if (java.lang.Boolean.valueOf(enable) == enableDownloaderErrorNotifications.value) {
+            return
+        }
+        Prefs.EnableDownloaderErrorNotifications.set(enable)
+        enableDownloaderErrorNotifications.value = enable
+    }
 
     /**
      * get device and app debug info, formatted into a nice string

@@ -24,4 +24,11 @@
         android:layout_height="wrap_content"
         android:text="Dump Error Logcat" />
 
+    <!-- toggle to enable error notifications for the downloader service -->
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/downloader_error_notifications"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Downloader Error Notifications" />
+
 </androidx.appcompat.widget.LinearLayoutCompat>
