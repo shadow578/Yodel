@@ -123,16 +123,6 @@ class MoreFragment : BaseFragment() {
         // populate download formats
         setupFormatSelection()
 
-        // listen to ssl fix
-        b.enableSslFix.setOnCheckedChangeListener { _, isChecked ->
-            model.setEnableSSLFix(isChecked)
-        }
-
-        model.enableSSLFix.observe(requireActivity(),
-            { sslFix: Boolean ->
-                b.enableSslFix.isChecked = sslFix
-            })
-
         // listen to write metadata
         b.enableTagging.setOnCheckedChangeListener { _, isChecked ->
             model.setEnableTagging(isChecked)

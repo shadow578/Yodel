@@ -61,5 +61,15 @@ class DeveloperToolsActivity : BaseActivity() {
             { sslFix: Boolean ->
                 b.downloaderVerboseOutput.isChecked = sslFix
             })
+
+        // listen to ssl fix
+        b.enableSslFix.setOnCheckedChangeListener { _, isChecked ->
+            model.setEnableSSLFix(isChecked)
+        }
+
+        model.enableSSLFix.observe(this,
+            { sslFix: Boolean ->
+                b.enableSslFix.isChecked = sslFix
+            })
     }
 }

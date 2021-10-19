@@ -29,7 +29,6 @@
     <string name="more_select_downloads_dir">Select Folder for Downloads</string>
     <string name="more_app_language_hint">Language</string>
     <string name="more_download_format_hint">Download Format</string>
-    <string name="more_enable_ssl_fix">Enable SSL Fix</string>
     <string name="more_enable_tagging">Write Track metadata</string>
     <string name="more_backup">Export</string>
     <string name="more_restore">Import</string>

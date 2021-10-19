@@ -16,7 +16,6 @@
     <string name="tracks_replace_existing_negative">Nein</string>
     <string name="more_about">Über</string>
     <string name="more_select_downloads_dir">Download- Ordern Auswählen</string>
-    <string name="more_enable_ssl_fix">SSL- Fix aktivieren</string>
     <string name="more_enable_tagging">Song- Metadaten schreiben</string>
     <string name="more_backup">Exportieren</string>
     <string name="more_restore">Importieren</string>

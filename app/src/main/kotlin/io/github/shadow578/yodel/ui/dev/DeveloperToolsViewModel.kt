@@ -57,6 +57,24 @@ class DeveloperToolsViewModel(application: Application) : AndroidViewModel(appli
     }
 
     /**
+     * current state of ssl_fix enable
+     */
+    val enableSSLFix = MutableLiveData(Prefs.EnableSSLFix.get())
+
+    /**
+     * set ssl fix enable
+     *
+     * @param enable enable ssl fix?
+     */
+    fun setEnableSSLFix(enable: Boolean) {
+        if (java.lang.Boolean.valueOf(enable) == enableSSLFix.value) {
+            return
+        }
+        Prefs.EnableSSLFix.set(enable)
+        enableSSLFix.value = enable
+    }
+
+    /**
      * get device and app debug info, formatted into a nice string
      */
     val debugInfo: String

@@ -11,31 +11,39 @@
     tools:ignore="HardcodedText">
 
     <!-- show device and app info at the top -->
-    <androidx.appcompat.widget.AppCompatTextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/debug_info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="(Debug Info)" />
 
     <!-- button to dump logcat and share -->
-    <androidx.appcompat.widget.AppCompatButton
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/dump_logcat"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Dump Error Logcat" />
 
     <!-- toggle to enable error notifications for the downloader service -->
-    <androidx.appcompat.widget.SwitchCompat
+    <com.google.android.material.switchmaterial.SwitchMaterial
         android:id="@+id/downloader_error_notifications"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Downloader Error Notifications" />
 
     <!-- toggle to enable verbose output for the downloader service -->
-    <androidx.appcompat.widget.SwitchCompat
+    <com.google.android.material.switchmaterial.SwitchMaterial
         android:id="@+id/downloader_verbose_output"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Downloader Verbose Output" />
+
+    <!-- ssl fix -->
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/enable_ssl_fix"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:text="Downloader: Skip SSL Check" />
 
 </androidx.appcompat.widget.LinearLayoutCompat>
