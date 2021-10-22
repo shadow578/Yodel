@@ -14,6 +14,7 @@ import io.github.shadow578.yodel.db.TracksDB
 import io.github.shadow578.yodel.db.model.*
 import io.github.shadow578.yodel.ui.base.BaseFragment
 import io.github.shadow578.yodel.util.*
+import io.github.shadow578.yodel.util.storage.decodeToFile
 import io.github.shadow578.yodel.util.storage.decodeToUri
 
 /**
@@ -80,8 +81,6 @@ class TracksFragment : BaseFragment() {
                 ) { track: TrackInfo ->
 
                     launchIO {
-                        //TODO: when merging with develop, keep this version (this fixes a bug in the other implementation where the cover was not removed correctly)
-
                         // remove files
                         track.deleteLocalFiles(this@TracksFragment.requireContext())
 
