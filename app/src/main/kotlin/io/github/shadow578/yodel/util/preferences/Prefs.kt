@@ -1,10 +1,9 @@
 package io.github.shadow578.yodel.util.preferences
 
-import io.github.shadow578.yodel.downloader.TrackDownloadFormat
 import io.github.shadow578.yodel.LocaleOverride
-import io.github.shadow578.yodel.util.storage.StorageKey
+import io.github.shadow578.yodel.downloader.*
 import io.github.shadow578.yodel.downloader.wrapper.YoutubeDLWrapper
-import io.github.shadow578.yodel.downloader.DownloaderService
+import io.github.shadow578.yodel.util.storage.StorageKey
 
 /**
  * app preferences storage
@@ -53,5 +52,23 @@ object Prefs {
         LocaleOverride::class.java,
         "locale_override",
         LocaleOverride.SystemDefault
+    )
+
+    /**
+     * enable sending notifications when the download service encounters a error when downloading a track
+     */
+    val EnableDownloaderErrorNotifications = PreferenceWrapper.create(
+        Boolean::class.java,
+        "downloader_error_notifications",
+        false
+    )
+
+    /**
+     * enable verbose output on youtube-dl
+     */
+    val EnableDownloaderVerboseOutput = PreferenceWrapper.create(
+        Boolean::class.java,
+        "downloader_verbose_output",
+        false
     )
 }

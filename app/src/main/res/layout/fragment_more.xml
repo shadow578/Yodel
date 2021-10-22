@@ -144,14 +144,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
                 android:text="@string/more_enable_tagging" />
-
-            <!-- ssl fix -->
-            <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/enable_ssl_fix"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:text="@string/more_enable_ssl_fix" />
         </androidx.appcompat.widget.LinearLayoutCompat>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

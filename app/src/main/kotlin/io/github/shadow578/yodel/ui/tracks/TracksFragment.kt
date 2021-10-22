@@ -81,13 +81,10 @@ class TracksFragment : BaseFragment() {
                 ) { track: TrackInfo ->
 
                     launchIO {
-                        // remove the file
-                        track.audioFileKey.decodeToFile(this@TracksFragment.requireContext())?.delete()
+                        // remove files
+                        track.deleteLocalFiles(this@TracksFragment.requireContext())
 
-                        // remove the cover
-                        track.coverKey.decodeToFile(this@TracksFragment.requireContext())?.delete()
-
-                        // remove from DB
+                        // remove from db
                         TracksDB.get(this@TracksFragment.requireContext()).tracks()
                             .remove(track)
                     }

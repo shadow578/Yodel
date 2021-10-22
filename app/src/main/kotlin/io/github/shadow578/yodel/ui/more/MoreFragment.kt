@@ -103,6 +103,11 @@ class MoreFragment : BaseFragment() {
             MoreViewModel::class.java
         )
 
+        // clicking the app icon multiple times opens developer options screen
+        b.appIcon.setOnClickListener {
+            model.countAndOpenDeveloperTools(requireActivity())
+        }
+
         // show app version
         b.appVersion.text = BuildConfig.VERSION_NAME
 
@@ -117,16 +122,6 @@ class MoreFragment : BaseFragment() {
 
         // populate download formats
         setupFormatSelection()
-
-        // listen to ssl fix
-        b.enableSslFix.setOnCheckedChangeListener { _, isChecked ->
-            model.setEnableSSLFix(isChecked)
-        }
-
-        model.enableSSLFix.observe(requireActivity(),
-            { sslFix: Boolean ->
-                b.enableSslFix.isChecked = sslFix
-            })
 
         // listen to write metadata
         b.enableTagging.setOnCheckedChangeListener { _, isChecked ->

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="10dp"
+    app:divider="@drawable/empty_small_divider"
+    app:showDividers="middle"
+    tools:ignore="HardcodedText">
+
+    <!-- show device and app info at the top -->
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/debug_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="(Debug Info)" />
+
+    <!-- button to dump logcat and share -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/dump_logcat"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Dump Error Logcat" />
+
+    <!-- button to re- download all tracks -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/reload_all_tracks"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Reload all Tracks" />
+
+    <!-- toggle to enable error notifications for the downloader service -->
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/downloader_error_notifications"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Downloader Error Notifications" />
+
+    <!-- toggle to enable verbose output for the downloader service -->
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/downloader_verbose_output"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Downloader Verbose Output" />
+
+    <!-- ssl fix -->
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/enable_ssl_fix"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:text="Downloader: Skip SSL Check" />
+
+</androidx.appcompat.widget.LinearLayoutCompat>
