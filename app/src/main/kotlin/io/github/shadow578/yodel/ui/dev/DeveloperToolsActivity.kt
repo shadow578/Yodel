@@ -51,5 +51,6 @@ class DeveloperToolsActivity : BaseActivity() {
         model.enableDownloaderErrorNotificationsBinder.bind(this, b.downloaderErrorNotifications)
         model.enableDownloaderVerboseOutputBinder.bind(this, b.downloaderVerboseOutput)
         model.enableSSLFixBinder.bind(this, b.enableSslFix)
+        model.useVideoIdOnlyBinder.bind(this, b.downloaderUseVideoId)
     }
 }

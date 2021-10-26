@@ -74,6 +74,7 @@ class DownloaderService : LifecycleService() {
 
         // ensure downloads are accessible
         if (!checkDownloadsDirSet()) {
+
             this.toast("Downloads directory not accessible, stopping Downloader!")
             Timber.i("downloads dir not accessible, stopping service")
             stopSelf()
@@ -85,16 +86,16 @@ class DownloaderService : LifecycleService() {
         TracksDB.get(this).tracks().observePending().observe(this,
             { pendingTracks: List<TrackInfo> ->
                 Timber.i("pendingTracks update! size= ${pendingTracks.size}")
+                
+                    // enqueue all that are not scheduled already
+                    for (track in pendingTracks) {
+                        // ignore if track not pending
+                        if (scheduledDownloads.contains(track) || track.status != TrackStatus.DownloadPending) continue
 
-                // enqueue all that are not scheduled already
-                for (track in pendingTracks) {
-                    // ignore if track not pending
-                    if (scheduledDownloads.contains(track) || track.status != TrackStatus.DownloadPending) continue
-
-                    //enqueue the track
-                    scheduledDownloads.put(track)
-                }
-            })
+                        //enqueue the track
+                        scheduledDownloads.put(track)
+                    }
+                })
 
         // start downloader thread as daemon
         downloadThread.name = "io.github.shadow578.yodel.downloader.DOWNLOAD_THREAD"
@@ -197,10 +198,10 @@ class DownloaderService : LifecycleService() {
         return try {
             // create session
             updateNotification(
-                createStatusNotification(
-                    track,
-                    R.string.dl_status_starting_download
-                )
+                    createStatusNotification(
+                            track,
+                            R.string.dl_status_starting_download
+                    )
             )
             val session = createSession(track, format)
             files = createTempFiles(track, format)
@@ -265,8 +266,8 @@ class DownloaderService : LifecycleService() {
     @Throws(DownloaderException::class)
     private fun createSession(track: TrackInfo, format: TrackDownloadFormat): YoutubeDLWrapper {
         val session = YoutubeDLWrapper(resolveVideoUrl(track))
-            .cacheDir(downloadCacheDirectory)
-            .audioOnly(format.fileExtension)
+                .cacheDir(downloadCacheDirectory)
+                .audioOnly(format.fileExtension)
 
         // enable ssl fix
         if (Prefs.EnableSSLFix.get())
@@ -316,7 +317,7 @@ class DownloaderService : LifecycleService() {
         // prepare a callback to show the progress in a notification
         val progressCallback = { progress: Float, etaInSeconds: Long ->
             updateNotification(
-                createProgressNotification(track, progress / 100.0, etaInSeconds)
+                    createProgressNotification(track, progress / 100.0, etaInSeconds)
             )
         }
 
@@ -353,8 +354,8 @@ class DownloaderService : LifecycleService() {
         // check if download was actually successful
         if (response == null || !files.audio.exists() || !files.metadataJson.exists())
             throw DownloaderException(
-                "youtube-dl download failed!",
-                dlOutput = downloaderOutputs.toString()
+                    "youtube-dl download failed!",
+                    dlOutput = downloaderOutputs.toString()
             )
     }
 
@@ -376,8 +377,8 @@ class DownloaderService : LifecycleService() {
         try {
             FileReader(files.metadataJson).use { reader ->
                 metadata = gson.fromJson(
-                    reader,
-                    TrackMetadata::class.java
+                        reader,
+                        TrackMetadata::class.java
                 )
             }
         } catch (e: IOException) {
@@ -413,11 +414,27 @@ class DownloaderService : LifecycleService() {
         // find root folder for saving downloaded tracks to
         // find using storage framework, and only allow persisted folders we can write to
         val downloadRoot = downloadsDirectory
-            ?: throw DownloaderException("failed to find downloads folder")
+                ?: throw DownloaderException("failed to find downloads folder")
+
+        // create a final file to write the track to, that does not currently exist
+        // if we do not check this ourself, the file extension may be messed up, causing external players to
+        // fail to play the file
+        var finalFileName: String
+        var c = 0
+        do {
+            // build suffix
+            // on the first iteration, there is no suffix
+            var suffix = ""
+            if (c > 0)
+                suffix = " ($c)"
+            c++
+
+            // build file display name
+            finalFileName = "${track.title}${suffix}.${format.fileExtension}"
+        } while (downloadRoot.findFile(finalFileName) != null)
 
         // create file to write the track to
-        val finalFile =
-            downloadRoot.createFile(format.mimetype, track.title + "." + format.fileExtension)
+        val finalFile = downloadRoot.createFile(format.mimetype, finalFileName)
         if (finalFile == null || !finalFile.canWrite())
             throw DownloaderException("Could not create final output file!")
 
@@ -434,8 +451,8 @@ class DownloaderService : LifecycleService() {
                 Timber.w("failed to delete final file on copy fail")
 
             throw DownloaderException(
-                "error copying temp file (${files.audio}) to final destination (${finalFile.uri})",
-                e
+                    "error copying temp file (${files.audio}) to final destination (${finalFile.uri})",
+                    e
             )
         }
 
@@ -468,7 +485,7 @@ class DownloaderService : LifecycleService() {
             FileInputStream(thumbnail).use { src ->
                 FileOutputStream(coverFile).use { out ->
                     val format =
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) Bitmap.CompressFormat.WEBP_LOSSLESS else Bitmap.CompressFormat.WEBP
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) Bitmap.CompressFormat.WEBP_LOSSLESS else Bitmap.CompressFormat.WEBP
                     val cover = BitmapFactory.decodeStream(src)
                     cover.compress(format, 100, out)
                     cover.recycle()
@@ -495,8 +512,8 @@ class DownloaderService : LifecycleService() {
             // clear all previous id3 tags, and create a new & empty one
             val mp3Wrapper = MP3agicWrapper(files.audio)
             val tag = mp3Wrapper
-                .clearAllTags()
-                .tag
+                    .clearAllTags()
+                    .tag
 
             // write basic metadata (title, artist, album, ...)
             tag.title = track.title
@@ -545,8 +562,10 @@ class DownloaderService : LifecycleService() {
      * @return the video url
      */
     private fun resolveVideoUrl(track: TrackInfo): String {
-        // youtube-dl is happy with just the track id
-        return track.id
+        return if (Prefs.UseVideoIdOnly.get())
+            track.id
+        else
+            "https://www.youtube.com/watch?v=${track.id}"
     }
 
     /**
@@ -629,15 +648,15 @@ class DownloaderService : LifecycleService() {
      * @return the progress notification
      */
     private fun createProgressNotification(
-        track: TrackInfo,
-        progress: Double,
-        eta: Long
+            track: TrackInfo,
+            progress: Double,
+            eta: Long
     ): Notification {
         return baseNotification
-            .setContentTitle(track.title)
-            .setSubText(getString(R.string.dl_notification_subtext, eta.secondsToTimeString()))
-            .setProgress(100, floor(progress * 100).toInt(), false)
-            .build()
+                .setContentTitle(track.title)
+                .setSubText(getString(R.string.dl_notification_subtext, eta.secondsToTimeString()))
+                .setProgress(100, floor(progress * 100).toInt(), false)
+                .build()
     }
 
     /**
@@ -648,14 +667,14 @@ class DownloaderService : LifecycleService() {
      * @return the status notification
      */
     private fun createStatusNotification(
-        track: TrackInfo,
-        @StringRes statusRes: Int
+            track: TrackInfo,
+            @StringRes statusRes: Int
     ): Notification {
         return baseNotification
-            .setContentTitle(track.title)
-            .setSubText(getString(statusRes))
-            .setProgress(1, 0, true)
-            .build()
+                .setContentTitle(track.title)
+                .setSubText(getString(statusRes))
+                .setProgress(1, 0, true)
+                .build()
     }
 
     /**
@@ -665,9 +684,9 @@ class DownloaderService : LifecycleService() {
      */
     private val baseNotification: NotificationCompat.Builder
         get() = NotificationCompat.Builder(this, NotificationChannels.DownloadProgress.id)
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
-            .setShowWhen(false)
-            .setOnlyAlertOnce(true)
+                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setShowWhen(false)
+                .setOnlyAlertOnce(true)
 
     //endregion
 
@@ -686,10 +705,10 @@ class DownloaderService : LifecycleService() {
         // create the notification
         val notificationId = Random.nextInt()
         val notification = NotificationCompat.Builder(this, NotificationChannels.DeveloperTools.id)
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
-            .setShowWhen(false)
-            .setContentTitle(error.message)
-            .setAutoCancel(true)
+                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setShowWhen(false)
+                .setContentTitle(error.message)
+                .setAutoCancel(true)
 
         // if we have output of the downloader, write it to a file we
         // can open when the notification is clicked
@@ -702,27 +721,27 @@ class DownloaderService : LifecycleService() {
 
             // add action to notification
             notification.addAction(
-                NotificationCompat.Action(
-                    null,
-                    "View Logs",
-                    PendingIntent.getBroadcast(
-                        this,
-                        0,
-                        Intent(DownloaderErrorOpenBroadcastReceiver.ACTION_OPEN_ERROR_OUTPUT).apply {
-                            setClass(
-                                this@DownloaderService,
-                                DownloaderErrorOpenBroadcastReceiver::class.java
+                    NotificationCompat.Action(
+                            null,
+                            "View Logs",
+                            PendingIntent.getBroadcast(
+                                    this,
+                                    0,
+                                    Intent(DownloaderErrorOpenBroadcastReceiver.ACTION_OPEN_ERROR_OUTPUT).apply {
+                                        setClass(
+                                                this@DownloaderService,
+                                                DownloaderErrorOpenBroadcastReceiver::class.java
+                                        )
+                                        putExtra(
+                                                DownloaderErrorOpenBroadcastReceiver.EXTRA_NOTIFICATION_ID,
+                                                notificationId
+                                        )
+                                        data = getContentUri(errorOutputFile)
+                                        flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+                                    },
+                                    PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE
                             )
-                            putExtra(
-                                DownloaderErrorOpenBroadcastReceiver.EXTRA_NOTIFICATION_ID,
-                                notificationId
-                            )
-                            data = getContentUri(errorOutputFile)
-                            flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
-                        },
-                        PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE
                     )
-                )
             )
         }
 

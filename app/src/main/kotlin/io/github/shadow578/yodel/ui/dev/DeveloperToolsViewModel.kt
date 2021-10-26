@@ -27,7 +27,6 @@ class DeveloperToolsViewModel(application: Application) : AndroidViewModel(appli
      */
     val enableDownloaderErrorNotificationsBinder = SwitchPreferenceBinder(Prefs.EnableDownloaderErrorNotifications)
 
-
     /**
      * binder for [Prefs.EnableDownloaderVerboseOutput]
      */
@@ -37,6 +36,11 @@ class DeveloperToolsViewModel(application: Application) : AndroidViewModel(appli
      * binder for [Prefs.EnableSSLFix]
      */
     val enableSSLFixBinder = SwitchPreferenceBinder(Prefs.EnableSSLFix)
+    
+    /**
+    * binder for [Prefs.UseVideoIdOnly]
+    */
+    val useVideoIdOnlyBinder = SwitchPreferenceBinder(Prefs.UseVideoIdOnly) 
 
     /**
      * remove all downloaded files, and mark all tracks as 'pending'
