@@ -53,9 +53,9 @@ class DeveloperToolsActivity : BaseActivity() {
         }
 
         model.enableDownloaderErrorNotifications.observe(this,
-            { sslFix: Boolean ->
-                b.downloaderErrorNotifications.isChecked = sslFix
-            })
+                { sslFix: Boolean ->
+                    b.downloaderErrorNotifications.isChecked = sslFix
+                })
 
         // listen to verbose output
         b.downloaderVerboseOutput.setOnCheckedChangeListener { _, isChecked ->
@@ -63,9 +63,9 @@ class DeveloperToolsActivity : BaseActivity() {
         }
 
         model.enableDownloaderVerboseOutput.observe(this,
-            { sslFix: Boolean ->
-                b.downloaderVerboseOutput.isChecked = sslFix
-            })
+                { sslFix: Boolean ->
+                    b.downloaderVerboseOutput.isChecked = sslFix
+                })
 
         // listen to ssl fix
         b.enableSslFix.setOnCheckedChangeListener { _, isChecked ->
@@ -73,8 +73,18 @@ class DeveloperToolsActivity : BaseActivity() {
         }
 
         model.enableSSLFix.observe(this,
-            { sslFix: Boolean ->
-                b.enableSslFix.isChecked = sslFix
-            })
+                { sslFix: Boolean ->
+                    b.enableSslFix.isChecked = sslFix
+                })
+
+        // listen to video id only toggle
+        b.downloaderUseVideoId.setOnCheckedChangeListener { _, isChecked ->
+            model.setUseVideoIdOnly(isChecked)
+        }
+
+        model.useVideoIdOnly.observe(this,
+                { onlyId: Boolean ->
+                    b.downloaderUseVideoId.isChecked = onlyId
+                })
     }
 }

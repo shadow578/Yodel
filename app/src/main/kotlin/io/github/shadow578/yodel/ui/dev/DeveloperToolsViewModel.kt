@@ -1,11 +1,14 @@
 package io.github.shadow578.yodel.ui.dev
 
-import android.app.*
-import android.content.*
+import android.app.Activity
+import android.app.Application
+import android.content.ClipData
+import android.content.Intent
 import android.os.Build
 import android.util.Log
 import android.widget.Toast
-import androidx.lifecycle.*
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.MutableLiveData
 import io.github.shadow578.yodel.BuildConfig
 import io.github.shadow578.yodel.db.TracksDB
 import io.github.shadow578.yodel.db.model.TrackStatus
@@ -24,7 +27,7 @@ class DeveloperToolsViewModel(application: Application) : AndroidViewModel(appli
      * current state of downloader_error_notifications enable
      */
     val enableDownloaderErrorNotifications =
-        MutableLiveData(Prefs.EnableDownloaderErrorNotifications.get())
+            MutableLiveData(Prefs.EnableDownloaderErrorNotifications.get())
 
     /**
      * set downloader_error_notifications enable
@@ -43,7 +46,7 @@ class DeveloperToolsViewModel(application: Application) : AndroidViewModel(appli
      * current state of downloader_verbose_output enable
      */
     val enableDownloaderVerboseOutput =
-        MutableLiveData(Prefs.EnableDownloaderVerboseOutput.get())
+            MutableLiveData(Prefs.EnableDownloaderVerboseOutput.get())
 
     /**
      * set downloader_verbose_output enable
@@ -74,6 +77,24 @@ class DeveloperToolsViewModel(application: Application) : AndroidViewModel(appli
         }
         Prefs.EnableSSLFix.set(enable)
         enableSSLFix.value = enable
+    }
+
+    /**
+     * current state of video_id_only enable
+     */
+    val useVideoIdOnly = MutableLiveData(Prefs.UseVideoIdOnly.get())
+
+    /**
+     * set video_id_only enable
+     *
+     * @param enable enable use video id only?
+     */
+    fun setUseVideoIdOnly(enable: Boolean) {
+        if (java.lang.Boolean.valueOf(enable) == useVideoIdOnly.value) {
+            return
+        }
+        Prefs.UseVideoIdOnly.set(enable)
+        useVideoIdOnly.value = enable
     }
 
     /**
@@ -158,7 +179,7 @@ class DeveloperToolsViewModel(application: Application) : AndroidViewModel(appli
                 Log.e("Yodel", "could not dump logcat", e)
                 launchMain {
                     Toast.makeText(parent, "could not get logs: ${e.message}", Toast.LENGTH_LONG)
-                        .show()
+                            .show()
                 }
             }
         }

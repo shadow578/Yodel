@@ -19,15 +19,6 @@ object Prefs {
     )
 
     /**
-     * enable [YoutubeDLWrapper.fixSsl] on track downloads
-     */
-    val EnableSSLFix = PreferenceWrapper.create(
-        Boolean::class.java,
-        "enable_ssl_fix",
-        false
-    )
-
-    /**
      * download format [DownloaderService] should use for future downloads. existing downloads are not affected
      */
     val DownloadFormat = PreferenceWrapper.create(
@@ -54,6 +45,7 @@ object Prefs {
         LocaleOverride.SystemDefault
     )
 
+    //region devtools flags
     /**
      * enable sending notifications when the download service encounters a error when downloading a track
      */
@@ -71,4 +63,23 @@ object Prefs {
         "downloader_verbose_output",
         false
     )
+
+    /**
+     * enable [YoutubeDLWrapper.fixSsl] on track downloads
+     */
+    val EnableSSLFix = PreferenceWrapper.create(
+            Boolean::class.java,
+            "enable_ssl_fix",
+            false
+    )
+
+    /**
+     * only use the video id instead of the full video url when creating a [YoutubeDLWrapper] session
+     */
+    val UseVideoIdOnly = PreferenceWrapper.create(
+            Boolean::class.java,
+            "video_id_only",
+            false
+    )
+    //endregion
 }
