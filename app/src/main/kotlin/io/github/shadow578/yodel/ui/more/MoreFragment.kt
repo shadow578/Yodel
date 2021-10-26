@@ -13,6 +13,7 @@ import io.github.shadow578.yodel.*
 import io.github.shadow578.yodel.databinding.FragmentMoreBinding
 import io.github.shadow578.yodel.downloader.TrackDownloadFormat
 import io.github.shadow578.yodel.ui.base.BaseFragment
+import io.github.shadow578.yodel.util.toast
 import java.util.*
 import java.util.stream.Collectors
 
@@ -59,17 +60,15 @@ class MoreFragment : BaseFragment() {
             val file = DocumentFile.fromSingleUri(requireContext(), uri)
             if (file != null && file.canWrite()) {
                 model.exportTracks(file)
-                Toast.makeText(
-                    requireContext(),
+                requireContext().toast(
                     R.string.backup_toast_starting,
                     Toast.LENGTH_SHORT
-                ).show()
+                )
             } else {
-                Toast.makeText(
-                    requireContext(),
+                requireContext().toast(
                     R.string.backup_toast_failed,
                     Toast.LENGTH_SHORT
-                ).show()
+                )
             }
         }
 
@@ -82,17 +81,15 @@ class MoreFragment : BaseFragment() {
             val file = DocumentFile.fromSingleUri(requireContext(), uri)
             if (file != null && file.canRead()) {
                 model.importTracks(file, requireActivity())
-                Toast.makeText(
-                    requireContext(),
+                requireContext().toast(
                     R.string.restore_toast_starting,
                     Toast.LENGTH_SHORT
-                ).show()
+                )
             } else {
-                Toast.makeText(
-                    requireContext(),
+                requireContext().toast(
                     R.string.restore_toast_failed,
                     Toast.LENGTH_SHORT
-                ).show()
+                )
             }
         }
     }

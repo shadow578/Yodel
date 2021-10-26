@@ -7,7 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import io.github.shadow578.yodel.R
 import io.github.shadow578.yodel.downloader.DownloaderService
 import io.github.shadow578.yodel.ui.InsertTrackUIHelper
-import io.github.shadow578.yodel.util.extractTrackId
+import io.github.shadow578.yodel.util.*
 
 /**
  * activity that handles shared youtube links (for download)
@@ -20,9 +20,9 @@ class ShareTargetActivity : AppCompatActivity() {
         // action is SHARE
         if (intent != null && Intent.ACTION_SEND == intent.action) {
             if (handleShare(intent))
-                Toast.makeText(this, R.string.share_toast_ok, Toast.LENGTH_SHORT).show()
+                this.toast(R.string.share_toast_ok, Toast.LENGTH_SHORT)
             else
-                Toast.makeText(this, R.string.share_toast_fail, Toast.LENGTH_SHORT).show()
+                this.toast(R.string.share_toast_fail, Toast.LENGTH_SHORT)
         }
 
         // done

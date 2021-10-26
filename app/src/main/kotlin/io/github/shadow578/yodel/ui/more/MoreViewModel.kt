@@ -87,11 +87,10 @@ class MoreViewModel(application: Application) : AndroidViewModel(application) {
             val backup = backupHelper.readBackup(file)
             if (backup == null) {
                 launchMain {
-                    Toast.makeText(
-                        getApplication(),
+                    getApplication<Application>().toast(
                         R.string.restore_toast_failed,
                         Toast.LENGTH_SHORT
-                    ).show()
+                    )
                 }
                 return@launchIO
             }
@@ -114,14 +113,13 @@ class MoreViewModel(application: Application) : AndroidViewModel(application) {
                     .setNegativeButton(R.string.restore_dialog_negative) { dialog, _ -> dialog.dismiss() }
                     .setPositiveButton(R.string.restore_dialog_positive) { _, _ ->
                         // restore the backup
-                        Toast.makeText(
-                            getApplication(),
+                        getApplication<Application>().toast(
                             getApplication<Application>().getString(
                                 R.string.restore_toast_success,
                                 tracksCount
                             ),
                             Toast.LENGTH_SHORT
-                        ).show()
+                        )
 
                         launchIO {
                             backupHelper.restoreBackup(
@@ -145,11 +143,10 @@ class MoreViewModel(application: Application) : AndroidViewModel(application) {
             val success = BackupHelper(getApplication()).createBackup(file)
             if (!success) {
                 launchMain {
-                    Toast.makeText(
-                        getApplication(),
+                    getApplication<Application>().toast(
                         R.string.backup_toast_failed,
                         Toast.LENGTH_SHORT
-                    ).show()
+                    )
                 }
             }
         }

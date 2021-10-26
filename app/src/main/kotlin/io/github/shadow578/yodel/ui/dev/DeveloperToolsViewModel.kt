@@ -96,7 +96,7 @@ class DeveloperToolsViewModel(application: Application) : AndroidViewModel(appli
         }
 
         // show toast
-        Toast.makeText(ctx, "Reloading all tracks...", Toast.LENGTH_SHORT).show()
+        ctx.toast("Reloading all tracks...", Toast.LENGTH_SHORT)
     }
 
     /**
@@ -131,7 +131,7 @@ class DeveloperToolsViewModel(application: Application) : AndroidViewModel(appli
      * @param parent the parent activity, used for sharing
      */
     fun dumpLogcat(parent: Activity) {
-        Toast.makeText(parent, "Dumping Logcat...", Toast.LENGTH_SHORT).show()
+        parent.toast("Dumping Logcat...", Toast.LENGTH_SHORT)
         launchIO {
             try {
                 // create a temporary file in cache
@@ -157,8 +157,7 @@ class DeveloperToolsViewModel(application: Application) : AndroidViewModel(appli
                 // failed to get logs
                 Log.e("Yodel", "could not dump logcat", e)
                 launchMain {
-                    Toast.makeText(parent, "could not get logs: ${e.message}", Toast.LENGTH_LONG)
-                        .show()
+                    parent.toast("could not get logs: ${e.message}")
                 }
             }
         }

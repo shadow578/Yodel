@@ -4,6 +4,8 @@ import android.content.*
 import android.content.res.Configuration
 import android.net.Uri
 import android.os.*
+import android.widget.Toast
+import androidx.annotation.StringRes
 import androidx.core.content.FileProvider
 import io.github.shadow578.yodel.LocaleOverride
 import io.github.shadow578.yodel.db.model.TrackInfo
@@ -168,3 +170,21 @@ fun TrackInfo.deleteLocalFiles(ctx: Context) {
     audioFileKey = StorageKey.EMPTY
     coverKey = StorageKey.EMPTY
 }
+
+/**
+ * show a toast
+ *
+ * @param text the text of the toast
+ * @param length the length to show the toast. one of [Toast.LENGTH_LONG] or [Toast.LENGTH_SHORT]
+ */
+fun Context.toast(@StringRes text: Int, length: Int = Toast.LENGTH_LONG) =
+    Toast.makeText(this, text, length).show()
+
+/**
+ * show a toast
+ *
+ * @param text the text of the toast
+ * @param length the length to show the toast. one of [Toast.LENGTH_LONG] or [Toast.LENGTH_SHORT]
+ */
+fun Context.toast(text: String, length: Int = Toast.LENGTH_LONG) =
+    Toast.makeText(this, text, length).show()

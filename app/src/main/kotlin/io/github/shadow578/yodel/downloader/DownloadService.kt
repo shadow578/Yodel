@@ -80,11 +80,7 @@ class DownloaderService : LifecycleService() {
 
         // ensure downloads are accessible
         if (!checkDownloadsDirSet()) {
-            Toast.makeText(
-                this,
-                "Downloads directory not accessible, stopping Downloader!",
-                Toast.LENGTH_LONG
-            ).show()
+            this.toast("Downloads directory not accessible, stopping Downloader!")
             Log.i(TAG, "downloads dir not accessible, stopping service")
             stopSelf()
             return
@@ -319,8 +315,7 @@ class DownloaderService : LifecycleService() {
             writeThumbnail()
 
             // enable verbose output with devtools toggle
-            if(Prefs.EnableDownloaderVerboseOutput.get())
-            {
+            if (Prefs.EnableDownloaderVerboseOutput.get()) {
                 verboseOutput()
                 printOutput = true
             }
