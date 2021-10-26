@@ -319,8 +319,7 @@ class DownloaderService : LifecycleService() {
             writeThumbnail()
 
             // enable verbose output with devtools toggle
-            if(Prefs.EnableDownloaderVerboseOutput.get())
-            {
+            if (Prefs.EnableDownloaderVerboseOutput.get()) {
                 verboseOutput()
                 printOutput = true
             }
@@ -428,9 +427,25 @@ class DownloaderService : LifecycleService() {
         val downloadRoot = downloadsDirectory
             ?: throw DownloaderException("failed to find downloads folder")
 
+        // create a final file to write the track to, that does not currently exist
+        // if we do not check this ourself, the file extension may be messed up, causing external players to
+        // fail to play the file
+        var finalFileName: String
+        var c = 0
+        do {
+            // build suffix
+            // on the first iteration, there is no suffix
+            var suffix = ""
+            if (c > 0)
+                suffix = " ($c)"
+            c++
+
+            // build file display name
+            finalFileName = "${track.title}${suffix}.${format.fileExtension}"
+        } while (downloadRoot.findFile(finalFileName) != null)
+
         // create file to write the track to
-        val finalFile =
-            downloadRoot.createFile(format.mimetype, track.title + "." + format.fileExtension)
+        val finalFile = downloadRoot.createFile(format.mimetype, finalFileName)
         if (finalFile == null || !finalFile.canWrite())
             throw DownloaderException("Could not create final output file!")
 
