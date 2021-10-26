@@ -1,10 +1,12 @@
 package io.github.shadow578.yodel.ui.dev
 
-import android.app.*
-import android.content.*
+import android.app.Activity
+import android.app.Application
+import android.content.ClipData
+import android.content.Intent
 import android.os.Build
 import android.widget.Toast
-import androidx.lifecycle.*
+import androidx.lifecycle.AndroidViewModel
 import io.github.shadow578.yodel.BuildConfig
 import io.github.shadow578.yodel.db.TracksDB
 import io.github.shadow578.yodel.db.model.TrackStatus
@@ -21,60 +23,20 @@ import java.util.*
 class DeveloperToolsViewModel(application: Application) : AndroidViewModel(application) {
 
     /**
-     * current state of downloader_error_notifications enable
+     * binder for [Prefs.EnableDownloaderErrorNotifications]
      */
-    val enableDownloaderErrorNotifications =
-        MutableLiveData(Prefs.EnableDownloaderErrorNotifications.get())
+    val enableDownloaderErrorNotificationsBinder = SwitchPreferenceBinder(Prefs.EnableDownloaderErrorNotifications)
+
 
     /**
-     * set downloader_error_notifications enable
-     *
-     * @param enable enable downloader_error_notifications?
+     * binder for [Prefs.EnableDownloaderVerboseOutput]
      */
-    fun setEnableDownloaderErrorNotifications(enable: Boolean) {
-        if (java.lang.Boolean.valueOf(enable) == enableDownloaderErrorNotifications.value) {
-            return
-        }
-        Prefs.EnableDownloaderErrorNotifications.set(enable)
-        enableDownloaderErrorNotifications.value = enable
-    }
+    val enableDownloaderVerboseOutputBinder = SwitchPreferenceBinder(Prefs.EnableDownloaderVerboseOutput)
 
     /**
-     * current state of downloader_verbose_output enable
+     * binder for [Prefs.EnableSSLFix]
      */
-    val enableDownloaderVerboseOutput =
-        MutableLiveData(Prefs.EnableDownloaderVerboseOutput.get())
-
-    /**
-     * set downloader_verbose_output enable
-     *
-     * @param enable enable downloader_verbose_output?
-     */
-    fun setEnableDownloaderVerboseOutput(enable: Boolean) {
-        if (java.lang.Boolean.valueOf(enable) == enableDownloaderVerboseOutput.value) {
-            return
-        }
-        Prefs.EnableDownloaderVerboseOutput.set(enable)
-        enableDownloaderVerboseOutput.value = enable
-    }
-
-    /**
-     * current state of ssl_fix enable
-     */
-    val enableSSLFix = MutableLiveData(Prefs.EnableSSLFix.get())
-
-    /**
-     * set ssl fix enable
-     *
-     * @param enable enable ssl fix?
-     */
-    fun setEnableSSLFix(enable: Boolean) {
-        if (java.lang.Boolean.valueOf(enable) == enableSSLFix.value) {
-            return
-        }
-        Prefs.EnableSSLFix.set(enable)
-        enableSSLFix.value = enable
-    }
+    val enableSSLFixBinder = SwitchPreferenceBinder(Prefs.EnableSSLFix)
 
     /**
      * remove all downloaded files, and mark all tracks as 'pending'

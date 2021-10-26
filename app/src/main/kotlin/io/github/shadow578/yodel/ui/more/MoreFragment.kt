@@ -42,9 +42,9 @@ class MoreFragment : BaseFragment() {
     private lateinit var chooseImportFileLauncher: ActivityResultLauncher<Array<String>>
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View {
         b = FragmentMoreBinding.inflate(inflater, container, false)
         return b.root
@@ -61,19 +61,19 @@ class MoreFragment : BaseFragment() {
             if (file != null && file.canWrite()) {
                 model.exportTracks(file)
                 requireContext().toast(
-                    R.string.backup_toast_starting,
-                    Toast.LENGTH_SHORT
+                        R.string.backup_toast_starting,
+                        Toast.LENGTH_SHORT
                 )
             } else {
                 requireContext().toast(
-                    R.string.backup_toast_failed,
-                    Toast.LENGTH_SHORT
+                        R.string.backup_toast_failed,
+                        Toast.LENGTH_SHORT
                 )
             }
         }
 
         chooseImportFileLauncher = registerForActivityResult(
-            OpenDocument()
+                OpenDocument()
         ) { uri: Uri? ->
             if (uri == null) {
                 return@registerForActivityResult
@@ -82,13 +82,13 @@ class MoreFragment : BaseFragment() {
             if (file != null && file.canRead()) {
                 model.importTracks(file, requireActivity())
                 requireContext().toast(
-                    R.string.restore_toast_starting,
-                    Toast.LENGTH_SHORT
+                        R.string.restore_toast_starting,
+                        Toast.LENGTH_SHORT
                 )
             } else {
                 requireContext().toast(
-                    R.string.restore_toast_failed,
-                    Toast.LENGTH_SHORT
+                        R.string.restore_toast_failed,
+                        Toast.LENGTH_SHORT
                 )
             }
         }
@@ -97,7 +97,7 @@ class MoreFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         model = ViewModelProvider(requireActivity()).get(
-            MoreViewModel::class.java
+                MoreViewModel::class.java
         )
 
         // clicking the app icon multiple times opens developer options screen
@@ -120,14 +120,8 @@ class MoreFragment : BaseFragment() {
         // populate download formats
         setupFormatSelection()
 
-        // listen to write metadata
-        b.enableTagging.setOnCheckedChangeListener { _, isChecked ->
-            model.setEnableTagging(isChecked)
-        }
-        model.enableTagging.observe(requireActivity(),
-            { enableTagging: Boolean ->
-                b.enableTagging.isChecked = enableTagging
-            })
+        // bind metadata toggle
+        model.enableMetadataTaggingBinder.bind(this, b.enableTagging)
 
         // backup / restore buttons
         b.restoreTracks.setOnClickListener {
@@ -145,12 +139,12 @@ class MoreFragment : BaseFragment() {
         val ctx = requireContext()
         val formatValues = listOf(*TrackDownloadFormat.values())
         val formatDisplayNames = formatValues.stream()
-            .map { ctx.getString(it.displayName) }
-            .collect(Collectors.toList())
+                .map { ctx.getString(it.displayName) }
+                .collect(Collectors.toList())
 
         // set values to display
         val adapter =
-            ArrayAdapter(ctx, android.R.layout.simple_dropdown_item_1line, formatDisplayNames)
+                ArrayAdapter(ctx, android.R.layout.simple_dropdown_item_1line, formatDisplayNames)
         b.downloadsFormat.setAdapter(adapter)
 
         // set change listener
@@ -160,11 +154,11 @@ class MoreFragment : BaseFragment() {
 
         // sync with model
         model.downloadFormat.observe(
-            requireActivity(),
-            {
-                val i = formatValues.indexOf(it)
-                b.downloadsFormat.setText(formatDisplayNames[i], false)
-            })
+                requireActivity(),
+                {
+                    val i = formatValues.indexOf(it)
+                    b.downloadsFormat.setText(formatDisplayNames[i], false)
+                })
 
         // always show all items
         b.downloadsFormat.setOnClickListener {
@@ -182,12 +176,12 @@ class MoreFragment : BaseFragment() {
         val ctx = requireContext()
         val localeValues = listOf(*LocaleOverride.values())
         val localeDisplayNames = localeValues.stream()
-            .map { it.getDisplayName(ctx) }
-            .collect(Collectors.toList())
+                .map { it.getDisplayName(ctx) }
+                .collect(Collectors.toList())
 
         // set values to display
         val adapter =
-            ArrayAdapter(ctx, android.R.layout.simple_dropdown_item_1line, localeDisplayNames)
+                ArrayAdapter(ctx, android.R.layout.simple_dropdown_item_1line, localeDisplayNames)
         b.languageOverride.setAdapter(adapter)
 
         // set change listener
