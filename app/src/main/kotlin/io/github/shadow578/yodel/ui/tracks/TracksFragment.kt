@@ -14,7 +14,6 @@ import io.github.shadow578.yodel.db.TracksDB
 import io.github.shadow578.yodel.db.model.*
 import io.github.shadow578.yodel.ui.base.BaseFragment
 import io.github.shadow578.yodel.util.*
-import io.github.shadow578.yodel.util.storage.decodeToFile
 import io.github.shadow578.yodel.util.storage.decodeToUri
 
 /**
@@ -104,7 +103,7 @@ class TracksFragment : BaseFragment() {
         // decode track audio file key
         val trackUri = track.audioFileKey.decodeToUri()
         if (trackUri != null) {
-            Toast.makeText(requireContext(), R.string.tracks_play_failed, Toast.LENGTH_SHORT).show()
+            requireContext().toast(R.string.tracks_play_failed, Toast.LENGTH_SHORT)
             return
         }
 

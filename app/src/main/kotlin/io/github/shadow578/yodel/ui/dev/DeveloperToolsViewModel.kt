@@ -1,16 +1,18 @@
 package io.github.shadow578.yodel.ui.dev
 
-import android.app.*
-import android.content.*
+import android.app.Activity
+import android.app.Application
+import android.content.ClipData
+import android.content.Intent
 import android.os.Build
-import android.util.Log
 import android.widget.Toast
-import androidx.lifecycle.*
+import androidx.lifecycle.AndroidViewModel
 import io.github.shadow578.yodel.BuildConfig
 import io.github.shadow578.yodel.db.TracksDB
 import io.github.shadow578.yodel.db.model.TrackStatus
 import io.github.shadow578.yodel.util.*
 import io.github.shadow578.yodel.util.preferences.Prefs
+import timber.log.Timber
 import java.io.File
 import java.time.LocalDateTime
 import java.util.*
@@ -21,60 +23,20 @@ import java.util.*
 class DeveloperToolsViewModel(application: Application) : AndroidViewModel(application) {
 
     /**
-     * current state of downloader_error_notifications enable
+     * binder for [Prefs.EnableDownloaderErrorNotifications]
      */
-    val enableDownloaderErrorNotifications =
-        MutableLiveData(Prefs.EnableDownloaderErrorNotifications.get())
+    val enableDownloaderErrorNotificationsBinder = SwitchPreferenceBinder(Prefs.EnableDownloaderErrorNotifications)
+
 
     /**
-     * set downloader_error_notifications enable
-     *
-     * @param enable enable downloader_error_notifications?
+     * binder for [Prefs.EnableDownloaderVerboseOutput]
      */
-    fun setEnableDownloaderErrorNotifications(enable: Boolean) {
-        if (java.lang.Boolean.valueOf(enable) == enableDownloaderErrorNotifications.value) {
-            return
-        }
-        Prefs.EnableDownloaderErrorNotifications.set(enable)
-        enableDownloaderErrorNotifications.value = enable
-    }
+    val enableDownloaderVerboseOutputBinder = SwitchPreferenceBinder(Prefs.EnableDownloaderVerboseOutput)
 
     /**
-     * current state of downloader_verbose_output enable
+     * binder for [Prefs.EnableSSLFix]
      */
-    val enableDownloaderVerboseOutput =
-        MutableLiveData(Prefs.EnableDownloaderVerboseOutput.get())
-
-    /**
-     * set downloader_verbose_output enable
-     *
-     * @param enable enable downloader_verbose_output?
-     */
-    fun setEnableDownloaderVerboseOutput(enable: Boolean) {
-        if (java.lang.Boolean.valueOf(enable) == enableDownloaderVerboseOutput.value) {
-            return
-        }
-        Prefs.EnableDownloaderVerboseOutput.set(enable)
-        enableDownloaderVerboseOutput.value = enable
-    }
-
-    /**
-     * current state of ssl_fix enable
-     */
-    val enableSSLFix = MutableLiveData(Prefs.EnableSSLFix.get())
-
-    /**
-     * set ssl fix enable
-     *
-     * @param enable enable ssl fix?
-     */
-    fun setEnableSSLFix(enable: Boolean) {
-        if (java.lang.Boolean.valueOf(enable) == enableSSLFix.value) {
-            return
-        }
-        Prefs.EnableSSLFix.set(enable)
-        enableSSLFix.value = enable
-    }
+    val enableSSLFixBinder = SwitchPreferenceBinder(Prefs.EnableSSLFix)
 
     /**
      * remove all downloaded files, and mark all tracks as 'pending'
@@ -96,7 +58,7 @@ class DeveloperToolsViewModel(application: Application) : AndroidViewModel(appli
         }
 
         // show toast
-        Toast.makeText(ctx, "Reloading all tracks...", Toast.LENGTH_SHORT).show()
+        ctx.toast("Reloading all tracks...", Toast.LENGTH_SHORT)
     }
 
     /**
@@ -131,7 +93,7 @@ class DeveloperToolsViewModel(application: Application) : AndroidViewModel(appli
      * @param parent the parent activity, used for sharing
      */
     fun dumpLogcat(parent: Activity) {
-        Toast.makeText(parent, "Dumping Logcat...", Toast.LENGTH_SHORT).show()
+        parent.toast("Dumping Logcat...", Toast.LENGTH_SHORT)
         launchIO {
             try {
                 // create a temporary file in cache
@@ -140,7 +102,7 @@ class DeveloperToolsViewModel(application: Application) : AndroidViewModel(appli
                 dir.mkdirs()
 
                 // add a timestamp
-                Log.e("Yodel", "-- dumpLogcat at ${LocalDateTime.now()} --")
+                Timber.e("-- dumpLogcat at ${LocalDateTime.now()} --")
 
                 // exec logcat command, write to the file
                 //FIXME: warning "Inappropriate blocking method call"
@@ -155,10 +117,9 @@ class DeveloperToolsViewModel(application: Application) : AndroidViewModel(appli
                 }
             } catch (e: Throwable) {
                 // failed to get logs
-                Log.e("Yodel", "could not dump logcat", e)
+                Timber.e(e, "could not dump logcat")
                 launchMain {
-                    Toast.makeText(parent, "could not get logs: ${e.message}", Toast.LENGTH_LONG)
-                        .show()
+                    parent.toast("could not get logs: ${e.message}")
                 }
             }
         }

@@ -47,34 +47,9 @@ class DeveloperToolsActivity : BaseActivity() {
             model.reloadAllTracks()
         }
 
-        // listen to error notifications
-        b.downloaderErrorNotifications.setOnCheckedChangeListener { _, isChecked ->
-            model.setEnableDownloaderErrorNotifications(isChecked)
-        }
-
-        model.enableDownloaderErrorNotifications.observe(this,
-            { sslFix: Boolean ->
-                b.downloaderErrorNotifications.isChecked = sslFix
-            })
-
-        // listen to verbose output
-        b.downloaderVerboseOutput.setOnCheckedChangeListener { _, isChecked ->
-            model.setEnableDownloaderVerboseOutput(isChecked)
-        }
-
-        model.enableDownloaderVerboseOutput.observe(this,
-            { sslFix: Boolean ->
-                b.downloaderVerboseOutput.isChecked = sslFix
-            })
-
-        // listen to ssl fix
-        b.enableSslFix.setOnCheckedChangeListener { _, isChecked ->
-            model.setEnableSSLFix(isChecked)
-        }
-
-        model.enableSSLFix.observe(this,
-            { sslFix: Boolean ->
-                b.enableSslFix.isChecked = sslFix
-            })
+        // bind switches with preferences
+        model.enableDownloaderErrorNotificationsBinder.bind(this, b.downloaderErrorNotifications)
+        model.enableDownloaderVerboseOutputBinder.bind(this, b.downloaderVerboseOutput)
+        model.enableSSLFixBinder.bind(this, b.enableSslFix)
     }
 }

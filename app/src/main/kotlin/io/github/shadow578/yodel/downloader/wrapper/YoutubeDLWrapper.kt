@@ -1,10 +1,10 @@
 package io.github.shadow578.yodel.downloader.wrapper
 
 import android.content.Context
-import android.util.Log
 import com.yausername.ffmpeg.FFmpeg
 import com.yausername.youtubedl_android.*
 import io.github.shadow578.yodel.BuildConfig
+import timber.log.Timber
 import java.io.File
 
 /**
@@ -17,10 +17,6 @@ class YoutubeDLWrapper(
     private val videoUrl: String
 ) {
     companion object {
-        /**
-         * tag for logging
-         */
-        private const val TAG = "Youtube-DL"
 
         /**
          * did the YoutubeDl library initialize once? in [.init]
@@ -47,7 +43,7 @@ class YoutubeDLWrapper(
                 FFmpeg.getInstance().init(ctx)
                 true
             } catch (e: YoutubeDLException) {
-                Log.e(TAG, "youtube-dl init failed", e)
+                Timber.e(e, "youtube-dl init failed")
                 initialized = false
                 false
             }
@@ -215,11 +211,11 @@ class YoutubeDLWrapper(
     @Throws(YoutubeDLException::class, InterruptedException::class)
     fun download(progressCallback: DownloadProgressCallback?): YoutubeDLResponse {
         check(initialized) { "youtube-dl was not initialized! call YoutubeDLWrapper.init() first!" }
-        Log.i(TAG, "downloading $videoUrl")
+        Timber.i("downloading $videoUrl")
 
         val response = YoutubeDL.getInstance().execute(request, progressCallback)
         if (printOutput) {
-            Log.i(TAG, response.toPrettyString())
+            Timber.i(response.toPrettyString())
             print(response)
         }
 
