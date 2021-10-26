@@ -1,21 +1,16 @@
 package io.github.shadow578.yodel.ui.tracks
 
-import android.content.Intent
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.*
-import android.widget.Toast
 import androidx.annotation.*
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.*
 import io.github.shadow578.yodel.R
 import io.github.shadow578.yodel.databinding.FragmentTracksBinding
-import io.github.shadow578.yodel.db.TracksDB
-import io.github.shadow578.yodel.db.model.*
+import io.github.shadow578.yodel.db.model.TrackInfo
 import io.github.shadow578.yodel.ui.base.BaseFragment
-import io.github.shadow578.yodel.util.*
-import io.github.shadow578.yodel.util.storage.decodeToFile
-import io.github.shadow578.yodel.util.storage.decodeToUri
+import io.github.shadow578.yodel.util.SwipeToDeleteCallback
 
 /**
  * downloaded and downloading tracks UI
@@ -46,16 +41,8 @@ class TracksFragment : BaseFragment() {
 
         // setup recycler with data from model
         val tracksAdapter = TracksAdapter(requireActivity(), model.tracks,
-            { track: TrackInfo ->
-                playTrack(
-                    track
-                )
-            },
-            { track: TrackInfo ->
-                reDownloadTrack(
-                    track
-                )
-            })
+            { model.playTrack(requireActivity(), it) },
+            { model.reDownloadTrack(it) })
         b.tracksRecycler.layoutManager = LinearLayoutManager(requireContext())
 
         // show empty label if no tracks available
@@ -78,60 +65,11 @@ class TracksFragment : BaseFragment() {
                 }
                 tracksAdapter.deleteLater(
                     viewHolder
-                ) { track: TrackInfo ->
-
-                    launchIO {
-                        // remove files
-                        track.deleteLocalFiles(this@TracksFragment.requireContext())
-
-                        // remove from db
-                        TracksDB.get(this@TracksFragment.requireContext()).tracks()
-                            .remove(track)
-                    }
-                }
+                ) { model.removeTrack(it) }
             }
         })
         swipeToDelete.attachToRecyclerView(b.tracksRecycler)
         b.tracksRecycler.adapter = tracksAdapter
-    }
-
-    /**
-     * play a track
-     *
-     * @param track the track to play
-     */
-    private fun playTrack(track: TrackInfo) {
-        // decode track audio file key
-        val trackUri = track.audioFileKey.decodeToUri()
-        if (trackUri != null) {
-            Toast.makeText(requireContext(), R.string.tracks_play_failed, Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        // start external player
-        val playIntent = Intent(Intent.ACTION_VIEW)
-            .setDataAndType(trackUri, "audio/*")
-            .addFlags(
-                Intent.FLAG_ACTIVITY_NEW_TASK
-                        or Intent.FLAG_ACTIVITY_SINGLE_TOP
-                        or Intent.FLAG_GRANT_READ_URI_PERMISSION
-            )
-        startActivity(playIntent)
-    }
-
-    /**
-     * re- download a track
-     *
-     * @param track the track to re- download
-     */
-    private fun reDownloadTrack(track: TrackInfo) {
-        // reset status to pending
-        track.status = TrackStatus.DownloadPending
-
-        // overwrite entry in db
-        launchIO {
-            TracksDB.get(requireContext()).tracks().insert(track)
-        }
     }
 
     /**
