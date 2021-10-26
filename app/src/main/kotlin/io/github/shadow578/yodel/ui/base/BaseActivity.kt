@@ -3,7 +3,6 @@ package io.github.shadow578.yodel.ui.base
 import android.content.*
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts.OpenDocumentTree
 import androidx.appcompat.app.AppCompatActivity
@@ -13,6 +12,7 @@ import io.github.shadow578.yodel.downloader.DownloaderService
 import io.github.shadow578.yodel.util.*
 import io.github.shadow578.yodel.util.preferences.Prefs
 import io.github.shadow578.yodel.util.storage.*
+import timber.log.Timber
 
 /**
  * topmost base activity. this is to be extended when creating a new activity.
@@ -45,7 +45,7 @@ open class BaseActivity : AppCompatActivity() {
                         // persist the permission & save
                         val treeKey = treeUri.persistFilePermission(applicationContext)
                         Prefs.DownloadsDirectory.set(treeKey)
-                        Log.i("Yodel", "selected and saved new track downloads directory: $treeUri")
+                        Timber.i("selected and saved new track downloads directory: $treeUri")
 
                         // restart downloader
                         val serviceIntent = Intent(application, DownloaderService::class.java)

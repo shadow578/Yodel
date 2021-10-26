@@ -1,12 +1,11 @@
 package io.github.shadow578.yodel.util.storage
 
-import android.content.Context
-import android.content.Intent
+import android.content.*
 import android.net.Uri
 import android.util.Base64
-import android.util.Log
 import androidx.documentfile.provider.DocumentFile
 import io.github.shadow578.yodel.util.unwrap
+import timber.log.Timber
 import java.nio.charset.StandardCharsets
 
 // region URI encode / decode
@@ -52,7 +51,7 @@ fun StorageKey.decodeToUri(): Uri? {
         // pare uri
         if (uriString == null || uriString.isEmpty()) null else Uri.parse(uriString)
     } catch (e: IllegalArgumentException) {
-        Log.e("StorageHelper", "failed to decode key ${this.key}", e)
+        Timber.e(e, "failed to decode key ${this.key}")
         null
     }
 }

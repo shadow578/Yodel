@@ -1,17 +1,12 @@
 package io.github.shadow578.yodel.backup
 
 import android.content.Context
-import android.util.Log
 import androidx.documentfile.provider.DocumentFile
-import com.google.gson.GsonBuilder
-import com.google.gson.JsonIOException
-import com.google.gson.JsonSyntaxException
+import com.google.gson.*
 import io.github.shadow578.yodel.db.TracksDB
-import java.io.IOException
-import java.io.InputStreamReader
-import java.io.OutputStreamWriter
-import java.time.LocalDate
-import java.time.LocalDateTime
+import timber.log.Timber
+import java.io.*
+import java.time.*
 
 /**
  * tracks db backup helper class.
@@ -21,8 +16,8 @@ import java.time.LocalDateTime
  * @param db database to read from / write to
  */
 class BackupHelper(
-        private val ctx: Context,
-        private val db: TracksDB = TracksDB.get(ctx)
+    private val ctx: Context,
+    private val db: TracksDB = TracksDB.get(ctx)
 ) {
     companion object {
 
@@ -30,14 +25,9 @@ class BackupHelper(
          * gson for backup serialization and deserialization
          */
         private val gson = GsonBuilder()
-                .registerTypeAdapter(LocalDateTime::class.java, LocalDateTimeAdapter())
-                .registerTypeAdapter(LocalDate::class.java, LocalDateAdapter())
-                .create()
-
-        /**
-         * tag for logging
-         */
-        private const val TAG = "BackupHelper"
+            .registerTypeAdapter(LocalDateTime::class.java, LocalDateTimeAdapter())
+            .registerTypeAdapter(LocalDate::class.java, LocalDateAdapter())
+            .create()
     }
 
     /**
@@ -61,7 +51,7 @@ class BackupHelper(
                 return true
             }
         } catch (e: IOException) {
-            Log.e(TAG, "writing backup file failed!", e)
+            Timber.e(e, "writing backup file failed!")
             return false
         }
     }
@@ -76,18 +66,18 @@ class BackupHelper(
         try {
             InputStreamReader(ctx.contentResolver.openInputStream(file.uri)).use { src ->
                 return gson.fromJson(
-                        src,
-                        BackupData::class.java
+                    src,
+                    BackupData::class.java
                 )
             }
         } catch (e: IOException) {
-            Log.e(TAG, "failed to read backup data!", e)
+            Timber.e(e, "failed to read backup data!")
             return null
         } catch (e: JsonSyntaxException) {
-            Log.e(TAG, "failed to read backup data!", e)
+            Timber.e(e, "failed to read backup data!")
             return null
         } catch (e: JsonIOException) {
-            Log.e(TAG, "failed to read backup data!", e)
+            Timber.e(e, "failed to read backup data!")
             return null
         }
     }

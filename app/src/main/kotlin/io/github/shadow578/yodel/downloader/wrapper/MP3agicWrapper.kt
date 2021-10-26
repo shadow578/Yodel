@@ -1,14 +1,8 @@
 package io.github.shadow578.yodel.downloader.wrapper
 
-import android.util.Log
-import com.mpatric.mp3agic.ID3v2
-import com.mpatric.mp3agic.ID3v24Tag
-import com.mpatric.mp3agic.Mp3File
-import com.mpatric.mp3agic.NotSupportedException
-import java.io.File
-import java.io.FileInputStream
-import java.io.FileOutputStream
-import java.io.IOException
+import com.mpatric.mp3agic.*
+import timber.log.Timber
+import java.io.*
 
 /**
  * wrapper for MP3agic to make working with it on android easier
@@ -18,13 +12,6 @@ import java.io.IOException
 class MP3agicWrapper(
     private val file: File
 ) {
-    companion object {
-        /**
-         * tag for logging
-         */
-        private const val TAG = "MP3agicW"
-    }
-
     /**
      * the mp3agic file instance
      */
@@ -74,7 +61,7 @@ class MP3agicWrapper(
 
             // delete original file
             if (!file.delete())
-                Log.i(TAG, "could not delete original file on save!")
+                Timber.i("could not delete original file on save!")
 
             // move tagged file to its place
             FileInputStream(tagged.absolutePath).use { src ->
@@ -84,7 +71,7 @@ class MP3agicWrapper(
             }
         } finally {
             if (tagged != null && tagged.exists() && !tagged.delete())
-                Log.i(TAG, "failed to delete temporary tagged mp3 file")
+                Timber.i("failed to delete temporary tagged mp3 file")
         }
     }
 }

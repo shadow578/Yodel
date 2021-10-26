@@ -3,7 +3,6 @@ package io.github.shadow578.yodel.ui.dev
 import android.app.*
 import android.content.*
 import android.os.Build
-import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.*
 import io.github.shadow578.yodel.BuildConfig
@@ -11,6 +10,7 @@ import io.github.shadow578.yodel.db.TracksDB
 import io.github.shadow578.yodel.db.model.TrackStatus
 import io.github.shadow578.yodel.util.*
 import io.github.shadow578.yodel.util.preferences.Prefs
+import timber.log.Timber
 import java.io.File
 import java.time.LocalDateTime
 import java.util.*
@@ -140,7 +140,7 @@ class DeveloperToolsViewModel(application: Application) : AndroidViewModel(appli
                 dir.mkdirs()
 
                 // add a timestamp
-                Log.e("Yodel", "-- dumpLogcat at ${LocalDateTime.now()} --")
+                Timber.e("-- dumpLogcat at ${LocalDateTime.now()} --")
 
                 // exec logcat command, write to the file
                 //FIXME: warning "Inappropriate blocking method call"
@@ -155,7 +155,7 @@ class DeveloperToolsViewModel(application: Application) : AndroidViewModel(appli
                 }
             } catch (e: Throwable) {
                 // failed to get logs
-                Log.e("Yodel", "could not dump logcat", e)
+                Timber.e(e, "could not dump logcat")
                 launchMain {
                     parent.toast("could not get logs: ${e.message}")
                 }
