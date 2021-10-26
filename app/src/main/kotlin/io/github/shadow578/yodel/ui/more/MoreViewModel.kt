@@ -26,9 +26,9 @@ class MoreViewModel(application: Application) : AndroidViewModel(application) {
     val downloadFormat = MutableLiveData(Prefs.DownloadFormat.get())
 
     /**
-     * current state of metadata tagging enable
+     * binder for [Prefs.EnableMetadataTagging]
      */
-    val enableTagging = MutableLiveData(Prefs.EnableMetadataTagging.get())
+    val enableMetadataTaggingBinder = SwitchPreferenceBinder(Prefs.EnableMetadataTagging)
 
     /**
      * currently selected locale override
@@ -87,11 +87,10 @@ class MoreViewModel(application: Application) : AndroidViewModel(application) {
             val backup = backupHelper.readBackup(file)
             if (backup == null) {
                 launchMain {
-                    Toast.makeText(
-                        getApplication(),
-                        R.string.restore_toast_failed,
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    getApplication<Application>().toast(
+                            R.string.restore_toast_failed,
+                            Toast.LENGTH_SHORT
+                    )
                 }
                 return@launchIO
             }
@@ -101,36 +100,35 @@ class MoreViewModel(application: Application) : AndroidViewModel(application) {
                 val replaceExisting = AtomicBoolean(false)
                 val tracksCount = backup.tracks.size
                 AlertDialog.Builder(parent)
-                    .setTitle(
-                        getApplication<Application>().getString(
-                            R.string.restore_dialog_title,
-                            tracksCount
+                        .setTitle(
+                                getApplication<Application>().getString(
+                                        R.string.restore_dialog_title,
+                                        tracksCount
+                                )
                         )
-                    )
-                    .setSingleChoiceItems(
-                        R.array.restore_dialog_modes,
-                        0
-                    ) { _, mode -> replaceExisting.set(mode == 1) }
-                    .setNegativeButton(R.string.restore_dialog_negative) { dialog, _ -> dialog.dismiss() }
-                    .setPositiveButton(R.string.restore_dialog_positive) { _, _ ->
-                        // restore the backup
-                        Toast.makeText(
-                            getApplication(),
-                            getApplication<Application>().getString(
-                                R.string.restore_toast_success,
-                                tracksCount
-                            ),
-                            Toast.LENGTH_SHORT
-                        ).show()
-
-                        launchIO {
-                            backupHelper.restoreBackup(
-                                backup,
-                                replaceExisting.get()
+                        .setSingleChoiceItems(
+                                R.array.restore_dialog_modes,
+                                0
+                        ) { _, mode -> replaceExisting.set(mode == 1) }
+                        .setNegativeButton(R.string.restore_dialog_negative) { dialog, _ -> dialog.dismiss() }
+                        .setPositiveButton(R.string.restore_dialog_positive) { _, _ ->
+                            // restore the backup
+                            getApplication<Application>().toast(
+                                    getApplication<Application>().getString(
+                                            R.string.restore_toast_success,
+                                            tracksCount
+                                    ),
+                                    Toast.LENGTH_SHORT
                             )
+
+                            launchIO {
+                                backupHelper.restoreBackup(
+                                        backup,
+                                        replaceExisting.get()
+                                )
+                            }
                         }
-                    }
-                    .show()
+                        .show()
             }
         }
     }
@@ -145,11 +143,10 @@ class MoreViewModel(application: Application) : AndroidViewModel(application) {
             val success = BackupHelper(getApplication()).createBackup(file)
             if (!success) {
                 launchMain {
-                    Toast.makeText(
-                        getApplication(),
-                        R.string.backup_toast_failed,
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    getApplication<Application>().toast(
+                            R.string.backup_toast_failed,
+                            Toast.LENGTH_SHORT
+                    )
                 }
             }
         }
@@ -167,19 +164,6 @@ class MoreViewModel(application: Application) : AndroidViewModel(application) {
         }
         Prefs.DownloadFormat.set(format)
         downloadFormat.value = format
-    }
-
-    /**
-     * enable or disable metadata tagging
-     *
-     * @param enable is tagging enabled?
-     */
-    fun setEnableTagging(enable: Boolean) {
-        if (enable == enableTagging.value) {
-            return
-        }
-        Prefs.EnableMetadataTagging.set(enable)
-        enableTagging.value = enable
     }
 
     /**

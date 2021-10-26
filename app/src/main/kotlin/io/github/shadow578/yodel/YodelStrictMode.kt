@@ -1,14 +1,14 @@
 package io.github.shadow578.yodel
 
 import android.os.*
-import android.util.Log
+import timber.log.Timber
 
 /**
  * enable [StrictMode] when running a debug build
  */
 fun maybeEnableStrictMode() {
     if (BuildConfig.DEBUG) {
-        Log.i("Yodel", "Enable Strict Mode on debug build!")
+        Timber.i("Enable Strict Mode on debug build!")
 
         // setup the thread policy
         // could probably use .detectAll(), but documentation is not really clear what that includes

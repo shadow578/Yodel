@@ -10,7 +10,8 @@ import io.github.shadow578.yodel.R
 import io.github.shadow578.yodel.databinding.FragmentTracksBinding
 import io.github.shadow578.yodel.db.model.TrackInfo
 import io.github.shadow578.yodel.ui.base.BaseFragment
-import io.github.shadow578.yodel.util.SwipeToDeleteCallback
+import io.github.shadow578.yodel.util.*
+import io.github.shadow578.yodel.util.storage.decodeToUri
 
 /**
  * downloaded and downloading tracks UI

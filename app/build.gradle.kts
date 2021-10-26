@@ -121,6 +121,9 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:4.12.0")
     kapt("com.github.bumptech.glide:compiler:4.12.0")
 
+    // timber
+    implementation("com.jakewharton.timber:timber:5.0.1")
+
     // about libraries
     implementation("com.mikepenz:aboutlibraries-core:8.9.1")
     implementation("com.mikepenz:aboutlibraries:8.9.1")

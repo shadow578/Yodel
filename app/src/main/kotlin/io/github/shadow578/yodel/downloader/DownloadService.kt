@@ -4,8 +4,6 @@ import android.app.*
 import android.content.*
 import android.graphics.*
 import android.os.Build
-import android.util.Log
-import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.core.app.*
 import androidx.documentfile.provider.DocumentFile
@@ -20,6 +18,7 @@ import io.github.shadow578.yodel.downloader.wrapper.*
 import io.github.shadow578.yodel.util.*
 import io.github.shadow578.yodel.util.preferences.Prefs
 import io.github.shadow578.yodel.util.storage.*
+import timber.log.Timber
 import java.io.*
 import java.util.*
 import java.util.concurrent.*
@@ -31,11 +30,6 @@ import kotlin.random.Random
  */
 class DownloaderService : LifecycleService() {
     companion object {
-        /**
-         * tag for logging
-         */
-        private const val TAG = "DLService"
-
         /**
          * retries for youtube-dl operations
          */
@@ -80,22 +74,19 @@ class DownloaderService : LifecycleService() {
 
         // ensure downloads are accessible
         if (!checkDownloadsDirSet()) {
-            Toast.makeText(
-                    this,
-                    "Downloads directory not accessible, stopping Downloader!",
-                    Toast.LENGTH_LONG
-            ).show()
-            Log.i(TAG, "downloads dir not accessible, stopping service")
+
+            this.toast("Downloads directory not accessible, stopping Downloader!")
+            Timber.i("downloads dir not accessible, stopping service")
             stopSelf()
             return
         }
 
         // init db and observe changes to pending tracks
-        Log.i(TAG, "start observing pending tracks...")
+        Timber.i("start observing pending tracks...")
         TracksDB.get(this).tracks().observePending().observe(this,
-                { pendingTracks: List<TrackInfo> ->
-                    Log.i(TAG, String.format("pendingTracks update! size= ${pendingTracks.size}"))
-
+            { pendingTracks: List<TrackInfo> ->
+                Timber.i("pendingTracks update! size= ${pendingTracks.size}")
+                
                     // enqueue all that are not scheduled already
                     for (track in pendingTracks) {
                         // ignore if track not pending
@@ -113,7 +104,7 @@ class DownloaderService : LifecycleService() {
     }
 
     override fun onDestroy() {
-        Log.i(TAG, "destroying service...")
+        Timber.i("destroying service...")
         downloadThread.interrupt()
         hideNotification()
         super.onDestroy()
@@ -149,9 +140,9 @@ class DownloaderService : LifecycleService() {
             TracksDB.get(this).tracks().resetDownloadingToPending()
 
             // init youtube-dl
-            Log.i(TAG, "downloader thread starting...")
+            Timber.i("downloader thread starting...")
             if (!YoutubeDLWrapper.init(this)) {
-                Log.e(TAG, "youtube-dl init failed, stopping service")
+                Timber.e("youtube-dl init failed, stopping service")
                 stopSelf()
                 return
             }
@@ -179,7 +170,7 @@ class DownloaderService : LifecycleService() {
         // double- check the track is not downloaded
         val dbTrack = TracksDB.get(this).tracks()[track.id]
         if (dbTrack == null || dbTrack.status != TrackStatus.DownloadPending) {
-            Log.i(TAG, "skipping download of ${track.id}: appears to already be downloaded")
+            Timber.i("skipping download of ${track.id}: appears to already be downloaded")
             return
         }
 
@@ -228,10 +219,9 @@ class DownloaderService : LifecycleService() {
                 try {
                     writeID3Tag(track, files)
                 } catch (e: DownloaderException) {
-                    Log.e(
-                            TAG,
-                            "failed to write id3v2 tags of ${track.id}! (not fatal, the rest of the download was successful)",
-                            e
+                    Timber.e(
+                        e,
+                        "failed to write id3v2 tags of ${track.id}! (not fatal, the rest of the download was successful)"
                     )
                     maybeShowErrorNotification(e, track)
                 }
@@ -245,22 +235,21 @@ class DownloaderService : LifecycleService() {
             try {
                 copyCoverToFinal(track, files)
             } catch (e: DownloaderException) {
-                Log.e(
-                        TAG,
-                        "failed to copy cover of ${track.id}! (not fatal, the rest of the download was successful)",
-                        e
+                Timber.e(
+                    e,
+                    "failed to copy cover of ${track.id}! (not fatal, the rest of the download was successful)"
                 )
                 maybeShowErrorNotification(e, track)
             }
             true
         } catch (e: DownloaderException) {
-            Log.e(TAG, "download of ${track.id} failed!", e)
+            Timber.e(e, "download of ${track.id} failed!")
             maybeShowErrorNotification(e, track)
             false
         } finally {
             // delete temp files
             if (files != null && !files.delete())
-                Log.w(TAG, "could not delete temp files for ${track.id}")
+                Timber.w("could not delete temp files for ${track.id}")
         }
     }
     //endregion
@@ -347,11 +336,11 @@ class DownloaderService : LifecycleService() {
                 downloaderOutputs.append(response.toPrettyString())
             } catch (e: YoutubeDLException) {
                 // log and append to output info
-                Log.e(TAG, "download of ${track.id} failed", e)
+                Timber.e(e, "download of ${track.id} failed")
                 downloaderOutputs.append("${e.message} \r\n${e.stackTraceToString()}")
             } catch (e: InterruptedException) {
                 // log and append to output info
-                Log.e(TAG, "download of ${track.id} was interrupted", e)
+                Timber.e(e, "download of ${track.id} was interrupted")
                 downloaderOutputs.append("${e.message} \r\n${e.stackTraceToString()}")
             }
 
@@ -459,7 +448,7 @@ class DownloaderService : LifecycleService() {
         } catch (e: IOException) {
             // try to remove the final file
             if (!finalFile.delete())
-                Log.w(TAG, "failed to delete final file on copy fail")
+                Timber.w("failed to delete final file on copy fail")
 
             throw DownloaderException(
                     "error copying temp file (${files.audio}) to final destination (${finalFile.uri})",
@@ -548,7 +537,7 @@ class DownloaderService : LifecycleService() {
                         }
                     }
                 } catch (e: IOException) {
-                    Log.e(TAG, "failed to convert cover image to PNG", e)
+                    Timber.e(e, "failed to convert cover image to PNG")
                 }
             }
 
