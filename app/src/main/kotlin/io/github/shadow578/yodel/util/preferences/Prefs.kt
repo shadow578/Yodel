@@ -44,42 +44,4 @@ object Prefs {
         "locale_override",
         LocaleOverride.SystemDefault
     )
-
-    //region devtools flags
-    /**
-     * enable sending notifications when the download service encounters a error when downloading a track
-     */
-    val EnableDownloaderErrorNotifications = PreferenceWrapper.create(
-        Boolean::class.java,
-        "downloader_error_notifications",
-        false
-    )
-
-    /**
-     * enable verbose output on youtube-dl
-     */
-    val EnableDownloaderVerboseOutput = PreferenceWrapper.create(
-        Boolean::class.java,
-        "downloader_verbose_output",
-        false
-    )
-
-    /**
-     * enable [YoutubeDLWrapper.fixSsl] on track downloads
-     */
-    val EnableSSLFix = PreferenceWrapper.create(
-            Boolean::class.java,
-            "enable_ssl_fix",
-            false
-    )
-
-    /**
-     * only use the video id instead of the full video url when creating a [YoutubeDLWrapper] session
-     */
-    val UseVideoIdOnly = PreferenceWrapper.create(
-            Boolean::class.java,
-            "video_id_only",
-            false
-    )
-    //endregion
 }
