@@ -1,94 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:padding="10dp"
-    app:divider="@drawable/empty_small_divider"
-    app:showDividers="middle"
     tools:ignore="HardcodedText">
 
-    <!-- section heading: actions -->
-    <com.google.android.material.textview.MaterialTextView
+    <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Actions" />
+        android:orientation="vertical"
+        app:divider="@drawable/empty_small_divider"
+        app:showDividers="middle">
 
-    <!-- button to dump logcat and share -->
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/dump_logcat"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Dump Error Logcat" />
+        <!-- section heading: actions -->
+        <com.google.android.material.textview.MaterialTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Actions" />
 
-    <!-- button to re- download all tracks -->
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/reload_all_tracks"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Reload all Tracks" />
+        <!-- button to dump logcat and share -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/dump_logcat"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Dump Error Logcat" />
 
-    <!-- separator -->
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="?android:attr/listDivider" />
+        <!-- button to re- download all tracks -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/reload_all_tracks"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Reload all Tracks" />
 
-    <!-- section heading: fixes / flags -->
-    <com.google.android.material.textview.MaterialTextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Behaviour Flags" />
+        <!-- separator -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="?android:attr/listDivider" />
 
-    <!-- toggle to enable verbose output for the downloader service -->
-    <com.google.android.material.switchmaterial.SwitchMaterial
-        android:id="@+id/downloader_verbose_output"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Downloader: Verbose Output" />
+        <!-- section heading: fixes / flags -->
+        <com.google.android.material.textview.MaterialTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Behaviour Flags" />
 
-    <!-- toggle to enable error notifications for the downloader service -->
-    <com.google.android.material.switchmaterial.SwitchMaterial
-        android:id="@+id/downloader_error_notifications"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Downloader: Error Notifications" />
+        <!-- flags container. this is populated programmatically -->
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/flags_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:divider="@drawable/empty_small_divider"
+            app:showDividers="middle" />
 
-    <!-- ssl fix -->
-    <com.google.android.material.switchmaterial.SwitchMaterial
-        android:id="@+id/enable_ssl_fix"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:text="Downloader: Skip SSL Check" />
+        <!-- separator -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="?android:attr/listDivider" />
 
-    <!-- only use video id for youtube-dl call -->
-    <com.google.android.material.switchmaterial.SwitchMaterial
-        android:id="@+id/downloader_use_video_id"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:text="Downloader: Use only Video ID" />
+        <!-- section heading: debug info -->
+        <com.google.android.material.textview.MaterialTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Debug info" />
 
-    <!-- separator -->
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="?android:attr/listDivider" />
+        <!-- show device and app info at the top -->
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/debug_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="(Debug Info)" />
 
-    <!-- section heading: debug info -->
-    <com.google.android.material.textview.MaterialTextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Debug info" />
-
-    <!-- show device and app info at the top -->
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/debug_info"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="(Debug Info)" />
-
-</androidx.appcompat.widget.LinearLayoutCompat>
+    </androidx.appcompat.widget.LinearLayoutCompat>
+</ScrollView>

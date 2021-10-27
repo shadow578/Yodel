@@ -16,6 +16,7 @@ import io.github.shadow578.yodel.db.TracksDB
 import io.github.shadow578.yodel.db.model.*
 import io.github.shadow578.yodel.downloader.wrapper.*
 import io.github.shadow578.yodel.util.*
+import io.github.shadow578.yodel.util.preferences.Flags
 import io.github.shadow578.yodel.util.preferences.Prefs
 import io.github.shadow578.yodel.util.storage.*
 import timber.log.Timber
@@ -84,9 +85,9 @@ class DownloaderService : LifecycleService() {
         // init db and observe changes to pending tracks
         Timber.i("start observing pending tracks...")
         TracksDB.get(this).tracks().observePending().observe(this,
-            { pendingTracks: List<TrackInfo> ->
-                Timber.i("pendingTracks update! size= ${pendingTracks.size}")
-                
+                { pendingTracks: List<TrackInfo> ->
+                    Timber.i("pendingTracks update! size= ${pendingTracks.size}")
+
                     // enqueue all that are not scheduled already
                     for (track in pendingTracks) {
                         // ignore if track not pending
@@ -220,8 +221,8 @@ class DownloaderService : LifecycleService() {
                     writeID3Tag(track, files)
                 } catch (e: DownloaderException) {
                     Timber.e(
-                        e,
-                        "failed to write id3v2 tags of ${track.id}! (not fatal, the rest of the download was successful)"
+                            e,
+                            "failed to write id3v2 tags of ${track.id}! (not fatal, the rest of the download was successful)"
                     )
                     maybeShowErrorNotification(e, track)
                 }
@@ -236,8 +237,8 @@ class DownloaderService : LifecycleService() {
                 copyCoverToFinal(track, files)
             } catch (e: DownloaderException) {
                 Timber.e(
-                    e,
-                    "failed to copy cover of ${track.id}! (not fatal, the rest of the download was successful)"
+                        e,
+                        "failed to copy cover of ${track.id}! (not fatal, the rest of the download was successful)"
                 )
                 maybeShowErrorNotification(e, track)
             }
@@ -270,7 +271,7 @@ class DownloaderService : LifecycleService() {
                 .audioOnly(format.fileExtension)
 
         // enable ssl fix
-        if (Prefs.EnableSSLFix.get())
+        if (Flags.NonSSLDownloads.value)
             session.fixSsl()
         return session
     }
@@ -308,7 +309,7 @@ class DownloaderService : LifecycleService() {
             writeThumbnail()
 
             // enable verbose output with devtools toggle
-            if (Prefs.EnableDownloaderVerboseOutput.get()) {
+            if (Flags.DownloaderVerboseOutput.value) {
                 verboseOutput()
                 printOutput = true
             }
@@ -562,10 +563,14 @@ class DownloaderService : LifecycleService() {
      * @return the video url
      */
     private fun resolveVideoUrl(track: TrackInfo): String {
-        return if (Prefs.UseVideoIdOnly.get())
+        return if (Flags.OnlyUseVideoID.value)
             track.id
-        else
-            "https://www.youtube.com/watch?v=${track.id}"
+        else {
+            if (Flags.NonSSLDownloads.value)
+                "http://www.youtube.com/watch?v=${track.id}"
+            else
+                "https://www.youtube.com/watch?v=${track.id}"
+        }
     }
 
     /**
@@ -699,7 +704,7 @@ class DownloaderService : LifecycleService() {
      */
     private fun maybeShowErrorNotification(error: DownloaderException, track: TrackInfo) {
         // skip if not enabled
-        if (!Prefs.EnableDownloaderErrorNotifications.get())
+        if (!Flags.NotificationsOnDownloadError.value)
             return
 
         // create the notification

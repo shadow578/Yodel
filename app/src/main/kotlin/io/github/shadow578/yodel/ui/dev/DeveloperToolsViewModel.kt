@@ -11,7 +11,7 @@ import io.github.shadow578.yodel.BuildConfig
 import io.github.shadow578.yodel.db.TracksDB
 import io.github.shadow578.yodel.db.model.TrackStatus
 import io.github.shadow578.yodel.util.*
-import io.github.shadow578.yodel.util.preferences.Prefs
+import io.github.shadow578.yodel.util.preferences.Flags
 import timber.log.Timber
 import java.io.File
 import java.time.LocalDateTime
@@ -23,24 +23,28 @@ import java.util.*
 class DeveloperToolsViewModel(application: Application) : AndroidViewModel(application) {
 
     /**
-     * binder for [Prefs.EnableDownloaderErrorNotifications]
+     * map that maps every dev flag to a preference binder
      */
-    val enableDownloaderErrorNotificationsBinder = SwitchPreferenceBinder(Prefs.EnableDownloaderErrorNotifications)
+    private val flagBinders: MutableMap<Flags, SwitchPreferenceBinder> = EnumMap(Flags::class.java)
+
+    init {
+        for (flag in Flags.values())
+            flagBinders[flag] = SwitchPreferenceBinder(flag.preference)
+    }
 
     /**
-     * binder for [Prefs.EnableDownloaderVerboseOutput]
+     * function to create the switches for the [Flags].
+     * calls the callback for every flag and provides both the flag, as well as the binder for that flag
+     *
+     * @param callback the callback
      */
-    val enableDownloaderVerboseOutputBinder = SwitchPreferenceBinder(Prefs.EnableDownloaderVerboseOutput)
-
-    /**
-     * binder for [Prefs.EnableSSLFix]
-     */
-    val enableSSLFixBinder = SwitchPreferenceBinder(Prefs.EnableSSLFix)
-    
-    /**
-    * binder for [Prefs.UseVideoIdOnly]
-    */
-    val useVideoIdOnlyBinder = SwitchPreferenceBinder(Prefs.UseVideoIdOnly) 
+    fun bindAllFlags(callback: (Flags, SwitchPreferenceBinder) -> Unit) {
+        flagBinders.keys.forEach {
+            // using !! here since we know that every key should have a non- null value to it
+            // if not, somethings wrong anyway and we're better off crashing anyways :P
+            callback(it, flagBinders[it]!!)
+        }
+    }
 
     /**
      * remove all downloaded files, and mark all tracks as 'pending'
