@@ -16,14 +16,15 @@ if (useSignProps)
     FileInputStream(signPropsFile).use { signProps.load(it) }
 
 android {
-    compileSdk = 30
-    buildToolsVersion = "30.0.3"
+    compileSdk = 33
+    buildToolsVersion = "33.0.0"
+    namespace = "io.github.shadow578.yodel"
 
     defaultConfig {
         applicationId = "io.github.shadow578.yodel"
         minSdk = 23
-        targetSdk = 30
-        compileSdk = 30
+        targetSdk = 33
+        compileSdk = 33
         versionCode = 2
         versionName = "1.2"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -59,11 +60,8 @@ android {
     }
     compileOptions {
         isCoreLibraryDesugaringEnabled = true
-
-        //TODO reverted back to JDK 8 until the next version of AS is released in stable
-        // https://issuetracker.google.com/issues/180946610?pli=1
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_11.toString()
@@ -93,56 +91,57 @@ aboutLibraries {
 
 dependencies {
     // androidX
-    implementation("androidx.core:core-ktx:1.6.0")
-    implementation("androidx.constraintlayout:constraintlayout:2.1.0")
-    implementation("androidx.appcompat:appcompat:1.3.1")
-    implementation("androidx.lifecycle:lifecycle-service:2.3.1")
+    implementation("androidx.core:core-ktx:1.9.0")
+    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+    implementation("androidx.appcompat:appcompat:1.5.1")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1")
+    implementation("androidx.lifecycle:lifecycle-service:2.5.1")
     implementation("androidx.legacy:legacy-support-v4:1.0.0")
-    implementation("androidx.preference:preference-ktx:1.1.1")
+    implementation("androidx.preference:preference-ktx:1.2.0")
 
     // material design
-    implementation("com.google.android.material:material:1.4.0")
+    implementation("com.google.android.material:material:1.6.1")
 
     // Room
-    implementation("androidx.room:room-runtime:2.3.0")
-    kapt("androidx.room:room-compiler:2.3.0")
+    implementation("androidx.room:room-runtime:2.4.3")
+    kapt("androidx.room:room-compiler:2.4.3")
 
     // youtube-dl
     implementation("com.github.yausername.youtubedl-android:library:0.14.0")
     implementation("com.github.yausername.youtubedl-android:ffmpeg:0.14.0")
     implementation("com.github.yausername.youtubedl-android:aria2c:0.14.0")
 
-
     // id3v2 tagging
     implementation("com.mpatric:mp3agic:0.9.1")
 
     // gson
-    implementation("com.google.code.gson:gson:2.8.7")
+    implementation("com.google.code.gson:gson:2.9.1")
 
     // glide
-    implementation("com.github.bumptech.glide:glide:4.12.0")
-    kapt("com.github.bumptech.glide:compiler:4.12.0")
+    implementation("com.github.bumptech.glide:glide:4.14.1")
+    kapt("com.github.bumptech.glide:compiler:4.14.1")
 
     // timber
     implementation("com.jakewharton.timber:timber:5.0.1")
 
     // about libraries
-    implementation("com.mikepenz:aboutlibraries-core:8.9.1")
-    implementation("com.mikepenz:aboutlibraries:8.9.1")
+    implementation("com.mikepenz:aboutlibraries-core:8.9.4")
+    implementation("com.mikepenz:aboutlibraries:8.9.4")
 
     // desugaring
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.5")
+    //TODO 2.0.0 is only available with AGP > 7.4.0
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.2.0")
 
     // unit testing
     testImplementation("androidx.test.ext:junit:1.1.3")
-    testImplementation("org.robolectric:robolectric:4.6.1")
-    testImplementation("io.kotest:kotest-assertions-core:4.6.1")
+    testImplementation("org.robolectric:robolectric:4.8.2")
+    testImplementation("io.kotest:kotest-assertions-core:5.4.2")
     androidTestImplementation("androidx.test:runner:1.4.0")
     androidTestImplementation("androidx.test:rules:1.4.0")
-    androidTestImplementation("io.kotest:kotest-assertions-core:4.6.1")
+    androidTestImplementation("io.kotest:kotest-assertions-core:5.4.2")
 
     // leakcanary (only on debug builds)
-    debugImplementation("com.squareup.leakcanary:leakcanary-android:2.7")
+    debugImplementation("com.squareup.leakcanary:leakcanary-android:2.9.1")
 }
 
 tasks.withType<Test>().all {

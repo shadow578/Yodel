@@ -4,7 +4,6 @@ import android.app.*
 import android.content.*
 import android.graphics.*
 import android.os.Build
-import android.util.Log
 import androidx.annotation.StringRes
 import androidx.core.app.*
 import androidx.documentfile.provider.DocumentFile
@@ -642,7 +641,11 @@ class DownloaderService : LifecycleService() {
      */
     private fun hideNotification() {
         notificationManager.cancel(PROGRESS_NOTIFICATION_ID)
-        stopForeground(true)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            stopForeground(STOP_FOREGROUND_REMOVE)
+        } else {
+            stopForeground(true)
+        }
         isInForeground = false
     }
 

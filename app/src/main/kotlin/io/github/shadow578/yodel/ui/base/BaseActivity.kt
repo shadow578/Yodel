@@ -22,7 +22,7 @@ open class BaseActivity : AppCompatActivity() {
     /**
      * result launcher for download directory select
      */
-    private lateinit var downloadDirectorySelectLauncher: ActivityResultLauncher<Uri>
+    private lateinit var downloadDirectorySelectLauncher: ActivityResultLauncher<Uri?>
 
     override fun attachBaseContext(newBase: Context) {
         super.attachBaseContext(newBase.wrapLocale())

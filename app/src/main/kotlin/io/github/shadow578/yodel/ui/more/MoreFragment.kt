@@ -14,7 +14,6 @@ import io.github.shadow578.yodel.databinding.FragmentMoreBinding
 import io.github.shadow578.yodel.downloader.TrackDownloadFormat
 import io.github.shadow578.yodel.ui.base.BaseFragment
 import io.github.shadow578.yodel.util.toast
-import java.util.*
 import java.util.stream.Collectors
 
 /**
@@ -52,7 +51,7 @@ class MoreFragment : BaseFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        chooseExportFileLauncher = registerForActivityResult(CreateDocument()) { uri: Uri? ->
+        chooseExportFileLauncher = registerForActivityResult(CreateDocument("application/json")) { uri: Uri? ->
             if (uri == null) {
                 return@registerForActivityResult
             }
