@@ -2,6 +2,7 @@ package io.github.shadow578.yodel
 
 import android.app.Application
 import androidx.preference.PreferenceManager
+import com.google.android.material.color.DynamicColors
 import io.github.shadow578.yodel.db.TracksDB
 import io.github.shadow578.yodel.util.*
 import io.github.shadow578.yodel.util.preferences.PreferenceWrapper
@@ -17,6 +18,9 @@ class YodelApp : Application() {
         // init timber
         if (BuildConfig.DEBUG)
             Timber.plant(Timber.DebugTree())
+
+        // apply material3 dynamic colors
+        DynamicColors.applyToActivitiesIfAvailable(this)
 
         // initialize stuff
         PreferenceWrapper.init(PreferenceManager.getDefaultSharedPreferences(this))
