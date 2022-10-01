@@ -8,6 +8,7 @@ import com.google.android.material.switchmaterial.SwitchMaterial
 import io.github.shadow578.yodel.databinding.ActivityDeveloperToolsBinding
 import io.github.shadow578.yodel.ui.base.BaseActivity
 import io.github.shadow578.yodel.util.copyToClipboard
+import io.github.shadow578.yodel.util.toast
 
 /**
  * developer tools activity
@@ -42,12 +43,20 @@ class DeveloperToolsActivity : BaseActivity() {
 
         // setup logcat dump
         b.dumpLogcat.setOnClickListener {
+            this.toast("long press to activate!")
+        }
+        b.dumpLogcat.setOnLongClickListener {
             model.dumpLogcat(this)
+            true
         }
 
         // setup reload all
         b.reloadAllTracks.setOnClickListener {
+            this.toast("long press to activate!")
+        }
+        b.reloadAllTracks.setOnLongClickListener {
             model.reloadAllTracks()
+            true
         }
 
         // init and bind switches for dev flags
