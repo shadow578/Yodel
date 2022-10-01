@@ -1,6 +1,7 @@
 package io.github.shadow578.yodel.ui.more
 
 import android.app.*
+import android.content.Intent
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.documentfile.provider.DocumentFile
@@ -10,6 +11,7 @@ import io.github.shadow578.yodel.*
 import io.github.shadow578.yodel.backup.BackupHelper
 import io.github.shadow578.yodel.downloader.TrackDownloadFormat
 import io.github.shadow578.yodel.ui.base.BaseActivity
+import io.github.shadow578.yodel.ui.dev.DeveloperToolsActivity
 import io.github.shadow578.yodel.util.*
 import io.github.shadow578.yodel.util.preferences.Prefs
 import java.util.concurrent.atomic.AtomicBoolean
@@ -24,19 +26,33 @@ class MoreViewModel(application: Application) : AndroidViewModel(application) {
     val downloadFormat = MutableLiveData(Prefs.DownloadFormat.get())
 
     /**
-     * current state of ssl_fix enable
+     * binder for [Prefs.EnableMetadataTagging]
      */
-    val enableSSLFix = MutableLiveData(Prefs.EnableSSLFix.get())
-
-    /**
-     * current state of metadata tagging enable
-     */
-    val enableTagging = MutableLiveData(Prefs.EnableMetadataTagging.get())
+    val enableMetadataTaggingBinder = SwitchPreferenceBinder(Prefs.EnableMetadataTagging)
 
     /**
      * currently selected locale override
      */
     val localeOverride = MutableLiveData(Prefs.AppLocaleOverride.get())
+
+    /**
+     * how often [countAndOpenDeveloperTools] was called (== how often the app_icon was clicked)
+     */
+    private var developerToolsCounter: Int = 0
+
+    /**
+     * count how many times this function was called.
+     * if it was called more than 5 times, open the developer tools activity
+     *
+     * @param parent parent activity
+     */
+    fun countAndOpenDeveloperTools(parent: Activity) {
+        developerToolsCounter++
+        if (developerToolsCounter >= 5) {
+            parent.startActivity(Intent(parent, DeveloperToolsActivity::class.java))
+            developerToolsCounter = 0
+        }
+    }
 
     /**
      * open the about page
@@ -71,11 +87,10 @@ class MoreViewModel(application: Application) : AndroidViewModel(application) {
             val backup = backupHelper.readBackup(file)
             if (backup == null) {
                 launchMain {
-                    Toast.makeText(
-                            getApplication(),
+                    getApplication<Application>().toast(
                             R.string.restore_toast_failed,
                             Toast.LENGTH_SHORT
-                    ).show()
+                    )
                 }
                 return@launchIO
             }
@@ -98,14 +113,13 @@ class MoreViewModel(application: Application) : AndroidViewModel(application) {
                         .setNegativeButton(R.string.restore_dialog_negative) { dialog, _ -> dialog.dismiss() }
                         .setPositiveButton(R.string.restore_dialog_positive) { _, _ ->
                             // restore the backup
-                            Toast.makeText(
-                                    getApplication(),
+                            getApplication<Application>().toast(
                                     getApplication<Application>().getString(
                                             R.string.restore_toast_success,
                                             tracksCount
                                     ),
                                     Toast.LENGTH_SHORT
-                            ).show()
+                            )
 
                             launchIO {
                                 backupHelper.restoreBackup(
@@ -129,11 +143,10 @@ class MoreViewModel(application: Application) : AndroidViewModel(application) {
             val success = BackupHelper(getApplication()).createBackup(file)
             if (!success) {
                 launchMain {
-                    Toast.makeText(
-                            getApplication(),
+                    getApplication<Application>().toast(
                             R.string.backup_toast_failed,
                             Toast.LENGTH_SHORT
-                    ).show()
+                    )
                 }
             }
         }
@@ -151,32 +164,6 @@ class MoreViewModel(application: Application) : AndroidViewModel(application) {
         }
         Prefs.DownloadFormat.set(format)
         downloadFormat.value = format
-    }
-
-    /**
-     * set ssl fix enable
-     *
-     * @param enable enable ssl fix?
-     */
-    fun setEnableSSLFix(enable: Boolean) {
-        if (java.lang.Boolean.valueOf(enable) == enableSSLFix.value) {
-            return
-        }
-        Prefs.EnableSSLFix.set(enable)
-        enableSSLFix.value = enable
-    }
-
-    /**
-     * enable or disable metadata tagging
-     *
-     * @param enable is tagging enabled?
-     */
-    fun setEnableTagging(enable: Boolean) {
-        if (enable == enableTagging.value) {
-            return
-        }
-        Prefs.EnableMetadataTagging.set(enable)
-        enableTagging.value = enable
     }
 
     /**

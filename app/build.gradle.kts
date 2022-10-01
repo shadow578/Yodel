@@ -121,6 +121,9 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:4.12.0")
     kapt("com.github.bumptech.glide:compiler:4.12.0")
 
+    // timber
+    implementation("com.jakewharton.timber:timber:5.0.1")
+
     // about libraries
     implementation("com.mikepenz:aboutlibraries-core:8.9.1")
     implementation("com.mikepenz:aboutlibraries:8.9.1")
@@ -135,6 +138,9 @@ dependencies {
     androidTestImplementation("androidx.test:runner:1.4.0")
     androidTestImplementation("androidx.test:rules:1.4.0")
     androidTestImplementation("io.kotest:kotest-assertions-core:4.6.1")
+
+    // leakcanary (only on debug builds)
+    debugImplementation("com.squareup.leakcanary:leakcanary-android:2.7")
 }
 
 tasks.withType<Test>().all {

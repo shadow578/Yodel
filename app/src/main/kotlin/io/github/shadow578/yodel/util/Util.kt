@@ -1,12 +1,16 @@
 package io.github.shadow578.yodel.util
 
-import android.content.Context
-import android.content.ContextWrapper
+import android.content.*
 import android.content.res.Configuration
-import android.os.Build
-import android.os.LocaleList
+import android.net.Uri
+import android.os.*
+import android.widget.Toast
+import androidx.annotation.StringRes
+import androidx.core.content.FileProvider
 import io.github.shadow578.yodel.LocaleOverride
+import io.github.shadow578.yodel.db.model.TrackInfo
 import io.github.shadow578.yodel.util.preferences.Prefs
+import io.github.shadow578.yodel.util.storage.*
 import java.io.File
 import java.util.regex.Pattern
 
@@ -128,3 +132,59 @@ fun Context.wrapLocale(): Context {
     // wrap the context
     return ContextWrapper(this.createConfigurationContext(config))
 }
+
+/**
+ * copy a message to the clipboard
+ *
+ * @param label the label for the data
+ * @param text the message to copy
+ */
+fun Context.copyToClipboard(label: String, text: String) {
+    val clipManager = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+    val data = ClipData.newPlainText(label, text)
+    clipManager.setPrimaryClip(data)
+}
+
+/**
+ * create a content uri for the file using the global file provider.
+ * the file's path has to be covered by provider_paths.xml
+ */
+fun Context.getContentUri(file: File): Uri {
+    return FileProvider.getUriForFile(this, this.packageName + ".global_file_provider", file)
+}
+
+/**
+ * delete a track's locally downloaded files (audio and cover) and clear [TrackInfo.audioFileKey] and [TrackInfo.coverKey]
+ */
+fun TrackInfo.deleteLocalFiles(ctx: Context) {
+    // remove the audio file
+    audioFileKey.decodeToFile(ctx)?.delete()
+
+    // remove cover image
+    val coverPath = coverKey.decodeToUri()?.path
+    if (!coverPath.isNullOrEmpty()) {
+        File(coverPath).delete()
+    }
+
+    // clear keys
+    audioFileKey = StorageKey.EMPTY
+    coverKey = StorageKey.EMPTY
+}
+
+/**
+ * show a toast
+ *
+ * @param text the text of the toast
+ * @param length the length to show the toast. one of [Toast.LENGTH_LONG] or [Toast.LENGTH_SHORT]
+ */
+fun Context.toast(@StringRes text: Int, length: Int = Toast.LENGTH_LONG) =
+    Toast.makeText(this, text, length).show()
+
+/**
+ * show a toast
+ *
+ * @param text the text of the toast
+ * @param length the length to show the toast. one of [Toast.LENGTH_LONG] or [Toast.LENGTH_SHORT]
+ */
+fun Context.toast(text: String, length: Int = Toast.LENGTH_LONG) =
+    Toast.makeText(this, text, length).show()

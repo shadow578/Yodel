@@ -1,10 +1,9 @@
 package io.github.shadow578.yodel.util.preferences
 
-import io.github.shadow578.yodel.downloader.TrackDownloadFormat
 import io.github.shadow578.yodel.LocaleOverride
-import io.github.shadow578.yodel.util.storage.StorageKey
+import io.github.shadow578.yodel.downloader.*
 import io.github.shadow578.yodel.downloader.wrapper.YoutubeDLWrapper
-import io.github.shadow578.yodel.downloader.DownloaderService
+import io.github.shadow578.yodel.util.storage.StorageKey
 
 /**
  * app preferences storage
@@ -17,15 +16,6 @@ object Prefs {
         StorageKey::class.java,
         "downloads_dir",
         StorageKey.EMPTY
-    )
-
-    /**
-     * enable [YoutubeDLWrapper.fixSsl] on track downloads
-     */
-    val EnableSSLFix = PreferenceWrapper.create(
-        Boolean::class.java,
-        "enable_ssl_fix",
-        false
     )
 
     /**

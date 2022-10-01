@@ -3,17 +3,16 @@ package io.github.shadow578.yodel.ui.base
 import android.content.*
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
-import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts.OpenDocumentTree
 import androidx.appcompat.app.AppCompatActivity
 import androidx.documentfile.provider.DocumentFile
 import io.github.shadow578.yodel.R
 import io.github.shadow578.yodel.downloader.DownloaderService
+import io.github.shadow578.yodel.util.*
 import io.github.shadow578.yodel.util.preferences.Prefs
 import io.github.shadow578.yodel.util.storage.*
-import io.github.shadow578.yodel.util.wrapLocale
+import timber.log.Timber
 
 /**
  * topmost base activity. this is to be extended when creating a new activity.
@@ -46,18 +45,14 @@ open class BaseActivity : AppCompatActivity() {
                         // persist the permission & save
                         val treeKey = treeUri.persistFilePermission(applicationContext)
                         Prefs.DownloadsDirectory.set(treeKey)
-                        Log.i("Yodel", "selected and saved new track downloads directory: $treeUri")
+                        Timber.i("selected and saved new track downloads directory: $treeUri")
 
                         // restart downloader
                         val serviceIntent = Intent(application, DownloaderService::class.java)
                         application.startService(serviceIntent)
                     } else {
                         // bad selection
-                        Toast.makeText(
-                            this,
-                            R.string.base_toast_set_download_directory_fail,
-                            Toast.LENGTH_LONG
-                        ).show()
+                        this.toast(R.string.base_toast_set_download_directory_fail)
                         maybeSelectDownloadsDir(true)
                     }
                 }
@@ -84,8 +79,7 @@ open class BaseActivity : AppCompatActivity() {
         }
 
         // select directory
-        Toast.makeText(this, R.string.base_toast_select_download_directory, Toast.LENGTH_LONG)
-            .show()
+        this.toast(R.string.base_toast_select_download_directory)
         downloadDirectorySelectLauncher.launch(null)
     }
 }

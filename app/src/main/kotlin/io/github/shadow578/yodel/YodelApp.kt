@@ -1,11 +1,11 @@
 package io.github.shadow578.yodel
 
 import android.app.Application
-import android.util.Log
 import androidx.preference.PreferenceManager
 import io.github.shadow578.yodel.db.TracksDB
 import io.github.shadow578.yodel.util.*
 import io.github.shadow578.yodel.util.preferences.PreferenceWrapper
+import timber.log.Timber
 
 /**
  * application class, for boilerplate init
@@ -14,13 +14,21 @@ import io.github.shadow578.yodel.util.preferences.PreferenceWrapper
 class YodelApp : Application() {
     override fun onCreate() {
         super.onCreate()
+        // init timber
+        if (BuildConfig.DEBUG)
+            Timber.plant(Timber.DebugTree())
+
+        // initialize stuff
         PreferenceWrapper.init(PreferenceManager.getDefaultSharedPreferences(this))
         NotificationChannels.registerAll(this)
+
+        // enable strict mode for diagnostics
+        maybeEnableStrictMode()
 
         // find tracks that were deleted
         launchIO {
             val removedCount = TracksDB.get(this@YodelApp).markDeletedTracks(this@YodelApp)
-            Log.i("Yodel", "found $removedCount tracks that were deleted in the file system")
+            Timber.i("found $removedCount tracks that were deleted in the file system")
         }
     }
 }

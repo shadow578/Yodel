@@ -1,10 +1,10 @@
 package io.github.shadow578.yodel.downloader.wrapper
 
 import android.content.Context
-import android.util.Log
 import com.yausername.ffmpeg.FFmpeg
 import com.yausername.youtubedl_android.*
 import io.github.shadow578.yodel.BuildConfig
+import timber.log.Timber
 import java.io.File
 
 /**
@@ -17,10 +17,6 @@ class YoutubeDLWrapper(
     private val videoUrl: String
 ) {
     companion object {
-        /**
-         * tag for logging
-         */
-        private const val TAG = "Youtube-DL"
 
         /**
          * did the YoutubeDl library initialize once? in [.init]
@@ -47,7 +43,7 @@ class YoutubeDLWrapper(
                 FFmpeg.getInstance().init(ctx)
                 true
             } catch (e: YoutubeDLException) {
-                Log.e(TAG, "youtube-dl init failed", e)
+                Timber.e(e, "youtube-dl init failed")
                 initialized = false
                 false
             }
@@ -57,19 +53,20 @@ class YoutubeDLWrapper(
     /**
      * the download request
      */
-    val request: YoutubeDLRequest = YoutubeDLRequest(videoUrl)
+    val request: YoutubeDLRequest =
+        YoutubeDLRequest(videoUrl)
 
     /**
      * should the command output be printed to log?
      */
-    private var printOutput = false
+    var printOutput = false
 
     init {
         // enable verbose output on debug builds
         if (BuildConfig.DEBUG) {
-            request.addOption("--verbose")
+            verboseOutput()
+            printOutput = true
         }
-        printOutput(BuildConfig.DEBUG)
     }
 
     //region parameter wrapper
@@ -92,6 +89,16 @@ class YoutubeDLWrapper(
     fun fixSsl(): YoutubeDLWrapper {
         request.addOption("--no-check-certificate")
             .addOption("--prefer-insecure")
+        return this
+    }
+
+    /**
+     * add the '--verbose' option to the request
+     *
+     * @return self instance
+     */
+    fun verboseOutput(): YoutubeDLWrapper {
+        request.addOption("--verbose")
         return this
     }
 
@@ -190,77 +197,47 @@ class YoutubeDLWrapper(
         }
         return this
     }
-
-    /**
-     * enable printing of the youtube-dl command output.
-     * by default on on DEBUG builds, and off on RELEASE builds.
-     * only for use with [.download] functions
-     *
-     * @return self instance
-     */
-    private fun printOutput(print: Boolean): YoutubeDLWrapper {
-        printOutput = print
-        return this
-    }
     //endregion
 
     //region download
     /**
-     * download the video using youtube-dl, with retires
+     * download the video using youtube-dl
      *
      * @param progressCallback callback to report back download progress
-     * @param tries            the number of retries for downloading
-     * @return the response, or null if the download failed
+     * @return the response. this is never null
+     * @throws YoutubeDLException by [YoutubeDL.execute] call
+     * @throws InterruptedException by [YoutubeDL.execute] call
      */
-    fun download(progressCallback: DownloadProgressCallback?, tries: Int = 1): YoutubeDLResponse? {
-        var retry = tries
+    @Throws(YoutubeDLException::class, InterruptedException::class)
+    fun download(progressCallback: DownloadProgressCallback?): YoutubeDLResponse {
         check(initialized) { "youtube-dl was not initialized! call YoutubeDLWrapper.init() first!" }
-        var response: YoutubeDLResponse?
-        do {
-            response = download(progressCallback)
-            if (response != null) {
-                break
-            }
-        } while (--retry > 0)
-        return response
-    }
+        Timber.i("downloading $videoUrl")
 
-    /**
-     * download the video using youtube-dl, without retires
-     *
-     * @param progressCallback callback to report back download progress
-     * @return the response, or null if the download failed
-     */
-    fun download(progressCallback: DownloadProgressCallback?): YoutubeDLResponse? {
-        check(initialized) { "youtube-dl was not initialized! call YoutubeDLWrapper.init() first!" }
-        return try {
-            Log.i(TAG, "downloading $videoUrl")
-            val response = YoutubeDL.getInstance().execute(request, progressCallback)
-            if (printOutput) {
-                print(response)
-            }
-            response
-        } catch (e: YoutubeDLException) {
-            Log.e(TAG, "download of '$videoUrl' using youtube-dl failed", e)
-            null
-        } catch (e: InterruptedException) {
-            Log.e(TAG, "download of '$videoUrl' using youtube-dl failed", e)
-            null
+        val response = YoutubeDL.getInstance().execute(request, progressCallback)
+        if (printOutput) {
+            Timber.i(response.toPrettyString())
+            print(response)
         }
-    }
 
-    /**
-     * print response details to log
-     *
-     * @param response the response to print
-     */
-    private fun print(response: YoutubeDLResponse) {
-        Log.i(TAG, "-------------")
-        Log.i(TAG, " url: $videoUrl")
-        Log.i(TAG, " command: ${response.command}")
-        Log.i(TAG, " exit code: ${response.exitCode}")
-        Log.i(TAG, " stdout: ${response.out}")
-        Log.i(TAG, " stderr: ${response.err}")
+        return response
     }
 //endregion
 }
+
+/**
+ * create a nicer string from a response (for logging)
+ */
+fun YoutubeDLResponse.toPrettyString(): String {
+    return """
+        -- details --
+        Command: $command
+        Exit Code: $exitCode
+        
+        -- stdout -- 
+        $out
+        
+        -- stderr --
+        $err
+    """.trimIndent()
+}
+
