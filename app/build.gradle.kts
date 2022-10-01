@@ -108,8 +108,10 @@ dependencies {
     kapt("androidx.room:room-compiler:2.3.0")
 
     // youtube-dl
-    implementation("com.github.yausername.youtubedl-android:library:0.12.4")
-    implementation("com.github.yausername.youtubedl-android:ffmpeg:0.12.4")
+    implementation("com.github.yausername.youtubedl-android:library:0.14.0")
+    implementation("com.github.yausername.youtubedl-android:ffmpeg:0.14.0")
+    implementation("com.github.yausername.youtubedl-android:aria2c:0.14.0")
+
 
     // id3v2 tagging
     implementation("com.mpatric:mp3agic:0.9.1")

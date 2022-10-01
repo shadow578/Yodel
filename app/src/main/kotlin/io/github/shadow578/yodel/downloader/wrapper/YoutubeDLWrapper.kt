@@ -1,6 +1,7 @@
 package io.github.shadow578.yodel.downloader.wrapper
 
 import android.content.Context
+import com.yausername.aria2c.Aria2c
 import com.yausername.ffmpeg.FFmpeg
 import com.yausername.youtubedl_android.*
 import io.github.shadow578.yodel.BuildConfig
@@ -41,6 +42,9 @@ class YoutubeDLWrapper(
 
                 // initialize FFMPEG library
                 FFmpeg.getInstance().init(ctx)
+
+                // initialize ARIA2C
+                Aria2c.getInstance().init(ctx)
                 true
             } catch (e: YoutubeDLException) {
                 Timber.e(e, "youtube-dl init failed")

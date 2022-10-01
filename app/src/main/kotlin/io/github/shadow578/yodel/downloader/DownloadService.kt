@@ -4,6 +4,7 @@ import android.app.*
 import android.content.*
 import android.graphics.*
 import android.os.Build
+import android.util.Log
 import androidx.annotation.StringRes
 import androidx.core.app.*
 import androidx.documentfile.provider.DocumentFile
@@ -316,7 +317,8 @@ class DownloaderService : LifecycleService() {
         }
 
         // prepare a callback to show the progress in a notification
-        val progressCallback = { progress: Float, etaInSeconds: Long ->
+        val progressCallback = { progress: Float, etaInSeconds: Long, line: String ->
+            Timber.d("downloader status: $line")
             updateNotification(
                     createProgressNotification(track, progress / 100.0, etaInSeconds)
             )
