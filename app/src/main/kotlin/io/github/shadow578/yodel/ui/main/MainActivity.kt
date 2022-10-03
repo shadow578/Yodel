@@ -2,16 +2,17 @@ package io.github.shadow578.yodel.ui.main
 
 import android.os.Bundle
 import androidx.annotation.IdRes
-import androidx.fragment.app.*
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
+import com.google.android.material.elevation.ElevationOverlayProvider
 import io.github.shadow578.yodel.R
 import io.github.shadow578.yodel.databinding.ActivityMainBinding
 import io.github.shadow578.yodel.ui.base.BaseActivity
 import io.github.shadow578.yodel.ui.more.MoreFragment
 import io.github.shadow578.yodel.ui.tracks.TracksFragment
-import java.util.*
 
 /**
  * the main activity
@@ -80,11 +81,15 @@ class MainActivity : BaseActivity() {
         })
 
         // sync model with pager and bottom navigation
-        model.section.observe(this, { section: Section ->
+        model.section.observe(this) { section: Section ->
             b.bottomNav.selectedItemId = section.menuItemId
             b.fragmentPager.currentItem = sectionOrder.indexOf(section)
             b.fragmentPager.isUserInputEnabled = section.allowPagerInput
-        })
+        }
+
+        // set the color of the navigation bar to the color of the bottom navigation view
+        window.navigationBarColor =
+            ElevationOverlayProvider(this).compositeOverlayWithThemeSurfaceColorIfNeeded(b.bottomNav.elevation)
     }
 
     /**
