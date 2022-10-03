@@ -60,9 +60,8 @@ class ShareTargetActivity : AppCompatActivity() {
         // add to db as pending download
         InsertTrackUIHelper.insertTrack(this, trackId, title)
 
-        // start downloader as needed
-        val serviceIntent = Intent(this, DownloaderService::class.java)
-        startService(serviceIntent)
+        // start downloader on demand
+        DownloaderService.startOnDemand(this)
         return true
     }
 }

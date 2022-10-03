@@ -4,9 +4,11 @@ import android.content.Context
 import androidx.documentfile.provider.DocumentFile
 import com.google.gson.*
 import io.github.shadow578.yodel.db.TracksDB
+import io.github.shadow578.yodel.db.model.TrackInfo
 import timber.log.Timber
 import java.io.*
-import java.time.*
+import java.time.LocalDate
+import java.time.LocalDateTime
 
 /**
  * tracks db backup helper class.
@@ -87,15 +89,19 @@ class BackupHelper(
      *
      * @param data            the data to restore
      * @param replaceExisting if true, existing entries are overwritten. if false, existing entries are not added
+     * @param transform transformation function, applied to all restored tracks
      */
-    fun restoreBackup(data: BackupData, replaceExisting: Boolean) {
+    fun restoreBackup(data: BackupData, replaceExisting: Boolean, transform: TrackInfo.() -> Unit = {}) {
         // check there are tracks to import
         if (data.tracks.isEmpty()) return
 
+        // apply transform to all tracks
+        val tracks = data.tracks.map { it.transform(); it }
+
         // insert the tracks
         if (replaceExisting)
-            db.tracks().insertAll(data.tracks)
+            db.tracks().insertAll(tracks)
         else
-            db.tracks().insertAllNew(data.tracks)
+            db.tracks().insertAllNew(tracks)
     }
 }

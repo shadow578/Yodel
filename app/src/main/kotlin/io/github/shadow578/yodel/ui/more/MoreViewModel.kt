@@ -9,6 +9,8 @@ import androidx.lifecycle.*
 import com.mikepenz.aboutlibraries.LibsBuilder
 import io.github.shadow578.yodel.*
 import io.github.shadow578.yodel.backup.BackupHelper
+import io.github.shadow578.yodel.db.model.TrackStatus
+import io.github.shadow578.yodel.downloader.DownloaderService
 import io.github.shadow578.yodel.downloader.TrackDownloadFormat
 import io.github.shadow578.yodel.ui.base.BaseActivity
 import io.github.shadow578.yodel.ui.dev.DeveloperToolsActivity
@@ -81,13 +83,14 @@ class MoreViewModel(application: Application) : AndroidViewModel(application) {
      * @param file the file to import from
      */
     fun importTracks(file: DocumentFile, parent: Activity) {
+        val application = getApplication<Application>()
         val backupHelper = BackupHelper(getApplication())
         launchIO {
             // read the backup data
             val backup = backupHelper.readBackup(file)
             if (backup == null) {
                 launchMain {
-                    getApplication<Application>().toast(
+                    application.toast(
                             R.string.restore_toast_failed,
                             Toast.LENGTH_SHORT
                     )
@@ -101,7 +104,7 @@ class MoreViewModel(application: Application) : AndroidViewModel(application) {
                 val tracksCount = backup.tracks.size
                 AlertDialog.Builder(parent)
                         .setTitle(
-                                getApplication<Application>().getString(
+                                application.getString(
                                         R.string.restore_dialog_title,
                                         tracksCount
                                 )
@@ -113,7 +116,7 @@ class MoreViewModel(application: Application) : AndroidViewModel(application) {
                         .setNegativeButton(R.string.restore_dialog_negative) { dialog, _ -> dialog.dismiss() }
                         .setPositiveButton(R.string.restore_dialog_positive) { _, _ ->
                             // restore the backup
-                            getApplication<Application>().toast(
+                            application.toast(
                                     getApplication<Application>().getString(
                                             R.string.restore_toast_success,
                                             tracksCount
@@ -122,10 +125,14 @@ class MoreViewModel(application: Application) : AndroidViewModel(application) {
                             )
 
                             launchIO {
+                                // restore, transform all restored to pending state
                                 backupHelper.restoreBackup(
                                         backup,
                                         replaceExisting.get()
-                                )
+                                ) { status = TrackStatus.DownloadPending }
+
+                                // start service on demand
+                                DownloaderService.startOnDemand(application)
                             }
                         }
                         .show()

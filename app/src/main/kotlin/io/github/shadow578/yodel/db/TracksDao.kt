@@ -18,20 +18,20 @@ interface TracksDao {
     fun observe(): LiveData<List<TrackInfo>>
 
     /**
-     * observe all tracks that have to be downloaded
-     *
-     * @return the tracks that can be observed
-     */
-    @Query("SELECT * FROM tracks WHERE status = 'pending'")
-    fun observePending(): LiveData<List<TrackInfo>>
-
-    /**
      * get a list of all tracks
      *
      * @return a list of all tracks
      */
     @get:Query("SELECT * FROM tracks")
     val all: List<TrackInfo>
+
+    /**
+     * get a list of all tracks that are marked as pending download
+     *
+     * @return a list of all downloaded tracks
+     */
+    @get:Query("SELECT * FROM tracks WHERE status = 'pending'")
+    val pending: List<TrackInfo>
 
     /**
      * get a list of all tracks that are marked as downloaded

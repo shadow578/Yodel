@@ -1,17 +1,22 @@
 package io.github.shadow578.yodel.ui.base
 
-import android.content.*
+import android.Manifest
+import android.content.Context
+import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts.OpenDocumentTree
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.documentfile.provider.DocumentFile
 import io.github.shadow578.yodel.R
-import io.github.shadow578.yodel.downloader.DownloaderService
-import io.github.shadow578.yodel.util.*
 import io.github.shadow578.yodel.util.preferences.Prefs
 import io.github.shadow578.yodel.util.storage.*
+import io.github.shadow578.yodel.util.toast
+import io.github.shadow578.yodel.util.wrapLocale
 import timber.log.Timber
 
 /**
@@ -46,10 +51,6 @@ open class BaseActivity : AppCompatActivity() {
                         val treeKey = treeUri.persistFilePermission(applicationContext)
                         Prefs.DownloadsDirectory.set(treeKey)
                         Timber.i("selected and saved new track downloads directory: $treeUri")
-
-                        // restart downloader
-                        val serviceIntent = Intent(application, DownloaderService::class.java)
-                        application.startService(serviceIntent)
                     } else {
                         // bad selection
                         this.toast(R.string.base_toast_set_download_directory_fail)
@@ -81,5 +82,20 @@ open class BaseActivity : AppCompatActivity() {
         // select directory
         this.toast(R.string.base_toast_select_download_directory)
         downloadDirectorySelectLauncher.launch(null)
+    }
+
+    /**
+     * prompt the user to allow notification permissions on android 13+
+     */
+    fun maybeRequestNotificationPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            // check if permission is already granted
+            if(ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
+                return
+            }
+
+            // request the permission
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.POST_NOTIFICATIONS), 0 )
+        }
     }
 }

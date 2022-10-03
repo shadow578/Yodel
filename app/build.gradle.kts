@@ -57,6 +57,9 @@ android {
                 signingConfig = signingConfigs.getByName("from_props")
             }
         }
+        getByName("debug") {
+            applicationIdSuffix = ".dev"
+        }
     }
     compileOptions {
         isCoreLibraryDesugaringEnabled = true

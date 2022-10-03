@@ -64,7 +64,7 @@ class TracksDBRoboTest : RoboTest() {
 
     @Test
     fun observePendingShouldGetPending() {
-        db.tracks().observePending().getOrAwaitValue() shouldContainExactlyInAnyOrder listOf(
+        db.tracks().pending shouldContainExactlyInAnyOrder listOf(
             TrackInfo("aabbcc", "A Title"),
             TrackInfo("bbccdd", "B Title")
         )
