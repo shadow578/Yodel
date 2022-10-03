@@ -50,6 +50,11 @@ class MainActivity : BaseActivity() {
         // init UI
         setupBottomNavigationAndPager()
 
+        //TODO request permissions & select downloads dir in a OOBE step
+
+        // request permissions for notifications (downloader service)
+        maybeRequestNotificationPermissions()
+
         // select downloads dir
         maybeSelectDownloadsDir(false)
     }
