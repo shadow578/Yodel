@@ -5,6 +5,7 @@ import com.yausername.aria2c.Aria2c
 import com.yausername.ffmpeg.FFmpeg
 import com.yausername.youtubedl_android.*
 import io.github.shadow578.yodel.BuildConfig
+import io.github.shadow578.yodel.util.preferences.Flags
 import timber.log.Timber
 import java.io.File
 
@@ -44,7 +45,9 @@ class YoutubeDLWrapper(
                 FFmpeg.getInstance().init(ctx)
 
                 // initialize ARIA2C
-                Aria2c.getInstance().init(ctx)
+                if(Flags.UseAria2C.value) {
+                    Aria2c.getInstance().init(ctx)
+                }
                 true
             } catch (e: YoutubeDLException) {
                 Timber.e(e, "youtube-dl init failed")

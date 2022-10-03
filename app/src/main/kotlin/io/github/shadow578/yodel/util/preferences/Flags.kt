@@ -32,7 +32,12 @@ enum class Flags(val key: String, val default: Boolean, val displayName: String)
     /**
      * enable sending error notifications from the downloader in case a download fails
      */
-    NotificationsOnDownloadError("notify_on_dl_error", false, "Downloader: enable error notifications")
+    NotificationsOnDownloadError("notify_on_dl_error", false, "Downloader: enable error notifications"),
+
+    /**
+     * enable use of Aria2c for downloading
+     */
+    UseAria2C("use_aria2c_downloader", true, "Downloader: use Aria2C for downloads")
 
     ;
 
