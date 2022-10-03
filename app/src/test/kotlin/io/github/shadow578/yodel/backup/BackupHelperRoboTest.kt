@@ -94,7 +94,7 @@ class BackupHelperRoboTest : RoboTest() {
                 val backup = backupHelper.readBackup(backupDocFile)
                 backup.shouldNotBeNull()
 
-                backupHelper.restoreBackup(backup, true)
+                backupHelper.restoreBackup(backup, true) { status = TrackStatus.DownloadPending }
                 db.tracks().all shouldContainExactlyInAnyOrder listOf(
                         TrackInfo("aabbcc", "A Title"),
                         TrackInfo("bbccdd", "B Title"),
@@ -102,6 +102,13 @@ class BackupHelperRoboTest : RoboTest() {
                         TrackInfo("ddeeff", "D Title"),
                         TrackInfo("eeffgg", "E Title")
                 )
+
+                // all in restore should be pending status
+                withClue("restored tracks should have transform applied to them") {
+                    db.tracks().all.forEach { t ->
+                        t.status shouldBe TrackStatus.DownloadPending
+                    }
+                }
             }
         }
 
@@ -117,7 +124,7 @@ class BackupHelperRoboTest : RoboTest() {
                 val backup = backupHelper.readBackup(backupDocFile)
                 backup.shouldNotBeNull()
 
-                backupHelper.restoreBackup(backup, false)
+                backupHelper.restoreBackup(backup, false) { status = TrackStatus.DownloadPending }
                 db.tracks().all shouldContainExactlyInAnyOrder listOf(
                         TrackInfo("aabbcc", "A Title"),
                         TrackInfo("bbccdd", "FooBar"),
@@ -125,6 +132,13 @@ class BackupHelperRoboTest : RoboTest() {
                         TrackInfo("ddeeff", "D Title"),
                         TrackInfo("eeffgg", "E Title")
                 )
+
+                // all in restore should be pending status
+                withClue("restored tracks should have transform applied to them") {
+                    db.tracks().all.forEach { t ->
+                        t.status shouldBe TrackStatus.DownloadPending
+                    }
+                }
             }
         }
     }
