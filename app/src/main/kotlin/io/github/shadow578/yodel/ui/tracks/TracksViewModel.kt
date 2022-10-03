@@ -7,6 +7,7 @@ import androidx.lifecycle.*
 import io.github.shadow578.yodel.R
 import io.github.shadow578.yodel.db.TracksDB
 import io.github.shadow578.yodel.db.model.*
+import io.github.shadow578.yodel.downloader.DownloaderService
 import io.github.shadow578.yodel.util.*
 import io.github.shadow578.yodel.util.storage.decodeToUri
 
@@ -59,6 +60,9 @@ class TracksViewModel(application: Application) : AndroidViewModel(application) 
         launchIO {
             TracksDB.get(getApplication()).tracks().insert(track)
         }
+
+        // start service on demand
+        DownloaderService.startOnDemand(getApplication())
     }
 
     /**

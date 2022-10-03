@@ -1,6 +1,6 @@
 package io.github.shadow578.yodel.ui.base
 
-import android.content.*
+import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import androidx.activity.result.ActivityResultLauncher
@@ -8,10 +8,10 @@ import androidx.activity.result.contract.ActivityResultContracts.OpenDocumentTre
 import androidx.appcompat.app.AppCompatActivity
 import androidx.documentfile.provider.DocumentFile
 import io.github.shadow578.yodel.R
-import io.github.shadow578.yodel.downloader.DownloaderService
-import io.github.shadow578.yodel.util.*
 import io.github.shadow578.yodel.util.preferences.Prefs
 import io.github.shadow578.yodel.util.storage.*
+import io.github.shadow578.yodel.util.toast
+import io.github.shadow578.yodel.util.wrapLocale
 import timber.log.Timber
 
 /**
@@ -46,10 +46,6 @@ open class BaseActivity : AppCompatActivity() {
                         val treeKey = treeUri.persistFilePermission(applicationContext)
                         Prefs.DownloadsDirectory.set(treeKey)
                         Timber.i("selected and saved new track downloads directory: $treeUri")
-
-                        // restart downloader
-                        val serviceIntent = Intent(application, DownloaderService::class.java)
-                        application.startService(serviceIntent)
                     } else {
                         // bad selection
                         this.toast(R.string.base_toast_set_download_directory_fail)

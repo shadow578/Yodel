@@ -10,6 +10,7 @@ import androidx.lifecycle.AndroidViewModel
 import io.github.shadow578.yodel.BuildConfig
 import io.github.shadow578.yodel.db.TracksDB
 import io.github.shadow578.yodel.db.model.TrackStatus
+import io.github.shadow578.yodel.downloader.DownloaderService
 import io.github.shadow578.yodel.util.*
 import io.github.shadow578.yodel.util.preferences.Flags
 import timber.log.Timber
@@ -64,6 +65,9 @@ class DeveloperToolsViewModel(application: Application) : AndroidViewModel(appli
                 TracksDB.get(ctx).tracks().update(it)
             }
         }
+
+        // start service on demand
+        DownloaderService.startOnDemand(getApplication())
 
         // show toast
         ctx.toast("Reloading all tracks...", Toast.LENGTH_SHORT)

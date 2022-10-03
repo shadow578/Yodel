@@ -1,32 +1,16 @@
 package io.github.shadow578.yodel.ui.main
 
 import android.app.Application
-import android.content.Intent
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import io.github.shadow578.yodel.downloader.DownloaderService
+import androidx.lifecycle.*
 
 /**
  * view model for the main activity
  */
 class MainViewModel(application: Application) : AndroidViewModel(application) {
-    init {
-        startDownloadService()
-    }
-
     /**
      * the currently open section
      */
     private val currentSection = MutableLiveData(MainActivity.Section.Tracks)
-
-    /**
-     * start the downloader service
-     */
-    private fun startDownloadService() {
-        val serviceIntent = Intent(getApplication(), DownloaderService::class.java)
-        getApplication<Application>().startService(serviceIntent)
-    }
 
     /**
      * @return the currently visible section
