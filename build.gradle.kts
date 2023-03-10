@@ -6,8 +6,8 @@ buildscript {
         maven { setUrl("https://plugins.gradle.org/m2/") }
     }
     dependencies {
-        classpath("com.android.tools.build:gradle:7.3.0")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.7.10")
+        classpath("com.android.tools.build:gradle:7.4.2")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.10")
         classpath("com.mikepenz.aboutlibraries.plugin:aboutlibraries-plugin:8.9.4")
 
         // NOTE: Do not place your application dependencies here; they belong

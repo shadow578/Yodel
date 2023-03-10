@@ -23,14 +23,14 @@ class TempFiles(tempFile: File, format: String) {
 
     /**
      * the main audio file downloaded by youtube-dl.
-     * this file will be the same as [.convertedAudio], but with a .tmp extension
      */
     private val downloadedAudio: File = File(tempFile.absolutePath + ".tmp")
 
     /**
-     * the converted audio file, created by ffmpeg with the --extract-audio option
+     * the converted audio file, created by ffmpeg with the --extract-audio option.
+     * this file will be the same as [.downloadedAudio], but with the format extension added to it (*.tmp.<fmt>)
      */
-    private val convertedAudio: File = File(tempFile.absolutePath + "." + format)
+    private val convertedAudio: File = File(downloadedAudio.absolutePath + "." + format)
 
     /**
      * delete all files
