@@ -1,3 +1,4 @@
+@file:Suppress("UnstableApiUsage")
 import java.io.FileInputStream
 import java.util.*
 
@@ -96,23 +97,24 @@ dependencies {
     // androidX
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
-    implementation("androidx.appcompat:appcompat:1.5.1")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1")
-    implementation("androidx.lifecycle:lifecycle-service:2.5.1")
+    implementation("androidx.appcompat:appcompat:1.6.1")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.0")
+    implementation("androidx.lifecycle:lifecycle-service:2.6.0")
     implementation("androidx.legacy:legacy-support-v4:1.0.0")
     implementation("androidx.preference:preference-ktx:1.2.0")
 
     // material design
-    implementation("com.google.android.material:material:1.6.1")
+    implementation("com.google.android.material:material:1.8.0")
 
     // Room
-    implementation("androidx.room:room-runtime:2.4.3")
-    kapt("androidx.room:room-compiler:2.4.3")
+    implementation("androidx.room:room-runtime:2.5.0")
+    kapt("androidx.room:room-compiler:2.5.0")
 
     // youtube-dl
-    implementation("com.github.yausername.youtubedl-android:library:0.14.0")
-    implementation("com.github.yausername.youtubedl-android:ffmpeg:0.14.0")
-    implementation("com.github.yausername.youtubedl-android:aria2c:0.14.0")
+    //TODO: currently uses the latest version available. This makes the build unstable!
+    implementation("com.github.yausername.youtubedl-android:library:master-SNAPSHOT")
+    implementation("com.github.yausername.youtubedl-android:ffmpeg:master-SNAPSHOT")
+    implementation("com.github.yausername.youtubedl-android:aria2c:master-SNAPSHOT")
 
     // id3v2 tagging
     implementation("com.mpatric:mp3agic:0.9.1")
@@ -132,15 +134,14 @@ dependencies {
     implementation("com.mikepenz:aboutlibraries:8.9.4")
 
     // desugaring
-    //TODO 2.0.0 is only available with AGP > 7.4.0
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.2.0")
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.2")
 
     // unit testing
-    testImplementation("androidx.test.ext:junit:1.1.3")
+    testImplementation("androidx.test.ext:junit:1.1.5")
     testImplementation("org.robolectric:robolectric:4.8.2")
     testImplementation("io.kotest:kotest-assertions-core:5.4.2")
-    androidTestImplementation("androidx.test:runner:1.4.0")
-    androidTestImplementation("androidx.test:rules:1.4.0")
+    androidTestImplementation("androidx.test:runner:1.5.2")
+    androidTestImplementation("androidx.test:rules:1.5.0")
     androidTestImplementation("io.kotest:kotest-assertions-core:5.4.2")
 
     // leakcanary (only on debug builds)
