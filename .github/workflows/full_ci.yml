@@ -29,8 +29,9 @@ jobs:
     steps:
       # setup env
       - uses: actions/checkout@v4
-      - uses: actions/setup-java@v2
+      - uses: actions/setup-java@v4
         with:
+          distribution: 'corretto'
           java-version: 11
       - run: |
           mkdir -p ~/.gradle
@@ -74,8 +75,9 @@ jobs:
     steps:
       # setup env
       - uses: actions/checkout@v4
-      - uses: actions/setup-java@v2
+      - uses: actions/setup-java@v4
         with:
+          distribution: 'corretto'
           java-version: 11
       - run: |
           mkdir -p ~/.gradle
