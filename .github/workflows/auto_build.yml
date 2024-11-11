@@ -21,10 +21,10 @@ jobs:
       JAVA_TOOL_OPTIONS: -Xmx5g -XX:+UseParallelGC
     steps:
       # setup env
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
           ref: main
-      - uses: actions/setup-java@v1
+      - uses: actions/setup-java@v2
         with:
           java-version: 11
       - run: |
@@ -74,7 +74,7 @@ jobs:
 
       # upload results
       - name: Upload Test Results
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: unit-test-results
@@ -82,7 +82,7 @@ jobs:
 
       # upload artifacts
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: apks
           path: ./app/build/outputs/apk/release/*.apk
@@ -97,7 +97,7 @@ jobs:
       # download artifacts
       - run: mkdir ./release/
       - name: Download Artifacts
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: apks
           path: ./release/
