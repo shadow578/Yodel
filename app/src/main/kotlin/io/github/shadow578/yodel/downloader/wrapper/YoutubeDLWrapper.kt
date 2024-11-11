@@ -216,11 +216,11 @@ class YoutubeDLWrapper(
      * @throws InterruptedException by [YoutubeDL.execute] call
      */
     @Throws(YoutubeDLException::class, InterruptedException::class)
-    fun download(progressCallback: DownloadProgressCallback?): YoutubeDLResponse {
+    fun download(progressCallback: ((Float, Long, String) -> Unit)?): YoutubeDLResponse {
         check(initialized) { "youtube-dl was not initialized! call YoutubeDLWrapper.init() first!" }
         Timber.i("downloading $videoUrl")
 
-        val response = YoutubeDL.getInstance().execute(request, progressCallback)
+        val response = YoutubeDL.getInstance().execute(request, callback=progressCallback)
         if (printOutput) {
             Timber.i(response.toPrettyString())
             print(response)

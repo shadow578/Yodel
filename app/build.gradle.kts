@@ -23,7 +23,7 @@ android {
 
     defaultConfig {
         applicationId = "io.github.shadow578.yodel"
-        minSdk = 23
+        minSdk = 24
         targetSdk = 33
         compileSdk = 33
         versionCode = 5
@@ -111,10 +111,9 @@ dependencies {
     kapt("androidx.room:room-compiler:2.5.0")
 
     // youtube-dl
-    //TODO: currently uses the latest version available. This makes the build unstable!
-    implementation("com.github.yausername.youtubedl-android:library:master-SNAPSHOT")
-    implementation("com.github.yausername.youtubedl-android:ffmpeg:master-SNAPSHOT")
-    implementation("com.github.yausername.youtubedl-android:aria2c:master-SNAPSHOT")
+    implementation("io.github.junkfood02.youtubedl-android:library:0.17.1")
+    implementation("io.github.junkfood02.youtubedl-android:ffmpeg:0.17.1")
+    implementation("io.github.junkfood02.youtubedl-android:aria2c:0.17.1")
 
     // id3v2 tagging
     implementation("com.mpatric:mp3agic:0.9.1")

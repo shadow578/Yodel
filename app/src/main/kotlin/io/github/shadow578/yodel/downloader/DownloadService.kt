@@ -1,13 +1,16 @@
 package io.github.shadow578.yodel.downloader
 
+import android.Manifest
 import android.app.Notification
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Build
 import androidx.annotation.StringRes
+import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.documentfile.provider.DocumentFile
@@ -616,6 +619,10 @@ class DownloaderService : LifecycleService() {
     private fun updateNotification(newNotification: Notification) {
         if (isInForeground) {
             // already in foreground, update the notification
+            if (ActivityCompat.checkSelfPermission(this,Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: handle this gracefully
+                return
+            }
             notificationManager.notify(PROGRESS_NOTIFICATION_ID, newNotification)
         } else {
             // create foreground notification
@@ -745,7 +752,10 @@ class DownloaderService : LifecycleService() {
 
         // send the notification with a randomized id
         // this way, we can have multiple notifications (for multiple errors)
-        notificationManager.notify(notificationId, notification.build())
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
+            // TODO: handle this gracefully
+            notificationManager.notify(notificationId, notification.build())
+        }
     }
 
     //endregion
